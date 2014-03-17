@@ -1,0 +1,46 @@
+{% extends "drama/base.html" %}
+{% block title %}Show: {{show.name}}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="large-12 columns panel">
+      <p class="show-society"><a href="{% url 'society' show.society.slug%}">{{show.society.name}}</a> presents...</p>
+      <h2> {{show.name}}</br>{% if show.author %}<small>By {{show.author}}</small>{% endif %}</h2>
+      <p>
+	{% for performance in performances %}
+	{{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="/venues/{{performance.venue.slug}}">{{performance.venue.name}}</a><br />
+	{% endfor %}
+      </p>
+     <p>{{show.desc}}</p>
+    </div>
+</div>
+
+<div class="row">
+  <div class="large-{% if band %}4{% else %}6{% endif %} columns">
+    <h3> Cast </h3>
+    <div class="sortable-cast">
+      {% for role in cast %}
+      <div class="row" ><div class="small-11 columns">{% if role.role.link %}<a href="{%url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %} - <a href="{% url 'person' role.person.slug %}">{{role.person.name}}</a></div></div>
+      {% endfor %}
+    </div>
+  </div>
+  {% if band %}
+  <div class="large-4 columns">
+    <h3> Band </h3>
+    <div class="sortable-band">
+      {% for role in band %}
+      <div class="row" ><div class="small-11 columns">{% if role.role.link %}<a href="{%url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %} - <a href="{% url 'person' role.person.slug %}">{{role.person.name}}</a></div></div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  <div class="large-{% if band %}4{% else %}6{% endif %} columns end">
+    <h3> Production Team </h3>
+    <div class="sortable-prod">
+      {% for role in prod %}
+      <div class="row" ><div class="small-11 columns">{% if role.role.link %}<a href="{%url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %} - <a href="{% url 'person' role.person.slug %}">{{role.person.name}}</a></div></div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

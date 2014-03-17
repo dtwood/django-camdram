@@ -1,0 +1,25 @@
+from django.contrib import admin
+from drama.models import Person, Venue, Show, Performance, RoleInstance, Role, Society
+
+class PerformanceInline(admin.TabularInline):
+    model = Performance
+    extra = 1
+
+class RoleInline(admin.TabularInline):
+    model = RoleInstance
+    extra = 5
+    verbose_name = 'Company'
+
+class ShowAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['name', 'desc', 'society', 'year', 'image']}),
+        ('Booking info', {'fields': ['book','prices'], 'classes': ['collapse']})
+        ]
+    inlines = [PerformanceInline,RoleInline]
+    list_display = ['name', 'opening_night', 'slug']
+    
+admin.site.register(Person)
+admin.site.register(Venue)
+admin.site.register(Show, ShowAdmin)
+admin.site.register(Role)
+admin.site.register(Society)

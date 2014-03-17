@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="beta.camdram.net/css/main-6abb4ae.css" />
+    <title>{% block title %}{% endblock %} - Camdram</title>
+  </head>
+  
+  <body>
+    <section id="content">
+      {% block content %}{% endblock %}
+    </section>
+  </body>
+</html>
