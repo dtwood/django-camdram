@@ -13,5 +13,8 @@ urlpatterns = patterns('',
                        url(r'^vacancies/auditions', views.auditions, name='auditions'),
                        url(r'^vacancies/applications', views.applications, name='applications'),
                        url(r'^vacancies/(?P<show_slug>[^/]*)/(?P<role_slug>[^/]*)', views.ad_role, name='ad_role'),
+                       url(r'^vacancies/technical/(?P<slug>[^/]*)', views.techieads_show, name='techieads_show'),
+                       url(r'^vacancies/auditions/(?P<slug>[^/]*)', views.auditions_show, name='auditions_show'),
+                       url(r'^vacancies/applications/(?P<slug>[^/]*)', views.applications_show, name='applications_show'),
                        
                        )

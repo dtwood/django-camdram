@@ -4,8 +4,8 @@
 
 {% block adverts %}
 <h2><a href="{% url 'show' role.ad.show.slug %}">{{role.ad.show.name}}</a><br /><small>{% if role.role.link %}<a href="{% url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %}</small></h2>
-<p>{% if ad.show.performance_set.all %}
-{% for performance in role.show.performance_set.all %}
+<p>{% if role.ad.show.performance_set.all %}
+{% for performance in role.ad.show.performance_set.all %}
 {{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="{% url 'venue' performance.venue.slug %}">{{performance.venue.name}}</a><br/>
 {% endfor %}
 {% else %}
@@ -13,7 +13,7 @@ Dates and venues to be confirmed.
 {% endif %}</p>
 <p>{{role.desc}}</p>
 <p>
-  <strong>Contact:</strong> {{ad.contact}}<br />
-  <strong>Deadline for applications:</strong> {{ad.deadline|date:"l jS F G:i"}}
+  <strong>Contact:</strong> {{role.ad.contact}}<br />
+  <strong>Deadline for applications:</strong> {{role.ad.deadline|date:"l jS F G:i"}}
 </p>
 {% endblock %}

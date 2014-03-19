@@ -42,10 +42,10 @@ def applications(request):
 
 def ad_role(request, show_slug, role_slug):
     role = get_object_or_404(TechieAdRole,slug=role_slug,ad__show__slug=show_slug)
-    context = {'role':role}
+    context = {'role':role, 'current_roletype':'', 'current_pagetype':'vacancies'}
     return render(request, 'drama/ad_role.html', context)
 
 def techieads(request):
     ads = TechieAd.objects.all()
-    context = {'ads': ads}
+    context = {'ads': ads, 'current_roletype':'techie', 'current_pagetype':'vacancies'}
     return render(request, 'drama/techiead.html', context)

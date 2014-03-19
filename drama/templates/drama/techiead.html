@@ -5,7 +5,7 @@
 <h3>Technical and Design Roles</h3>
 {% for ad in ads %}
 <hr>
-<div id="ad.show.slug">
+<div id="{{ad.show.slug}}">
   <h4><a href="{% url 'show' ad.show.slug %}">{{ad.show.name}}</a></h4>
   <p>
     {% if ad.show.performance_set.all %}
