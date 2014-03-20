@@ -1,7 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from drama.models import *
 from django.utils import timezone
 from django.http import HttpResponse
+from django.core.urlresolvers import reverse
 
 def index(request):
     return HttpResponse("Hello World")
@@ -12,7 +13,7 @@ def show(request,slug):
     cast = company.filter(role__cat='cast')
     band = company.filter(role__cat='band')
     prod = company.filter(role__cat='prod')
-    performances = Performance.objects.filter(show=show)
+    performances = Show.object.performance_set.all() #Performance.objects.filter(show=show)
     context = {'show': show, 'cast': cast, 'band': band, 'prod': prod, 'performances': performances}
     return render(request, 'drama/show.html', context)
 
@@ -49,3 +50,12 @@ def techieads(request):
     ads = TechieAd.objects.all()
     context = {'ads': ads, 'current_roletype':'techie', 'current_pagetype':'vacancies'}
     return render(request, 'drama/techiead.html', context)
+
+def techieads_show(request,slug):
+    return redirect(reverse('techie_ads') + '#' + slug)
+
+def auditions_show(request,slug):
+    return HttpResponse("Hello World")
+
+def applications_show(request,slug):
+    return HttpResponse("Hello World")

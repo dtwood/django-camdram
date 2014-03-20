@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'south',
     'drama',
 )
 
@@ -61,12 +62,12 @@ WSGI_APPLICATION = 'camdram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django', 
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', 
         'NAME': 'camdram',
-        'USER': 'root',
-        'PASSWORD': 'asdf',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
+        'USER': 'camdram',
+        'PASSWORD': 'hello, little girl',
+        'HOST': '',   # Or an IP Address that your DB is hosted on
+        'PORT': '',
         #'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
