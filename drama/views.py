@@ -7,6 +7,9 @@ from django.core.urlresolvers import reverse
 def index(request):
     return HttpResponse("Hello World")
 
+def diary(request):
+    return HttpResponse("Hello World")
+
 def show(request,slug):
     show = get_object_or_404(Show,slug=slug)
     company = RoleInstance.objects.filter(show=show)
@@ -34,7 +37,7 @@ def society(request,slug):
     showapps = ShowApplication.objects.filter(show__society=society).filter(deadline__gte=timezone.now()).order_by('deadline')
     societyapps = SocietyApplication.objects.filter(society=society).filter(deadline__gte=timezone.now()).order_by('deadline')
     
-    context = {'society':society, 'shows':shows, 'auditions':auditions, 'techieads':techieads, 'showapps':showapps, 'societyapps':societyapps}
+    context = {'society':society, 'shows':shows, 'auditions':auditions, 'techieads':techieads, 'showapps':showapps, 'societyapps':societyapps, 'current_pagetype':'societies'}
     return render(request, 'drama/society.html', context)
 
 def societies(request):
@@ -47,7 +50,7 @@ def venue(request,slug):
     techieads = TechieAd.objects.filter(show__performance__venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
     showapps = ShowApplication.objects.filter(show__performance__venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline')
     venueapps = VenueApplication.objects.filter(venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline')
-    context = {'venue':venue, 'shows':shows, 'auditions':auditions, 'techieads':techieads, 'showapps':showapps, 'venueapps':venueapps}
+    context = {'venue':venue, 'shows':shows, 'auditions':auditions, 'techieads':techieads, 'showapps':showapps, 'venueapps':venueapps, 'current_pagetype':'venues'}
     return render(request, 'drama/venue.html', context)
 
 def venues(request):

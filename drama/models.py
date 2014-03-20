@@ -150,11 +150,14 @@ class ShowApplication(models.Model):
     desc = models.TextField('Description', blank=True)
     contact = models.CharField(max_length=200, blank=True)
     deadline = models.DateTimeField()
-    slug = models.SlugField(max_length=200, blank=True, editable=False)
+    slug = models.SlugField(max_length=200, blank=True, editable=False, unique=True)
     def save(self, *args, **kwargs):
         if not self.id:
-            self.slug = slugify(self.name)
-        super(ShowApplication, self).save(*args, **kwargs)
+            self.slug = slugify(self.show.name + '-' + self.name)
+        try:
+            super(ShowApplication, self).save(*args, **kwargs)
+        except IntegrityError:
+            self.slug = slugify(self.id + '-' + self.slug)
 
 class SocietyApplication(models.Model):
     society = models.ForeignKey(Society)
@@ -162,11 +165,14 @@ class SocietyApplication(models.Model):
     desc = models.TextField('Description', blank=True)
     contact = models.CharField(max_length=200, blank=True)
     deadline = models.DateTimeField()
-    slug = models.SlugField(max_length=200, blank=True, editable=False)
+    slug = models.SlugField(max_length=200, blank=True, editable=False, unique=True)
     def save(self, *args, **kwargs):
         if not self.id:
-            self.slug = slugify(self.name)
-        super(SocietyApplication, self).save(*args, **kwargs)
+            self.slug = slugify(self.society.name + '-' + self.name)
+        try:
+            super(SocietyApplication, self).save(*args, **kwargs)
+        except IntegrityError:
+            self.slug = slugify(self.id + '-' + self.slug)
 
 class VenueApplication(models.Model):
     venue = models.ForeignKey(Venue)
@@ -174,9 +180,13 @@ class VenueApplication(models.Model):
     desc = models.TextField('Description', blank=True)
     contact = models.CharField(max_length=200, blank=True)
     deadline = models.DateTimeField()
-    slug = models.SlugField(max_length=200, blank=True, editable=False)
+    slug = models.SlugField(max_length=200, blank=True, editable=False,unique=True)
     def save(self, *args, **kwargs):
         if not self.id:
+            super(VenueApplication, self).save(*args, **kwargs)
             self.slug = slugify(self.name)
-        super(VenueApplication, self).save(*args, **kwargs)
+        try:
+            super(VenueApplication, self).save(*args, **kwargs)
+        except IntegrityError:
+            self.slug = slugify(self.id + '-' + self.slug)
 

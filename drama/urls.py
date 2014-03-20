@@ -3,7 +3,8 @@ from django.conf.urls import patterns, url
 from drama import views
 
 urlpatterns = patterns('',
-                       url(r'^$', views.index, name='index'),
+                       url(r'^$', views.index, name='home'),
+                       url(r'^diary$', views.diary, name='diary'),
                        url(r'^shows/(?P<slug>[^/]*)', views.show, name='show'),
                        url(r'^people/(?P<slug>[^/]*)', views.person, name='person'),
                        url(r'^roles/(?P<slug>[^/]*)', views.role, name='role'),

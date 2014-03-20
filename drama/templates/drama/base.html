@@ -7,6 +7,17 @@
   
   <body>
     <div id="wrapper">
+      <nav class="top-bar">
+	<section class="top-bar-section">
+	  <ul class="left">
+	    {% for id,item in navitems_default %}
+	    <li{% if id == current_pagetype %} class="active"{% endif %}>
+	      <a href="{{item.path}}">{{item.text}}</a>
+	    </li>
+	    {% endfor %}
+	  </ul>
+	</section>
+      </nav>
       <section id="content">
 	{% block content %}{% endblock %}
       </section>
