@@ -16,7 +16,7 @@ class TechieAdInline(admin.TabularInline):
     verbose_name = 'Role'
 
 class AuditionInline(admin.TabularInline):
-    model = Audition
+    model = AuditionInstance
     extra = 1
     
 class ShowAdmin(admin.ModelAdmin):
@@ -40,8 +40,8 @@ admin.site.register(Show, ShowAdmin)
 admin.site.register(Role)
 admin.site.register(Society)
 admin.site.register(TechieAd,TechieAdAdmin)
-admin.site.register(AuditionAd,AuditionAdmin)
+admin.site.register(Audition,AuditionAdmin)
 admin.site.register(SocietyApplication)
 admin.site.register(VenueApplication)
-admin.site.register(DirectorApplication)
+admin.site.register(ShowApplication)
 

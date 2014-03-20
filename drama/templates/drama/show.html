@@ -5,7 +5,7 @@
 <div class="row">
   <div class="large-12 columns panel">
       <p class="show-society"><a href="{% url 'society' show.society.slug%}">{{show.society.name}}</a> presents...</p>
-      <h2> {{show.name}}<br />{% if show.author %}<small>By {{show.author}}</small>{% endif %}</h2>
+      <h2>{{show.name}}<br />{% if show.author %}<small>By {{show.author}}</small>{% endif %}</h2>
     {% if show.image %}
     <div class="large-3 columns text-center">
       <a href="{{show.image.url}}" class="fancybox"><img src="{{show.image.url}}" /></a>
@@ -21,13 +21,13 @@
     </div>
     {% if show.image %}</div>{% endif %}
 </div>
-{% if show.techiead_set.all or show.auditionad_set.all %}
+{% if show.techiead or show.audition %}
 <div class ="row">
   <div class="vacancies-panel">
-    {% for auditionad in show.auditionad_set.all %}
+    {% for audition in show.audition.auditioninstance_set.all %}
     
     {% endfor %}
-    {% for techiead in show.techiead_set.all %}
+    {% for techiead in show.techiead.techieadrole_set.all %}
     
     {% endfor %}
   </div>

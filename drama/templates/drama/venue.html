@@ -1,0 +1,26 @@
+{% extends "drama/base.html" %}
+{% block title %}Venue: {{venue.name}}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="large-12 columns panel">
+    <h2>{{venue.name}}{% if venue.address %}<br /><small>{{venue.address}}</small>{% endif %}</h2>
+    <p>{{venue.desc|safe}}</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="large-12 columns">
+    {% with title="Get involved with shows at "|add:venue.name|add:":" %}
+    {% include "drama/vacancies-panel.html" with title=title ourapps=venueapps%}
+    {% endwith %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="large-12 columns">
+    <h3>Shows</h3>
+    {% include "drama/diary.html" with events=shows %}
+  </div>
+</div>
+{% endblock %}

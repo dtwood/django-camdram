@@ -1,0 +1,17 @@
+<div class="vacancies-panel">
+  <h5>{{title}}</h5>
+  <ul>
+    {% for app in ourapps %}
+    <li>{{app.name}} open until {{app.deadline|date:"G:i"}} on {{app.deadline|date:"l jS F"}} - <a href="{% url 'applications_item' app.slug %}">more details</a></li>
+    {% endfor %}
+    {% for app in showapps %}
+    <li><a href="{% url 'show' app.show.slug %}">{{app.show.name}}</a> is looking for: {{app.name}} - <a href="{% url 'applications_item' app.slug %}">more details</a></li>
+    {% endfor %}
+    {% for audition in auditions %}
+    <li><a href="{% url 'show' audition.audition.show.slug %}">{{audition.audition.show.name}}</a> is holding auditions: from {{audition.start_time|date:"G:i"}} to {{audition.end_time|date:"G:i"}} on {{audition.date|date:"l jS F"}} at {{audition.location}} - <a href="{% url 'auditions_item' audition.audition.slug %}">more details</a></li>
+    {% endfor %}
+    {% for techiead in techieads %}
+    <li><a href="{% url 'show' techiead.show.slug %}">{{techiead.show.name}}</a> is looking for: {% for role in techiead.techieadrole_set.all %}{{role.name}}{% include "drama/comma.html" %} {% endfor %}- <a href="{% url 'techieads_item' techiead.show.slug %}">more details</a></li>
+    {% endfor %}
+  </ul>
+</div>

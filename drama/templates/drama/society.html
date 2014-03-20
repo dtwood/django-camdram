@@ -1,0 +1,26 @@
+{% extends "drama/base.html" %}
+{% block title %}Society: {{society.name}}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="large-12 columns panel">
+    <h2>{{society.name}}<small> - {{society.shortname}}</small></h2>
+    <p>{{society.desc|safe}}</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="large-12 columns">
+    {% with title="Get involved with "|add:society.name|add:" shows:" %}
+    {% include "drama/vacancies-panel.html" with title=title ourapps=societyapps%}
+    {% endwith %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="large-12 columns">
+    <h3>Shows</h3>
+    {% include "drama/diary.html" with events=shows %}
+  </div>
+</div>
+{% endblock %}
