@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -7,6 +8,25 @@
   
   <body>
     <div id="wrapper">
+      <header>
+	<div class="row">
+	 <div class="large-3 columns logo">
+	   <h1><a href="{% url 'home' %}"><img src="{% static 'drama/logo.png' %}" alt="camdram" title="camdram"/></a></h1>
+	 </div>
+	 <div class="large-9 columns search">
+	  <form method="get" action="/search" class="searchform" id="search_form">
+	    <i class="fa fa-search"></i>
+	    {% if form %}{{form.q}}{% else %}{{search_form.q}}{% endif %}
+	    <div class="results">
+	      <ul></ul>
+	      <div class="noresults">No results found for &quot;<span class="query"></span>&quot;</div>
+              <div class="fulltext"><a href="#">...perform a search for &quot;<span class="query"></span>&quot;</a></div>
+	    </div>
+            <i class="fa fa-spinner fa-spin"></i>
+	  </form>
+	 </div>
+	</div>
+      </header>
       <nav class="top-bar">
 	<section class="top-bar-section">
 	  <ul class="left">

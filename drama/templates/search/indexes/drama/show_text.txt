@@ -1,0 +1,6 @@
+{{ object.name }}
+{{ object.desc }}
+{{ object.society.name }}
+{% for performance in object.performance_set.all %}
+{{ performance.venue.name }}
+{% endfor %}

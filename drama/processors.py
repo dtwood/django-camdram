@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse
+from drama.forms import CamdramSearchForm
 
 def navitems_processor(request):
     return {'navitems_default':
@@ -8,3 +9,6 @@ def navitems_processor(request):
             ('societies', {'text': 'Societies', 'path': reverse('societies')}),
             ('venues', {'text': 'Venues', 'path': reverse('venues')}),
             )}
+
+def searchform(request):
+    return {'search_form': CamdramSearchForm()}

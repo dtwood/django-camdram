@@ -1,10 +1,10 @@
-from django.conf.urls import patterns, url
-
+from django.conf.urls import patterns, url, include
 from drama import views
 
 urlpatterns = patterns('',
                        url(r'^$', views.index, name='home'),
                        url(r'^diary$', views.diary, name='diary'),
+                       url(r'^search/', include('drama.haystack_urls'), name='search'),
                        url(r'^shows/(?P<slug>[^/]*)', views.show, name='show'),
                        url(r'^people/(?P<slug>[^/]*)', views.person, name='person'),
                        url(r'^roles/(?P<slug>[^/]*)', views.role, name='role'),

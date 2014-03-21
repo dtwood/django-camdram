@@ -1,5 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import slugify
+from datetime import date, timedelta
 
 class Person(models.Model):
     def __str__(self): return self.name
@@ -20,15 +21,24 @@ class Person(models.Model):
     @property
     def first_active(self):
         try:
-            return self.show_set.performance_set.order_by('start_date')[0].start_date
+            return Performance.objects.filter(show__company=self).order_by('start_date')[0].start_date
         except IndexError:
             return None
     @property
     def last_active(self):
         try:
-            return self.show_set.performance_set.order_by('-end_date')[0].end_date
+            return Performance.objects.filter(show__company=self).order_by('-end_date')[0].end_date
         except IndexError:
             return None
+    @property
+    def dec_string(self):
+        if date.today() - self.last_active < timedelta(days=365):
+            label = 'Active'
+        else:
+            label = 'Was Active: ' + self.first_active.strftime('%b %Y') + ' - ' + self.last_active.strftime('%b %Y')
+        return '(' + label + ', Shows: ' + str(self.num_shows) + ')'
+    def get_cname(self):
+        return "person"
     
     #TODO: Link to account
     #account = models.ForeignKey(accounts.Account)
@@ -43,6 +53,11 @@ class Venue(models.Model):
         if not self.id:
             self.slug = slugify(self.name)
         super(Venue, self).save(*args, **kwargs)
+    @property
+    def dec_string(self):
+        return ''
+    def get_cname(self):
+        return "venue"
     #TODO: Adress
 
 class Society(models.Model):
@@ -55,6 +70,11 @@ class Society(models.Model):
         if not self.id:
             self.slug = slugify(self.name)
         super(Society, self).save(*args, **kwargs)
+    @property
+    def dec_string(self):
+        return ''
+    def get_cname(self):
+        return "society"
 
 class Show(models.Model):
     def __str__(self): return self.name
@@ -84,6 +104,11 @@ class Show(models.Model):
             return self.performance_set.order_by('-end_date')[0].end_date
         except IndexError:
             return None
+    @property
+    def dec_string(self):
+        return '('+self.opening_night.strftime('%b %Y')+')'
+    def get_cname(self):
+        return "show"
 
 class Performance(models.Model):
     def __str__(self):

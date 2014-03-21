@@ -3,6 +3,8 @@ from drama.models import *
 from django.utils import timezone
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
+from haystack.query import SearchQuerySet
+import json
 
 def index(request):
     return HttpResponse("Hello World")
@@ -84,3 +86,11 @@ def techieads(request):
 def techieads_item(request,slug):
     return redirect(reverse('techie_ads') + '#' + slug)
 
+def autocomplete(request):
+    sqs = SearchQuerySet().autocomplete(auto=request.GET.get('q','')).load_all()[:10]
+    suggestions = [{'name':result.object.name,
+                   'string':result.object.dec_string,
+                   'link':reverse(result.object.get_cname(), kwargs={'slug':result.object.slug}),
+                   } for result in sqs]
+    data = json.dumps(suggestions)
+    return HttpResponse(data, content_type='application/json')
