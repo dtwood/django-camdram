@@ -24,7 +24,7 @@ def show(request,slug):
 
 def person(request,slug):
     person = get_object_or_404(Person,slug=slug)
-    roles = person.roleinstance_set.select_related(show__performace)
+    roles = person.roleinstance_set.select_related('show__performace')
     past_roles = roles.exclude(show__performance__end_date__gte=timezone.now())
     future_roles = roles.exclude(show__performance__start_date__lte=timezone.now())
     current_roles = roles.filter(show__performance__start_date__lte=timezone.now()).filter(show__performance__end_date__gte=timezone.now)
@@ -34,7 +34,7 @@ def person(request,slug):
 def society(request,slug):
     society = get_object_or_404(Society,slug=slug)
     shows = society.show_set
-    auditions = AuditionInstance.objects.filter(audition__show__society=society).filter(date__gte=timezone.now()).order_by('date','start_time','end_time')
+    auditions = AuditionInstance.objects.filter(audition__show__society=society).filter(end_datetime__gte=timezone.now()).order_by('end_datetime','start_time')
     techieads = TechieAd.objects.filter(show__society=society).filter(deadline__gte=timezone.now()).order_by('deadline')
     showapps = ShowApplication.objects.filter(show__society=society).filter(deadline__gte=timezone.now()).order_by('deadline')
     societyapps = SocietyApplication.objects.filter(society=society).filter(deadline__gte=timezone.now()).order_by('deadline')
@@ -48,7 +48,7 @@ def societies(request):
 def venue(request,slug):
     venue = get_object_or_404(Venue,slug=slug)
     shows = Show.objects.filter(performance__venue=venue).distinct()
-    auditions = AuditionInstance.objects.filter(audition__show__performance__venue=venue).filter(date__gte=timezone.now()).order_by('date','start_time','end_time').distinct()
+    auditions = AuditionInstance.objects.filter(audition__show__performance__venue=venue).filter(end_datetime__gte=timezone.now()).order_by('end_datetime','start_time').distinct()
     techieads = TechieAd.objects.filter(show__performance__venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
     showapps = ShowApplication.objects.filter(show__performance__venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline')
     venueapps = VenueApplication.objects.filter(venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline')
@@ -62,13 +62,25 @@ def role(request,slug):
     return HttpResponse("Hello World")
 
 def auditions(request):
+    aud_instances = AuditionInstance.objects.filter(end_datetime__gte=timezone.now()).order_by('end_datetime','start_time').select_related('audition')
+    seen = set()
+    seen_add = seen.add
+    ads = [i.audition for i in aud_instances if i.audition.id not in seen and not seen_add(i.audition.id)]
+    context = {'ads': ads, 'current_roletype':'auditions', 'current_pagetype':'vacancies'}
+    return render(request, 'drama/auditions.html', context)
+
+def auditions_diary(request):
     return HttpResponse("Hello World")
 
 def auditions_item(request,slug):
     return redirect(reverse('auditions') + '#' + slug)
 
 def applications(request):
-    return HttpResponse("Hello World")
+    showads = ShowApplication.objects.filter(deadline__gte=timezone.now()).order_by('deadline')
+    socads = SocietyApplication.objects.filter(deadline__gte=timezone.now()).order_by('deadline')
+    venueads = VenueApplication.objects.filter(deadline__gte=timezone.now()).order_by('deadline')
+    context = {'showads': showads, 'venueads': venueads, 'socads':socads, 'current_roletype':'applications', 'current_pagetype':'vacancies'}
+    return render(request, 'drama/applications.html', context)
 
 def applications_item(request,slug):
     return redirect(reverse('applications') + '#' + slug)
@@ -91,6 +103,19 @@ def autocomplete(request):
     suggestions = [{'name':result.object.name,
                    'string':result.object.dec_string,
                    'link':reverse(result.object.get_cname(), kwargs={'slug':result.object.slug}),
+                   'type':result.object.get_cname(),
                    } for result in sqs]
     data = json.dumps(suggestions)
     return HttpResponse(data, content_type='application/json')
+
+def about(request):
+    return HttpResponse("Hello World")
+
+def development(request):
+    return HttpResponse("Hello World")
+
+def contact_us(request):
+    return HttpResponse("Hello World")
+
+def privacy(request):
+    return HttpResponse("Hello World")

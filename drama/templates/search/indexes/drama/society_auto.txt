@@ -1,0 +1,2 @@
+{{ objct.name }}
+{{ object.shortname }}

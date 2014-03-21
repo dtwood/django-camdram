@@ -9,7 +9,7 @@
   <h4><a href="{% url 'show' ad.show.slug %}">{{ad.show.name}}</a></h4>
   <p>
     {% if ad.show.performance_set.all %}
-    {% for performance in role.show.performance_set.all %}
+    {% for performance in ad.show.performance_set.all %}
     {{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="{% url 'venue' performance.venue.slug %}">{{performance.venue.name}}</a><br/>
     {% endfor %}
     {% else %}

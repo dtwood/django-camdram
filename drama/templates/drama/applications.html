@@ -1,0 +1,63 @@
+{% extends "drama/vacancy.html" %}
+{% block title %}Applications{% endblock %}
+
+{% block adverts %}
+<h3>Producer/director roles and show applications</h3>
+{% for ad in socads %}
+<hr>
+<div id="{{ad.slug}}">
+  <h4><a href="{% url 'society' ad.society.slug %}">{{ad.society.name}}</a></h4>
+  <h5>{{ad.name}}</h5>
+  {% if ad.desc %}
+  <p>{{ad.desc}}</p>
+  {% endif %}
+  <p>
+    {% if ad.contact %}
+    <strong>Contact:</strong> {{ad.contact}}<br />
+    {% endif %}
+    <strong>Deadline for applications:</strong> {{ad.deadline|date:"l jS F G:i"}}
+  </p>
+</div>  
+{% endfor %}
+{% for ad in venueads %}
+<hr>
+<div id="{{ad.slug}}">
+  <h4><a href="{% url 'venue' ad.venue.slug %}">{{ad.venue.name}}</a></h4>
+  <h5>{{ad.name}}</h5>
+  {% if ad.desc %}
+  <p>{{ad.desc}}</p>
+  {% endif %}
+  <p>
+    {% if ad.contact %}
+    <strong>Contact:</strong> {{ad.contact}}<br />
+    {% endif %}
+    <strong>Deadline for applications:</strong> {{ad.deadline|date:"l jS F G:i"}}
+  </p>
+</div>  
+{% endfor %}
+{% for ad in showads %}
+<hr>
+<div id="{{ad.slug}}">
+  <h4><a href="{% url 'show' ad.show.slug %}">{{ad.show.name}}</a></h4>
+  <h5>{{ad.name}}</h5>
+  <p>
+    {% if ad.show.performance_set.all %}
+    {% for performance in role.show.performance_set.all %}
+    {{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="{% url 'venue' performance.venue.slug %}">{{performance.venue.name}}</a><br/>
+    {% endfor %}
+    {% else %}
+    Dates and venues to be confirmed.
+    {% endif %}
+  </p>
+  {% if ad.desc %}
+  <p>{{ad.desc}}</p>
+  {% endif %}
+  <p>
+    {% if ad.contact %}
+    <strong>Contact:</strong> {{ad.contact}}<br />
+    {% endif %}
+    <strong>Deadline for applications:</strong> {{ad.deadline|date:"l jS F G:i"}}
+  </p>
+</div>  
+{% endfor %}
+{% endblock %}

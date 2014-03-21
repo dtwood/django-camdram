@@ -1,6 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import slugify
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 class Person(models.Model):
     def __str__(self): return self.name
@@ -35,7 +35,7 @@ class Person(models.Model):
         if date.today() - self.last_active < timedelta(days=365):
             label = 'Active'
         else:
-            label = 'Was Active: ' + self.first_active.strftime('%b %Y') + ' - ' + self.last_active.strftime('%b %Y')
+            label = 'Was Active: ' + self.first_active.strftime('%b %y') + ' - ' + self.last_active.strftime('%b %y')
         return '(' + label + ', Shows: ' + str(self.num_shows) + ')'
     def get_cname(self):
         return "person"
@@ -161,12 +161,24 @@ class Audition(models.Model):
     show = models.OneToOneField(Show)
     desc = models.TextField('Description', blank=True)
     contact = models.CharField(max_length=200, blank=True)
+    @property
+    def starts_at(self):
+        try:
+            first = self.auditioninstance_set.order_by('date','start_time')[0]
+            return datetime.combine(first.date,first.start_time)
+        except IndexError:
+            return None
 
 class AuditionInstance(models.Model):
     audition = models.ForeignKey(Audition)
-    date = models.DateField()
+    end_datetime = models.DateTimeField()
+    @property
+    def date(self):
+        self.start_datetime.date() 
+    @property
+    def end_time(self):
+        self.start_datetime.time() 
     start_time = models.TimeField()
-    end_time = models.TimeField()
     location = models.CharField(max_length=200)
 
 class ShowApplication(models.Model):

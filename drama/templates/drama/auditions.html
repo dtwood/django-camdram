@@ -1,0 +1,36 @@
+{% extends "drama/vacancy.html" %}
+{% block title %}Auditions{% endblock %}
+
+{% block adverts %}
+<ul class="inline-list right">
+  <li>List view</li>
+  <li><a href="{% url 'auditions_diary' %}">Diary view</a></li>
+</ul>
+<h3>Auditions</h3>
+{% for ad in ads %}
+<hr>
+<div id="{{ad.show.slug}}">
+  <h4><a href="{% url 'show' ad.show.slug %}">{{ad.show.name}}</a></h4>
+  <p>
+    {% if ad.show.performance_set.all %}
+    {% for performance in ad.show.performance_set.all %}
+    {{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="{% url 'venue' performance.venue.slug %}">{{performance.venue.name}}</a><br/>
+    {% endfor %}
+    {% else %}
+    Dates and venues to be confirmed.
+    {% endif %}
+  </p>
+  {% if ad.desc %}
+  <p>{{ad.desc}}</p>
+  {% endif %}
+  <ul>
+    {% for instance in ad.auditioninstance_set.all %}
+    <li>{{instance.end_datetime|date:"D dS F"}}, {{instance.start_time|date:"g:iA"|lower}} - {{instance.end_datetime|date:"g:iA"|lower}}, {{instance.location}}</li>
+    {% endfor %}
+  </ul>
+  <p>
+    {% if ad.contact %}<strong>Contact:</strong> {{ad.contact}}{% endif %}
+  </p>
+</div>  
+{% endfor %}
+{% endblock %}

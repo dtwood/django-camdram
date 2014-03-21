@@ -2,12 +2,30 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="https://beta.camdram.net/css/main-6abb4ae.css" />
+    {{search_form.media}}
     <title>{% block title %}{% endblock %} - Camdram</title>
   </head>
   
   <body>
-    <div id="wrapper">
+    <div id="wrapper"> 
+      <nav id="header-bar">
+	<section>
+	  <ul class="left hide-for-small">
+            <li><a href="{% url 'about' %}">
+		About</a>
+	    </li>
+	    <li><a href="{% url 'development' %}">
+		Development</a>
+	    </li>
+	    <li><a href="{% url 'contact-us' %}">
+		Contact Us</a>
+	    </li>
+	  </ul>
+	  
+	  <ul class="right">
+	  </ul>
+	</section>
+      </nav>
       <header>
 	<div class="row">
 	 <div class="large-3 columns logo">
@@ -42,5 +60,34 @@
 	{% block content %}{% endblock %}
       </section>
     </div>
+    <footer>
+      <div id="sitemap" class="row">
+        <div class="large-4 columns">
+          <h5>Site Map</h5>
+	  {% for id,item in navitems_default %}
+	  <a href="{{item.path}}">{{item.text}}</a><br />
+	  {% endfor %}
+	</div>
+	<div class="large-4 columns">
+            <h5>Vacant Positions</h5>
+            <a href="{% url 'techie_ads' %}">Technical</a><br/>
+            <a href="{% url 'auditions' %}">Actors</a><br/>
+            <a href="{% url 'applications' %}">Directors/Producers</a><br/>
+        </div>
+        <div class="large-4 columns">
+          <h5>About</h5>
+          <a href="{% url 'about' %}">About Camdram</a><br/>
+          <a href="{% url 'development' %}">Development</a><br/>
+          <a href="{% url 'privacy' %}">Privacy policy</a><br/>
+          <a href="{% url 'contact-us' %}">Contact Us</a><br/>
+        </div>
+      </div>
+      
+      <div id="copyright" class="row">
+        <p>&copy; Association of Cambridge Theatre Societies and contributing groups 2004 &#8212; 2014.
+          Comments &amp; queries to <a href="mailto:websupport@camdram.net">websupport@camdram.net</a>
+        </p>
+      </div>
+    </footer>
   </body>
 </html>
