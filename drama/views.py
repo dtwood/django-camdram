@@ -38,28 +38,6 @@ def person(request,slug):
     context = {'person': person, 'past_roles':past_roles, 'current_roles':current_roles, 'future_roles': future_roles}
     return render(request, 'drama/person.html', context)
 
-def society(request,slug):
-    society = get_object_or_404(Society,slug=slug)
-    shows = society.show_set
-    auditions = AuditionInstance.objects.filter(audition__show__society=society).filter(end_datetime__gte=timezone.now()).order_by('end_datetime','start_time')
-    techieads = TechieAd.objects.filter(show__society=society).filter(deadline__gte=timezone.now()).order_by('deadline')
-    showapps = ShowApplication.objects.filter(show__society=society).filter(deadline__gte=timezone.now()).order_by('deadline')
-    societyapps = SocietyApplication.objects.filter(society=society).filter(deadline__gte=timezone.now()).order_by('deadline')
-    
-    context = {'society':society, 'shows':shows, 'auditions':auditions, 'techieads':techieads, 'showapps':showapps, 'societyapps':societyapps, 'current_pagetype':'societies'}
-    return render(request, 'drama/society.html', context)
-
-def venue(self, *args, **kwargs):
-    context = super(DetailView, self).get_context_data(**kwargs)
-    venue = context['object']
-    context['shows'] = Show.objects.filter(performance__venue=venue).distinct()
-    context['auditions'] = AuditionInstance.objects.filter(audition__show__performance__venue=venue).filter(end_datetime__gte=timezone.now()).order_by('end_datetime','start_time').distinct()
-    context['techieads'] = TechieAd.objects.filter(show__performance__venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
-    context['showapps'] = ShowApplication.objects.filter(show__performance__venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline')
-    context['venueapps'] = VenueApplication.objects.filter(venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline')
-    context['current_pagetype']='venues'
-    return context
-
 def role(request,slug):
     return HttpResponse("Hello World")
 
@@ -104,7 +82,7 @@ def autocomplete(request):
     sqs = SearchQuerySet().autocomplete(auto=request.GET.get('q','')).load_all()[:10]
     suggestions = [{'name':result.object.name,
                    'string':result.object.dec_string,
-                   'link':reverse(result.object.get_cname(), kwargs={'slug':result.object.slug}),
+                   'link':reverse('display', kwargs={'model_name':result.object.get_cname(), 'slug':result.object.slug}),
                    'type':result.object.get_cname(),
                    } for result in sqs]
     data = json.dumps(suggestions)

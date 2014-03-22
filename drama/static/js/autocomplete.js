@@ -42,7 +42,7 @@ Autocomplete.prototype.setup = function() {
     });
 
 
-    this.form_elem.find('.results ul li').mousemove(function() {
+    this.form_elem.find('.results ul li').mouseenter(function() {
 	console.log(hello);
         if (!$(this).hasClass('active')) {
             self.form_elem.find(".results ul li").removeClass('active');

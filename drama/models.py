@@ -38,7 +38,7 @@ class Person(models.Model):
             label = 'Was Active: ' + self.first_active.strftime('%b %y') + ' - ' + self.last_active.strftime('%b %y')
         return '(' + label + ', Shows: ' + str(self.num_shows) + ')'
     def get_cname(self):
-        return "person"
+        return "people"
     
     #TODO: Link to account
     #account = models.ForeignKey(accounts.Account)
@@ -57,7 +57,7 @@ class Venue(models.Model):
     def dec_string(self):
         return ''
     def get_cname(self):
-        return "venue"
+        return "venues"
     #TODO: Adress
 
 class Society(models.Model):
@@ -74,7 +74,7 @@ class Society(models.Model):
     def dec_string(self):
         return ''
     def get_cname(self):
-        return "society"
+        return "societies"
 
 class Show(models.Model):
     def __str__(self): return self.name
@@ -108,7 +108,7 @@ class Show(models.Model):
     def dec_string(self):
         return '('+self.opening_night.strftime('%b %Y')+')'
     def get_cname(self):
-        return "show"
+        return "shows"
 
 class Performance(models.Model):
     def __str__(self):
