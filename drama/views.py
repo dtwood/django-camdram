@@ -13,31 +13,6 @@ def index(request):
 def diary(request):
     return HttpResponse("Hello World")
 
-def show(request,slug):
-    show = get_object_or_404(Show,slug=slug)
-    company = RoleInstance.objects.filter(show=show)
-    cast = company.filter(role__cat='cast')
-    band = company.filter(role__cat='band')
-    prod = company.filter(role__cat='prod')
-    performances = show.performance_set.all()
-    auditions = AuditionInstance.objects.filter(audition__show=show).filter(end_datetime__gte=timezone.now()).order_by('end_datetime','start_time')
-    applications = ShowApplication.objects.filter(show=show).filter(deadline__gte=timezone.now()).order_by('deadline')
-    try:
-        techiead = TechieAd.objects.filter(show=show).get()
-    except TechieAd.DoesNotExist:
-        techiead = None
-    context = {'show': show, 'cast': cast, 'band': band, 'prod': prod, 'performances': performances, 'applications':applications, 'auditions':auditions, 'techiead':techiead}
-    return render(request, 'drama/show.html', context)
-
-def person(request,slug):
-    person = get_object_or_404(Person,slug=slug)
-    roles = person.roleinstance_set.select_related('show__performace')
-    past_roles = roles.exclude(show__performance__end_date__gte=timezone.now()).order_by('-closing_night')
-    future_roles = roles.exclude(show__performance__start_date__lte=timezone.now()).order_by('opening_night')
-    current_roles = roles.filter(show__performance__start_date__lte=timezone.now()).filter(show__performance__end_date__gte=timezone.now)
-    context = {'person': person, 'past_roles':past_roles, 'current_roles':current_roles, 'future_roles': future_roles}
-    return render(request, 'drama/person.html', context)
-
 def role(request,slug):
     return HttpResponse("Hello World")
 

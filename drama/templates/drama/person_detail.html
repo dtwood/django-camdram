@@ -1,0 +1,51 @@
+{% extends "drama/base.html" %}
+{% block title %}Person: {{person.name}}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="large-12 columns panel">
+    <div id="entity-header">
+      <h2>{{person.name}}</h2>
+    </div>
+    <p>{{person.desc}}</p>
+  </div>
+</div>
+{% if current_roles %}
+<h4>{{person.name}} is currently involved with</h4>
+{% for role in current_roles %}
+<div>
+  <h5><a href="{% url 'display' model_name='shows' slug=role.show.slug %}">{{role.show.name}}</a> - {% if role.role.link %}<a href="{%url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %}</h5>
+  <p>{% for performance in role.show.performance_set.all %}
+    {{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="{% url 'display' model_name='venues' slug=performance.venue.slug %}">{{performance.venue.name}}</a><br/>
+    {% endfor %}</p>
+  <p>{{role.show.desc}}</p></div>
+{% endfor %}
+{% endif %}
+
+{% if future_roles %}
+<h4>{{person.name}} is preparing for</h4>
+<ul class="large-block-grid-2">
+  {% for role in future_roles %}
+  <li>
+  <h5><a href="{% url 'display' model_name='shows' slug=role.show.slug %}">{{role.show.name}}</a> - {% if role.role.link %}<a href="{%url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %}</h5>
+    <p>{% for performance in role.show.performance_set.all %}
+    {{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="{% url 'display' model_name='venues' slug=performance.venue.slug %}">{{performance.venue.name}}</a><br/>
+      {% endfor %}</p>
+    <p>{{role.show.desc|truncatechars:200}}</p></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if past_roles %}
+<h4>{{person.name}} has been involved with</h4>
+<ul class="no-bullet">
+{% for role in past_roles %}
+<li>
+  <h5><a href="{% url 'display' model_name='shows' slug=role.show.slug %}">{{role.show.name}}</a> - {% if role.role.link %}<a href="{%url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %}</h5>
+  <p>{% for performance in role.show.performance_set.all %}
+    {{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="{% url 'display' model_name='venues' slug=performance.venue.slug %}">{{performance.venue.name}}</a><br/>
+    {% endfor %}</p></li>
+{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
