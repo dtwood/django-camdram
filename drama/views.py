@@ -31,8 +31,8 @@ def show(request,slug):
 def person(request,slug):
     person = get_object_or_404(Person,slug=slug)
     roles = person.roleinstance_set.select_related('show__performace')
-    past_roles = roles.exclude(show__performance__end_date__gte=timezone.now())
-    future_roles = roles.exclude(show__performance__start_date__lte=timezone.now())
+    past_roles = roles.exclude(show__performance__end_date__gte=timezone.now()).order_by('-closing_night')
+    future_roles = roles.exclude(show__performance__start_date__lte=timezone.now()).order_by('opening_night')
     current_roles = roles.filter(show__performance__start_date__lte=timezone.now()).filter(show__performance__end_date__gte=timezone.now)
     context = {'person': person, 'past_roles':past_roles, 'current_roles':current_roles, 'future_roles': future_roles}
     return render(request, 'drama/person.html', context)
