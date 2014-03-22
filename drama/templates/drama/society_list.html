@@ -1,0 +1,25 @@
+{% extends "drama/base.html" %}
+{% block title %}Societies{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="large-12 columns">
+    <h3>Societies</h3>
+  </div>
+</div>
+
+<ul class="large-block-grid-2" id="societies_list">
+{% for society in object_list %}
+<li id="{{society.slug}}">
+  <div class="row">
+    <div class="large-12 columns">
+      <h5><a href="{% url 'society' society.slug %}">{{society.name}}</a>{% if society.shortname %}<small> - {{society.shortname}}</small>{% endif %}</h5>
+      <p>{{society.desc|truncatechars:200}}<br />
+	[<a href="{% url 'society' society.slug %}">Read More</a>]
+      </p>
+    </div>
+  </div>
+</li>
+{% endfor %}
+</ul>
+{% endblock %}

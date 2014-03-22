@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url, include
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
+from drama.models import Venue, Society
 from drama import views
 
 urlpatterns = patterns('',
@@ -13,9 +14,9 @@ urlpatterns = patterns('',
                        url(r'^shows/(?P<slug>[^/]*)', views.show, name='show'),
                        url(r'^people/(?P<slug>[^/]*)', views.person, name='person'),
                        url(r'^roles/(?P<slug>[^/]*)', views.role, name='role'),
-                       url(r'^venues/?$',views.venues, name='venues'),
+                       url(r'^venues/?$',ListView.as_view(model=Venue), name='venues'),
                        url(r'^venues/(?P<slug>[^/]*)', views.venue, name='venue'),
-                       url(r'^societies/?$', views.societies, name='societies'),
+                       url(r'^societies/?$', ListView.as_view(model=Society), name='societies'),
                        url(r'^societies/(?P<slug>[^/]*)', views.society, name='society'),
                        url(r'^vacancies/technical/?$', views.techieads, name='techie_ads'),
                        url(r'^vacancies/auditions/?$', views.auditions, name='auditions'),

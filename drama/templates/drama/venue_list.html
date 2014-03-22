@@ -1,0 +1,30 @@
+{% extends "drama/base.html" %}
+{% block title %}Venues{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="large-12 columns">
+    <h3>Venues</h3>
+    <div class="map-large">
+    </div>
+  </div>
+</div>
+
+<ul class="large-block-grid-2" id="venues_list">
+{% for venue in object_list %}
+<li id="{{venue.slug}}">
+  <div class="row">
+    <div class="small-2 columns marker_column">
+      
+    </div>
+    <div class="small-10 columns">
+      <h5><a href="{% url 'venue' venue.slug %}">{{venue.name}}</a></h5>
+      <p>{{venue.desc|truncatechars:200}}<br />
+	[<a href="{% url 'venue' venue.slug %}">Read More</a>]
+      </p>
+    </div>
+  </div>
+</li>
+{% endfor %}
+</ul>
+{% endblock %}
