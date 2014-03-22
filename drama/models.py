@@ -195,6 +195,8 @@ class ShowApplication(models.Model):
             super(ShowApplication, self).save(*args, **kwargs)
         except IntegrityError:
             self.slug = slugify(self.id + '-' + self.slug)
+            super(ShowApplication, self).save(*args, **kwargs)
+            
 
 class SocietyApplication(models.Model):
     society = models.ForeignKey(Society)
@@ -210,6 +212,7 @@ class SocietyApplication(models.Model):
             super(SocietyApplication, self).save(*args, **kwargs)
         except IntegrityError:
             self.slug = slugify(self.id + '-' + self.slug)
+            super(SocietyApplication, self).save(*args, **kwargs)
 
 class VenueApplication(models.Model):
     venue = models.ForeignKey(Venue)
@@ -226,4 +229,5 @@ class VenueApplication(models.Model):
             super(VenueApplication, self).save(*args, **kwargs)
         except IntegrityError:
             self.slug = slugify(self.id + '-' + self.slug)
+            super(VenueApplication, self).save(*args, **kwargs)
 
