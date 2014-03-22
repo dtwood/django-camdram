@@ -7,7 +7,7 @@ def navitems_processor(request):
             ('diary', {'text': 'Diary', 'path': reverse('diary')}),
             ('vacancies', {'text': 'Vacancies', 'path': reverse('auditions')}),
             ('societies', {'text': 'Societies', 'path': reverse('societies')}),
-            ('venues', {'text': 'Venues', 'path': reverse('venues')}),
+            ('venues', {'text': 'Venues', 'path': reverse('list', kwargs={'model_name':'venues'})}),
             )}
 
 def searchform(request):

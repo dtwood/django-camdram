@@ -3,9 +3,9 @@ from django.views.generic import TemplateView, ListView
 from drama.models import *
 from drama import views
 
-#pass in with a slug, model_name, model, [form] and [getcontext] and get apropriate views
+#pass in with a slug, model_name, model, form, template and get_context and get apropriate views
 #model_name and slug should be captured, the others passed in a dict
-#get_context is used only when displaying a single item
+#get_context and template are used only when displaying a single item
 #model_name is only for url reversal
 object_patterns = patterns('drama.views',
                            url(r'^$', 'display', name='display'),
@@ -31,6 +31,11 @@ vacancy_patterns = patterns('drama.views',
                        url(r'^(?P<show_slug>[^/]*)/(?P<role_slug>[^/]*)', 'ad_role', name='ad_role'),
                         )
 
+list_patterns = patterns('drama.views',
+                         url(r'^$', 'list', name='list'),
+                         url(r'^(?P<slug>[^/]*)', include(object_patterns)),
+                         )
+
 urlpatterns = patterns('',
                        url(r'^$', views.index, name='home'),
                        url(r'^diary/$', views.diary, name='diary'),
@@ -42,8 +47,7 @@ urlpatterns = patterns('',
                        url(r'^shows/(?P<slug>[^/]*)', views.show, name='show'),
                        url(r'^people/(?P<slug>[^/]*)', views.person, name='person'),
                        url(r'^roles/(?P<slug>[^/]*)', views.role, name='role'),
-                       url(r'^venues/?$',ListView.as_view(model=Venue), name='venues'),
-                       url(r'^venues/(?P<slug>[^/]*)', views.venue, name='venue'),
+                       url(r'^(?P<model_name>venues)/', include(list_patterns), {'model':Venue, 'form':None, 'get_context':views.venue}),
                        url(r'^societies/?$', ListView.as_view(model=Society), name='societies'),
                        url(r'^societies/(?P<slug>[^/]*)', views.society, name='society'),
                        url(r'^vacancies/',include(vacancy_patterns)),

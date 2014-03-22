@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from haystack.query import SearchQuerySet
+from django.views.generic import TemplateView, DetailView, CreateView, UpdateView, DeleteView, ListView
 import json
 
 def index(request):
@@ -48,15 +49,16 @@ def society(request,slug):
     context = {'society':society, 'shows':shows, 'auditions':auditions, 'techieads':techieads, 'showapps':showapps, 'societyapps':societyapps, 'current_pagetype':'societies'}
     return render(request, 'drama/society.html', context)
 
-def venue(request,slug):
-    venue = get_object_or_404(Venue,slug=slug)
-    shows = Show.objects.filter(performance__venue=venue).distinct()
-    auditions = AuditionInstance.objects.filter(audition__show__performance__venue=venue).filter(end_datetime__gte=timezone.now()).order_by('end_datetime','start_time').distinct()
-    techieads = TechieAd.objects.filter(show__performance__venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
-    showapps = ShowApplication.objects.filter(show__performance__venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline')
-    venueapps = VenueApplication.objects.filter(venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline')
-    context = {'venue':venue, 'shows':shows, 'auditions':auditions, 'techieads':techieads, 'showapps':showapps, 'venueapps':venueapps, 'current_pagetype':'venues'}
-    return render(request, 'drama/venue.html', context)
+def venue(self, *args, **kwargs):
+    context = super(DetailView, self).get_context_data(**kwargs)
+    venue = context['object']
+    context['shows'] = Show.objects.filter(performance__venue=venue).distinct()
+    context['auditions'] = AuditionInstance.objects.filter(audition__show__performance__venue=venue).filter(end_datetime__gte=timezone.now()).order_by('end_datetime','start_time').distinct()
+    context['techieads'] = TechieAd.objects.filter(show__performance__venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
+    context['showapps'] = ShowApplication.objects.filter(show__performance__venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline')
+    context['venueapps'] = VenueApplication.objects.filter(venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline')
+    context['current_pagetype']='venues'
+    return context
 
 def role(request,slug):
     return HttpResponse("Hello World")
@@ -123,15 +125,31 @@ def privacy(request):
 def my_redirect(request, model_name, slug, *args, **kwargs):
     return redirect(reverse(model_name) + '#' + slug)
 
-def display(request, *args, **kwargs):
-    return HttpResponse("Hello World")
+class MyDetailView(DetailView):
+    get_context = None
+    def get_context_data(self, **kwargs):
+        func = self.get_context
+        return func(self, **kwargs)
+    
+def display(request, model, template=None, get_context=None, *args, **kwargs):
+    if not get_context:
+        def get_context(self, **kwargs):
+            return super(DetailView, self).get_context_data(**kwargs)
+    view = MyDetailView.as_view(model=model,get_context=get_context, template_name=template)
+    return view(request, *args, **kwargs)
 
-def new(request, *args, **kwargs):
-    return HttpResponse("Hello World")
+def new(request, model, form=None, *args, **kwargs):
+    view = CreateView.as_view(model=model,form=form)
+    return view(request, *args, **kwargs)
+    
+def edit(request, model, form=None, *args, **kwargs):
+    view = UpdateView.as_view(model=model, form=form)
+    return view(request, *args, **kwargs)
+    
+def remove(request, model, *args, **kwargs):
+    view = DeleteView.as_view(model=model)
+    return view(request, *args, **kwargs)
 
-def edit(request, *args, **kwargs):
-    return HttpResponse("Hello World")
-
-def remove(request, *args, **kwargs):
-    return HttpResponse("Hello World")
-
+def list(request, model, *args, **kwargs):
+    view = ListView.as_view(model=model)
+    return view(request, *args, **kwargs)
