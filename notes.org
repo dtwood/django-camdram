@@ -1,12 +1,23 @@
 
 * TODO Views:
-- [ ] Venue
-- [ ] Venues
-- [ ] Society
-- [ ] Societies
+- Venues
+- Societies
+- home
+- diary
+- contact
+- development
+- show
+  - get involved
+- role
+- ad_role
+- auditions_diary
 
-* TODO Search
-
-* TODO Vacancies
+* API
 
 * TODO Diary
+
+* TODO users
+
+* TODO administration
+
+* social integration

@@ -21,15 +21,24 @@
     </div>
     {% if show.image %}</div>{% endif %}
 </div>
-{% if show.techiead or show.audition %}
+{% if techiead or auditions or applications %}
 <div class ="row">
   <div class="vacancies-panel">
-    {% for audition in show.audition.auditioninstance_set.all %}
-    
+    <h5> Get involved with <em>{{show.name}}</em>:</h5>
+    {% for application in applications %}
+    <p>{{application.name}} - <a href="{% url 'applications_item' application.slug %}">more details</a></p>
     {% endfor %}
-    {% for techiead in show.techiead.techieadrole_set.all %}
-    
+    {% if auditions %}
+    <p>Auditions are being held at the times below - <a href="{% url 'auditions_item' show.slug %}">more details</a></p>
+    <ul>
+    {% for instance in auditions %}
+    <li>{{instance.end_datetime|date:"D dS F"}}, {{instance.start_time|date:"g:iA"|lower}} - {{instance.end_datetime|date:"g:iA"|lower}}, {{instance.location}}</li>
     {% endfor %}
+    </ul>
+    {% endif %}
+    {% if techiead %}
+    <p>We are looking for: {% for role in techiead.techieadrole_set.all%}{{role.name}}{% include "drama/comma.html" %} {% endfor %}- <a href="{% url 'techieads_item' show.slug %}">more details</a></p>
+    {% endif %}
   </div>
 </div>
 {% endif %}

@@ -111,3 +111,5 @@ HAYSTACK_CONNECTIONS = {
         'INDEX_NAME': 'camdram',
     },
 }
+
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'

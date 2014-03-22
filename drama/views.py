@@ -19,7 +19,13 @@ def show(request,slug):
     band = company.filter(role__cat='band')
     prod = company.filter(role__cat='prod')
     performances = show.performance_set.all()
-    context = {'show': show, 'cast': cast, 'band': band, 'prod': prod, 'performances': performances}
+    auditions = AuditionInstance.objects.filter(audition__show=show).filter(end_datetime__gte=timezone.now()).order_by('end_datetime','start_time')
+    applications = ShowApplication.objects.filter(show=show).filter(deadline__gte=timezone.now()).order_by('deadline')
+    try:
+        techiead = TechieAd.objects.filter(show=show).get()
+    except TechieAd.DoesNotExist:
+        techiead = None
+    context = {'show': show, 'cast': cast, 'band': band, 'prod': prod, 'performances': performances, 'applications':applications, 'auditions':auditions, 'techiead':techiead}
     return render(request, 'drama/show.html', context)
 
 def person(request,slug):
