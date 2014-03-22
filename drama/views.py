@@ -119,3 +119,19 @@ def contact_us(request):
 
 def privacy(request):
     return HttpResponse("Hello World")
+
+def my_redirect(request, model_name, slug, *args, **kwargs):
+    return redirect(reverse(model_name) + '#' + slug)
+
+def display(request, *args, **kwargs):
+    return HttpResponse("Hello World")
+
+def new(request, *args, **kwargs):
+    return HttpResponse("Hello World")
+
+def edit(request, *args, **kwargs):
+    return HttpResponse("Hello World")
+
+def remove(request, *args, **kwargs):
+    return HttpResponse("Hello World")
+

@@ -1,13 +1,41 @@
 from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView, ListView
-from drama.models import Venue, Society
+from drama.models import *
 from drama import views
+
+#pass in with a slug, model_name, model, [form] and [getcontext] and get apropriate views
+#model_name and slug should be captured, the others passed in a dict
+#get_context is used only when displaying a single item
+#model_name is only for url reversal
+object_patterns = patterns('drama.views',
+                           url(r'^$', 'display', name='display'),
+                           url(r'^new$', 'new', name='new'),
+                           url(r'^edit$', 'edit', name='edit'),
+                           url(r'^remove$', 'remove', name='remove'),
+                           )
+
+redirector_patterns = patterns('drama.views',
+                               url(r'^$', 'my_redirect', name='item'),
+                               url(r'^', include(object_patterns)),
+                               )
+
+vacancy_patterns = patterns('drama.views',
+                       url(r'^technical/$', 'techieads', name='technical'),
+                       url(r'^auditions/$', 'auditions', name='auditions'),
+                       url(r'^auditions/diary/$', 'auditions_diary', name='auditions_diary'),
+                       url(r'^applications/$', 'applications', name='applications'),
+                       url(r'^(?P<model_name>technical)/(?P<slug>[^/]*)', include(redirector_patterns), {'model': TechieAd,'form': None,}),
+                       url(r'^(?P<model_name>auditions)/(?P<slug>[^/]*)', include(redirector_patterns), {'model': Audition,'form': None,}),
+                       #society and venue applications must happen elsewhere
+                       url(r'^(?P<model_name>applications)/(?P<slug>[^/]*)', include(redirector_patterns), {'model': ShowApplication,'form': None,}),
+                       url(r'^(?P<show_slug>[^/]*)/(?P<role_slug>[^/]*)', 'ad_role', name='ad_role'),
+                        )
 
 urlpatterns = patterns('',
                        url(r'^$', views.index, name='home'),
-                       url(r'^diary/?$', views.diary, name='diary'),
-                       url(r'^search/?', include('drama.haystack_urls'), name='search'),
-                       url(r'^about/?$', TemplateView.as_view(template_name="drama/about.html"), name='about'),
+                       url(r'^diary/$', views.diary, name='diary'),
+                       url(r'^search/', include('drama.haystack_urls'), name='search'),
+                       url(r'^about/$', TemplateView.as_view(template_name="drama/about.html"), name='about'),
                        url(r'^development/?$', views.development, name='development'),
                        url(r'^contact-us/?$', views.contact_us, name='contact-us'),
                        url(r'^privacy/?$', TemplateView.as_view(template_name="drama/privacy.html"), name='privacy'),
@@ -18,13 +46,6 @@ urlpatterns = patterns('',
                        url(r'^venues/(?P<slug>[^/]*)', views.venue, name='venue'),
                        url(r'^societies/?$', ListView.as_view(model=Society), name='societies'),
                        url(r'^societies/(?P<slug>[^/]*)', views.society, name='society'),
-                       url(r'^vacancies/technical/?$', views.techieads, name='techie_ads'),
-                       url(r'^vacancies/auditions/?$', views.auditions, name='auditions'),
-                       url(r'^vacancies/auditions/diary/?$', views.auditions_diary, name='auditions_diary'),
-                       url(r'^vacancies/applications/?$', views.applications, name='applications'),
-                       url(r'^vacancies/technical/(?P<slug>[^/]*)', views.techieads_item, name='techieads_item'),
-                       url(r'^vacancies/auditions/(?P<slug>[^/]*)', views.auditions_item, name='auditions_item'),
-                       url(r'^vacancies/applications/(?P<slug>[^/]*)', views.applications_item, name='applications_item'),
-                       url(r'^vacancies/(?P<show_slug>[^/]*)/(?P<role_slug>[^/]*)', views.ad_role, name='ad_role'),
+                       url(r'^vacancies/',include(vacancy_patterns)),
                        
                        )

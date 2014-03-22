@@ -5,7 +5,7 @@
   <div class="large-3 columns">
     <ul class ="side-nav">
       <li{% if current_roletype == 'auditions' %} class="active"{% endif %}><a href="{% url 'auditions' %}">Auditions</a></li>
-      <li{% if current_roletype == 'techie' %} class="active"{% endif %}><a href="{% url 'techie_ads' %}">Technical and Design Roles</a></li>
+      <li{% if current_roletype == 'techie' %} class="active"{% endif %}><a href="{% url 'technical' %}">Technical and Design Roles</a></li>
       <li{% if current_roletype == 'applications' %} class="active"{% endif %}><a href="{% url 'applications' %}">Producer/Director Roles and Show Applications</a></li>
     </ul>
   </div>
