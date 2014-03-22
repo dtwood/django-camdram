@@ -13,9 +13,9 @@
 <li id="{{society.slug}}">
   <div class="row">
     <div class="large-12 columns">
-      <h5><a href="{% url 'society' society.slug %}">{{society.name}}</a>{% if society.shortname %}<small> - {{society.shortname}}</small>{% endif %}</h5>
+      <h5><a href="{% url 'display' model_name='societies' slug=society.slug %}">{{society.name}}</a>{% if society.shortname %}<small> - {{society.shortname}}</small>{% endif %}</h5>
       <p>{{society.desc|truncatechars:200}}<br />
-	[<a href="{% url 'society' society.slug %}">Read More</a>]
+	[<a href="{% url 'display' model_name='societies' slug=society.slug %}">Read More</a>]
       </p>
     </div>
   </div>

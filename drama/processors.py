@@ -6,7 +6,7 @@ def navitems_processor(request):
             (('home', {'text': 'Home', 'path': reverse('home')}),
             ('diary', {'text': 'Diary', 'path': reverse('diary')}),
             ('vacancies', {'text': 'Vacancies', 'path': reverse('auditions')}),
-            ('societies', {'text': 'Societies', 'path': reverse('societies')}),
+            ('societies', {'text': 'Societies', 'path': reverse('list', kwargs={'model_name':'societies'})}),
             ('venues', {'text': 'Venues', 'path': reverse('list', kwargs={'model_name':'venues'})}),
             )}
 

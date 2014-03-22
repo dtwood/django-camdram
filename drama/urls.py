@@ -33,7 +33,7 @@ vacancy_patterns = patterns('drama.views',
 
 list_patterns = patterns('drama.views',
                          url(r'^$', 'list', name='list'),
-                         url(r'^(?P<slug>[^/]*)', include(object_patterns)),
+                         url(r'^(?P<slug>[^/]*)/', include(object_patterns)),
                          )
 
 urlpatterns = patterns('',
@@ -48,8 +48,7 @@ urlpatterns = patterns('',
                        url(r'^people/(?P<slug>[^/]*)', views.person, name='person'),
                        url(r'^roles/(?P<slug>[^/]*)', views.role, name='role'),
                        url(r'^(?P<model_name>venues)/', include(list_patterns), {'model':Venue, 'form':None, 'get_context':contexts.venue}),
-                       url(r'^societies/?$', ListView.as_view(model=Society), name='societies'),
-                       url(r'^societies/(?P<slug>[^/]*)', views.society, name='society'),
+                       url(r'^(?P<model_name>societies)/', include(list_patterns), {'model':Society, 'form':None, 'get_context':contexts.society}),
                        url(r'^vacancies/',include(vacancy_patterns)),
                        
                        )

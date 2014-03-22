@@ -18,9 +18,9 @@
       
     </div>
     <div class="small-10 columns">
-      <h5><a href="{% url 'venue' venue.slug %}">{{venue.name}}</a></h5>
+      <h5><a href="{% url 'display' model_name='venues' slug=venue.slug %}">{{venue.name}}</a></h5>
       <p>{{venue.desc|truncatechars:200}}<br />
-	[<a href="{% url 'venue' venue.slug %}">Read More</a>]
+	[<a href="{% url 'display' model_name='venues' slug=venue.slug %}">Read More</a>]
       </p>
     </div>
   </div>

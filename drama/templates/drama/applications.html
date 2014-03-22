@@ -6,7 +6,7 @@
 {% for ad in socads %}
 <hr>
 <div id="{{ad.slug}}">
-  <h4><a href="{% url 'society' ad.society.slug %}">{{ad.society.name}}</a></h4>
+  <h4><a href="{% url 'display' model_name='societies' slug=ad.society.slug %}">{{ad.society.name}}</a></h4>
   <h5>{{ad.name}}</h5>
   {% if ad.desc %}
   <p>{{ad.desc}}</p>
