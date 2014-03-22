@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView, ListView
 from drama.models import *
-from drama import views
+from drama import views, contexts
 
 #pass in with a slug, model_name, model, form, template and get_context and get apropriate views
 #model_name and slug should be captured, the others passed in a dict
@@ -47,7 +47,7 @@ urlpatterns = patterns('',
                        url(r'^shows/(?P<slug>[^/]*)', views.show, name='show'),
                        url(r'^people/(?P<slug>[^/]*)', views.person, name='person'),
                        url(r'^roles/(?P<slug>[^/]*)', views.role, name='role'),
-                       url(r'^(?P<model_name>venues)/', include(list_patterns), {'model':Venue, 'form':None, 'get_context':views.venue}),
+                       url(r'^(?P<model_name>venues)/', include(list_patterns), {'model':Venue, 'form':None, 'get_context':contexts.venue}),
                        url(r'^societies/?$', ListView.as_view(model=Society), name='societies'),
                        url(r'^societies/(?P<slug>[^/]*)', views.society, name='society'),
                        url(r'^vacancies/',include(vacancy_patterns)),

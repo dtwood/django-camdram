@@ -139,11 +139,11 @@ def display(request, model, template=None, get_context=None, *args, **kwargs):
     return view(request, *args, **kwargs)
 
 def new(request, model, form=None, *args, **kwargs):
-    view = CreateView.as_view(model=model,form=form)
+    view = CreateView.as_view(model=model,form_class=form)
     return view(request, *args, **kwargs)
     
 def edit(request, model, form=None, *args, **kwargs):
-    view = UpdateView.as_view(model=model, form=form)
+    view = UpdateView.as_view(model=model, form_class=form)
     return view(request, *args, **kwargs)
     
 def remove(request, model, *args, **kwargs):
