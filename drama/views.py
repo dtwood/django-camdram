@@ -48,9 +48,6 @@ def society(request,slug):
     context = {'society':society, 'shows':shows, 'auditions':auditions, 'techieads':techieads, 'showapps':showapps, 'societyapps':societyapps, 'current_pagetype':'societies'}
     return render(request, 'drama/society.html', context)
 
-def societies(request):
-    return HttpResponse("Hello World")
-
 def venue(request,slug):
     venue = get_object_or_404(Venue,slug=slug)
     shows = Show.objects.filter(performance__venue=venue).distinct()
@@ -60,9 +57,6 @@ def venue(request,slug):
     venueapps = VenueApplication.objects.filter(venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline')
     context = {'venue':venue, 'shows':shows, 'auditions':auditions, 'techieads':techieads, 'showapps':showapps, 'venueapps':venueapps, 'current_pagetype':'venues'}
     return render(request, 'drama/venue.html', context)
-
-def venues(request):
-    return HttpResponse("Hello World")
 
 def role(request,slug):
     return HttpResponse("Hello World")
