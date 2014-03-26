@@ -1,9 +1,10 @@
 from drama.models import *
+from drama.views import MyDetailView
 from django.views.generic import DetailView
 from django.utils import timezone
 
 def venue(self, **kwargs):
-    context = super(DetailView, self).get_context_data(**kwargs)
+    context = super(MyDetailView, self).get_context_data(**kwargs)
     venue = context['object']
     context['shows'] = Show.objects.filter(performance__venue=venue).distinct()
     context['auditions'] = AuditionInstance.objects.filter(audition__show__performance__venue=venue).filter(end_datetime__gte=timezone.now()).order_by('end_datetime','start_time').distinct()
@@ -14,7 +15,7 @@ def venue(self, **kwargs):
     return context
 
 def society(self, **kwargs):
-    context = super(DetailView, self).get_context_data(**kwargs)
+    context = super(MyDetailView, self).get_context_data(**kwargs)
     society = context['object']
     context['shows'] = society.show_set
     context['auditions'] = AuditionInstance.objects.filter(audition__show__society=society).filter(end_datetime__gte=timezone.now()).order_by('end_datetime','start_time')
@@ -25,7 +26,7 @@ def society(self, **kwargs):
     return context
 
 def show(self, **kwargs):
-    context = super(DetailView, self).get_context_data(**kwargs)
+    context = super(MyDetailView, self).get_context_data(**kwargs)
     show = context['object']
     company = RoleInstance.objects.filter(show=show)
     context['cast'] = company.filter(role__cat='cast')
@@ -41,7 +42,7 @@ def show(self, **kwargs):
     return context
 
 def person(self, **kwargs):
-    context = super(DetailView, self).get_context_data(**kwargs)
+    context = super(MyDetailView, self).get_context_data(**kwargs)
     person = context['object']
     roles = person.roleinstance_set.select_related('show__performace')
     past_roles = roles.exclude(show__performance__end_date__gte=timezone.now())

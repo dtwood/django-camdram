@@ -1,0 +1,18 @@
+{% extends "drama/base.html" %}
+
+{% block title %}Society: {% if object %}{{object.name}} - Edit{% else %}Create{% endif %}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <h3>Edit Society</h3>
+  <form action="" method="post">
+    {% csrf_token %}
+    {% include "drama/form_field.html" with field=content_form.name %}
+    {% include "drama/form_field.html" with field=content_form.shortname %}
+    {% include "drama/form_field.html" with field=content_form.desc %}
+    {% include "drama/form_field.html" with field=content_form.image %}
+    <input type="submit" value="Submit" />
+  </form>
+</div>
+{% endblock %}
+    

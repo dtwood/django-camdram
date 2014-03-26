@@ -6,11 +6,11 @@
 - diary
 - contact
 - development
-- show
-  - get involved
 - role
 - ad_role
 - auditions_diary
+- venue
+  - map
 
 * API
 
@@ -19,5 +19,11 @@
 * TODO users
 
 * TODO administration
+- think about sub url patterns for adverts
 
 * social integration
+
+* fun stuff
+- tour map
+- sign in sheets
+- 

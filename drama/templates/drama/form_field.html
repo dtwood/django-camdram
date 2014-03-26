@@ -1,0 +1,13 @@
+<div class="row">
+  <div class="large-3 columns">
+    <label class="{{field.css_classes}} right inline" for="{{field.id_for_label}}">
+      {{field.label}}
+    </label>
+  </div>
+  <div class="{{field.css_classes}} large-9 columns">
+    {{field}}
+    {% for error in field.errors %}
+    <small class="error">{{error}}</small>
+    {% endfor %}
+  </div>
+</div>
