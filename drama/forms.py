@@ -40,8 +40,11 @@ class FormsetsForm(forms.ModelForm):
             new_formset.is_valid()
             new_formset.save()
         return result
-    
-PerformanceInline = inlineformset_factory(Show, Performance, extra=1)
+class PerformanceForm(autocomplete_light.ModelForm):
+    class Meta:
+        model = Performance
+            
+PerformanceInline = inlineformset_factory(Show, Performance, PerformanceForm, extra=1)
 RoleInline = inlineformset_factory(Show, RoleInstance)
 
 class ShowForm(FormsetsForm, autocomplete_light.ModelForm):
