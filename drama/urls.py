@@ -12,7 +12,6 @@ from drama.forms import *
 # model_name is only for url reversal
 object_patterns = patterns('drama.views',
                            url(r'^$', 'display', name='display'),
-                           url(r'^new$', 'new', name='new'),
                            url(r'^edit$', 'edit', name='edit'),
                            url(r'^remove$', 'remove', name='remove'),
                            )
@@ -45,7 +44,7 @@ vacancy_patterns = patterns('drama.views',
 
 list_patterns = patterns('drama.views',
                          url(r'^$', 'list', name='list'),
-                         url(r'', include(object_patterns)),
+                         url(r'^new$', 'new', name='new'),
                          url(r'^(?P<slug>[^/]+)/', include(object_patterns)),
                          )
 

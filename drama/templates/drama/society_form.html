@@ -18,7 +18,9 @@
     {% include "drama/form_field.html" with field=content_form.shortname %}
     {% include "drama/form_field.html" with field=content_form.desc %}
     {% include "drama/form_field.html" with field=content_form.image %}
-    <input type="submit" value="Submit" />
+    <div class="right">
+      <button type="submit">Save</button>
+    </div>
   </form>
 </div>
 {% endblock %}
