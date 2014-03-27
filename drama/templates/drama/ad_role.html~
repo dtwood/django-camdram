@@ -1,9 +1,0 @@
-{% extends "drama/vacancy.html" %}
-
-{% block title %}Role Description: {{role.name}} for {{role.ad.show.name}}{% endblock %}
-
-{% block adverts %}
-<h2><a href="{% url 'show' role.ad.show.slug %}">{{role.ad.show.name}}</a><br /><small>{% if role.role.link %}<a href="{% url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %}</small></h2>
-
-<p>{{role.desc}}</p>
-{% endblock %}

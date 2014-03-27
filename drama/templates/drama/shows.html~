@@ -1,6 +1,0 @@
-<h1> {{show.name}}</h1>
-<ul>
-{% for person in cast %}
-    <li><a href="/people/{{person.slug}}">{{person.name}}</a></li>
-{% endfor %}
-</ul>
