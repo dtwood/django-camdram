@@ -4,7 +4,14 @@
 
 {% block content %}
 <div class="row">
+  {% if object %}
   <h3>Edit Show</h3>
+  {% else %}
+  <h3>Create a new show</h3>
+  <div class="panel">
+    <p>Please fill in the details below to add a new show to Camdram. Required fields are marked with an asterisk (*), and all fields can be modified later if necessary.</p>
+  </div>
+  {% endif %}
   <form action="" method="post">
   {% csrf_token %}
   {% include "drama/form_field.html" with field=content_form.name %}
@@ -49,13 +56,13 @@
 	      </label>
 	    </div>
 	    <div class="{{form.time.css_classes}} large-3 columns">
-	      <div class="right">
-		{{form.DELETE}}
-	      </div>
 	      {{form.time}}
 	      {% for error in form.time.errors %}
 	      <small class="error">{{error}}</small>
 	      {% endfor %}
+	      <div class="inline right">
+		{{form.DELETE}}
+	      </div>
 	    </div>
 	  </div>
 	  <div class="row venue-row">
@@ -81,7 +88,9 @@
   {% include "drama/form_field.html" with field=content_form.desc %}
   {% include "drama/form_field.html" with field=content_form.image %}
   {% include "drama/form_field.html" with field=content_form.year %}
+  <div class="text-right">
   <button type="submit">Save</button>
+  </div>
   </form>
 </div>
 {% endblock %}

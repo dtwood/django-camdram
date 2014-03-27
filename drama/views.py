@@ -123,6 +123,35 @@ class MyCreateView(FormSetMixin, CreateView):
         context['content_form'] = context['form']
         del context['form']
         return context
+
+    def is_popup(self):
+        return self.request.GET.get('_popup', False)
+
+    def respond_script(self, obj=None):
+        if obj is None:
+            obj = self.object
+
+        html = []
+        html.append(u'<script type="text/javascript">')
+        html.append(u'opener.dismissAddAnotherPopup( window, "%s", "%s" );' % (
+            str(obj.pk), str(obj).replace('"', '\\"')))
+        html.append(u'</script>')
+
+        html = u''.join(html)
+
+        return HttpResponse(html, status=201)
+
+    def form_valid(self, form):
+        """ If request.GET._popup, return some javascript. """
+        if self.is_popup():
+            self.success_url = '/'  # avoid ImproperlyConfigured
+
+        response = super(CreateView, self).form_valid(form)
+
+        if not self.is_popup():
+            return response
+
+        return self.respond_script()
         
 class MyUpdateView(FormSetMixin, UpdateView):
     def get(self, request, *args, **kwargs):

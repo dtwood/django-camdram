@@ -1,3 +1,5 @@
+import autocomplete_light
+autocomplete_light.autodiscover()
 from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView, ListView
 from drama.models import *
@@ -52,4 +54,5 @@ urlpatterns = patterns('',
                        url(r'^(?P<model_name>venues)/', include(list_patterns), {'model':Venue, 'form':VenueForm, 'get_context':contexts.venue}),
                        url(r'^(?P<model_name>societies)/', include(list_patterns), {'model':Society, 'form':SocietyForm, 'get_context':contexts.society}),
                        url(r'^vacancies/',include(vacancy_patterns)),
+                       url(r'autocomplete/', include('autocomplete_light.urls')),
                        )

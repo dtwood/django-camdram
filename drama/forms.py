@@ -1,4 +1,6 @@
 from haystack.forms import SearchForm
+import autocomplete_light
+autocomplete_light.autodiscover()
 from django import forms
 from django.forms.models import inlineformset_factory
 from drama.models import *
@@ -42,7 +44,7 @@ class FormsetsForm(forms.ModelForm):
 PerformanceInline = inlineformset_factory(Show, Performance, extra=1)
 RoleInline = inlineformset_factory(Show, RoleInstance)
 
-class ShowForm(FormsetsForm):
+class ShowForm(FormsetsForm, autocomplete_light.ModelForm):
     error_css_class = 'error'
     required_css_class = 'required'
     formsets = {'performance_formset':PerformanceInline}

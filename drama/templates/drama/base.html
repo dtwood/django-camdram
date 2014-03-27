@@ -2,8 +2,10 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel='icon' href='/static/favicon.png' type='image/png' />
     {{search_form.media}}
     {{content_form.media}}
+    {% include 'autocomplete_light/static.html' %}
     <title>{% block title %}{% endblock %} - Camdram</title>
   </head>
   

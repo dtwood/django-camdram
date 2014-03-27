@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'haystack',
     'south',
+    'autocomplete_light',
     'drama',
 )
 
