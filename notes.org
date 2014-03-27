@@ -1,4 +1,3 @@
-
 * TODO Views:
 - home
 - diary
@@ -29,18 +28,21 @@
 * templates
 |             | detail | list  | form | delete |
 |-------------+--------+-------+------+--------|
-| show        | done   | no    | done |        |
-| person      | done   | no    |      |        |
-| society     | done   | done  | done |        |
-| venue       | done   | done  |      |        |
-| role        |        |       |      |        |
+| show        | done   | no    | done | done   |
+| person      | done   | no    |      | done   |
+| society     | done   | done  | done | done   |
+| venue       | done   | done  | done | done   |
+| role        |        |       |      | done   |
 | techiead    | other  | other |      |        |
 | audition    | other  | other |      |        |
 | application | other  | other |      |        |
 | ad_role     | other  | no    |      |        |
+- errors
 
 * adding people to shows
 
 * testing
 
 * commenting
+
+* add date range link

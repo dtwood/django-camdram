@@ -1,8 +1,9 @@
 import datetime
 from haystack import indexes
-from drama.models import Show,Person,Venue,Society
+from drama.models import Show, Person, Venue, Society
 
-class ShowIndex(indexes.SearchIndex,indexes.Indexable):
+
+class ShowIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     date = indexes.DateField(model_attr='opening_night')
     auto = indexes.EdgeNgramField(model_attr='name')
@@ -10,24 +11,26 @@ class ShowIndex(indexes.SearchIndex,indexes.Indexable):
     def get_model(self):
         return Show
 
-class PersonIndex(indexes.SearchIndex,indexes.Indexable):
+
+class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     auto = indexes.EdgeNgramField(model_attr='name')
 
     def get_model(self):
         return Person
 
-class VenueIndex(indexes.SearchIndex,indexes.Indexable):
+
+class VenueIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     auto = indexes.EdgeNgramField(model_attr='name')
 
     def get_model(self):
-            return Venue
+        return Venue
 
-class SocietyIndex(indexes.SearchIndex,indexes.Indexable):
+
+class SocietyIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     auto = indexes.EdgeNgramField(use_template=True)
 
     def get_model(self):
-            return Society
-
+        return Society
