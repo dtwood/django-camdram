@@ -1,0 +1,50 @@
+{% extends "drama/base.html" %}
+
+{% block title %}{% if object %}Edit{% else %}Add{% endif %} Auditions{% endblock %}
+
+{% block content %}
+<div class="row">
+  {% if object %}
+  <h3>Edit Audition</h3>
+  {% else %}
+  <h3>Add Audition</h3>
+  {% endif %}
+  <div class="panel">
+    <p> Use the form below modify or add auditions for your show.</p>
+  </div>
+  <form action="" method="post">
+  {% csrf_token %}
+  {% include "drama/form_field.html" with field=content_form.desc %}
+  {% include "drama/form_field.html" with field=content_form.contact %}
+  <div class="row">
+    <div class="large-3 columns">
+      <label class="right inline required">Audition sessions</label>
+    </div>
+    <div class="large-9 columns">
+      <div id="audition_sessions" class="auditions entity_collection">
+	{{audition_formset.management_form}}
+	{% for form in audition_formset %}
+	{% include "drama/audition_form_item.html" %}
+	{% endfor %}
+      </div>
+      <ul class="inline-list audition-links">
+        <li> <a href="#" id="add_more">Add audition session</a></li>
+      </ul>
+    </div>
+    <div id="empty_form" style="display:none">
+      {% include "drama/audition_form_item.html" with form=audition_formset.empty_form %}
+    </div>
+  </div>
+  <script>
+    $('#add_more').click(function() {
+        var form_idx = $('#id_auditioninstance_set-TOTAL_FORMS').val();
+        $('#auditions).append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+        $('#id_auditioninstance_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+    });
+</script>
+  <div class="text-right">
+  <button type="submit">Save</button>
+  </div>
+  </form>
+</div>
+{% endblock %}

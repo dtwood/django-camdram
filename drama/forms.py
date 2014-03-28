@@ -1,4 +1,5 @@
 from haystack.forms import SearchForm
+import datetime
 import autocomplete_light
 autocomplete_light.autodiscover()
 from django import forms
@@ -56,8 +57,42 @@ class PerformanceForm(autocomplete_light.ModelForm):
     class Meta:
         model = Performance
 
+class AuditionInstanceForm(forms.ModelForm):
+    date = forms.DateField()
+    end_time = forms.TimeField()
+
+    def __init__(self, instance = None, initial=None, *args, **kwargs):
+        if initial is None:
+            initial = {}
+        if instance is not None:
+            temp = instance.end_datetime
+            initial.update({'date': temp.date(),
+                            'end_time': temp.time(),
+                            })
+        super(AuditionInstanceForm, self).__init__(initial=initial, instance=instance, *args, **kwargs)
+
+        
+    def clean(self):
+        cleaned_data = super(AuditionInstanceForm, self).clean()
+        if 'end_datetime' in self._errors:
+            del self._errors['end_datetime']
+        try:
+            cleaned_data['end_datetime'] = datetime.combine(
+                cleaned_data['date'], cleaned_data['end_time'])
+        except KeyError:
+            pass
+        return cleaned_data
+
+    
+    class Meta:
+        model = AuditionInstance
+
+AuditionInline = inlineformset_factory(
+    Audition, AuditionInstance, AuditionInstanceForm, extra=1)
+
 PerformanceInline = inlineformset_factory(
     Show, Performance, PerformanceForm, extra=1)
+
 RoleInline = inlineformset_factory(Show, RoleInstance)
 
 
@@ -97,6 +132,44 @@ class VenueForm(FormsetsForm):
         model = Venue
 
 
+class AuditionForm(FormsetsForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+    formsets = {'audition_formset':AuditionInline}
+    this_show = None
+
+    def __init__(self, show=None, *args, **kwargs):
+        super(AuditionForm, self).__init__(*args, **kwargs)
+        self.this_show = show
+
+    def save(self, *args, **kwargs):
+        if self.this_show is not None:
+            self._meta.exclude = None
+        super(AuditionForm,self).save(*args, **kwargs)
+
+
+    def clean(self):
+        if self.this_show is not None:
+            self._meta.exclude = None
+        cleaned_data = super(AuditionForm, self).clean()
+        if self.this_show is not None:
+            cleaned_data['show'] = self.this_show
+        return cleaned_data
+
+    class Meta:
+        model = Audition
+        exclude = ('show',)
+
+
+class TechieAdForm(FormsetsForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+    formsets = {}
+
+    class Meta:
+        model = TechieAd
+
+        
 class RoleForm(FormsetsForm):
     error_css_class = 'error'
     required_css_class = 'required'

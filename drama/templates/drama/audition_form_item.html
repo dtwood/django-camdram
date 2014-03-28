@@ -1,0 +1,53 @@
+	<div class="audition">
+	  {{form.id}}
+	  {{form.show}}
+	  <div class="row">
+	    <div class="large-1 column">
+	      <label class="{{form.date.css_classes}} right inline" for="{{form.date.id_for_label}}">
+		Date
+	      </label>
+	    </div>
+	    <div class="{{form.date.css_classes}} large-3 columns">
+	      {{form.date}}
+	      {% for error in form.date.errors %}
+	      <small class="error">{{error}}</small>
+	      {% endfor %}
+	    </div>
+	    <div class="large-2 column">
+	      <label class="{{form.start_time.css_classes}} right inline" for="{{form.end_date.id_for_label}}">
+		Start time
+	      </label>
+	    </div>
+	    <div class="{{form.start_time.css_classes}} large-2 columns">
+	      {{form.start_time}}
+	      {% for error in form.start_time.errors %}
+	      <small class="error">{{error}}</small>
+	      {% endfor %}
+	    </div>
+	    <div class="large-2 column">
+	      <label class="{{form.end_time.css_classes}} right inline" for="{{form.end_time.id_for_label}}">
+		End time
+	      </label>
+	    </div>
+	    <div class="{{form.end_time.css_classes}} large-2 columns">
+	      {{form.end_time}}
+	      {% for error in form.end_time.errors %}
+	      <small class="error">{{error}}</small>
+	      {% endfor %}
+	      <div class="inline right">
+		{{form.DELETE}}
+	      </div>
+	    </div>
+	  </div>
+	  <div class="row">
+	    <div class="large-3 columns">
+	      <label class="{{form.location.css_classes}} right inline" for="{{form.location.id_for_label}}"> {{form.location.label}} </label>
+	    </div>
+	    <div class="{{form.location.css_classes}} large-9 columns">
+	      {{form.location}}
+	      {% for error in form.location.errors %}
+	      <small class="error">{{error}}</small>
+	      {% endfor %}
+	    </div>
+	  </div>
+	</div>

@@ -1,10 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from drama.models import *
 from django.utils import timezone
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
 from haystack.query import SearchQuerySet
-from django.views.generic import TemplateView, DetailView, CreateView, UpdateView, DeleteView, ListView
+from django.views.generic import TemplateView, DetailView, CreateView, UpdateView, DeleteView, ListView, View
 import json
 import autocomplete_light
 
@@ -94,6 +94,12 @@ class MyDetailView(DetailView):
 
 
 class FormSetMixin:
+    form_kwargs={}
+
+    def get_form_kwargs(self):
+        kwargs = super(FormSetMixin, self).get_form_kwargs()
+        kwargs.update(self.form_kwargs)
+        return kwargs
 
     def post(self, request, *args, **kwargs):
         """
@@ -149,6 +155,12 @@ class MyCreateView(FormSetMixin, autocomplete_light.CreateView):
         del context['form']
         return context
 
+    def get_success_url(self):
+        if self.success_url:
+            return self.success_url
+        else:
+            return super(MyCreateView, self).get_success_url()
+
 
 class MyUpdateView(FormSetMixin, UpdateView):
 
@@ -175,7 +187,21 @@ class MyListView(ListView):
         context['current_pagetype'] = self.model_name
         return context
 
+class ItemUpdateView(FormSetMixin, UpdateView):
+    object = None
+    def get_context_data(self, **kwargs):
+        context = super(ItemUpdateView, self).get_context_data(**kwargs)
+        context['content_form'] = context['form']
+        del context['form']
+        return context
 
+    def get_success_url(self):
+        if self.success_url:
+            return self.success_url
+        else:
+            return super(MyCreateView, self).get_success_url()
+    
+   
 def display(request, model, template=None, get_context=None, *args, **kwargs):
     if not get_context:
         def get_context(self, **kwargs):
@@ -203,3 +229,17 @@ def remove(request, model, *args, **kwargs):
 def list(request, model, model_name, *args, **kwargs):
     view = MyListView.as_view(model=model, model_name=model_name)
     return view(request, model_name=model_name, *args, **kwargs)
+
+
+def related_edit(request, model, form, slug, *args, **kwargs):
+    show = get_object_or_404(Show, slug=slug)
+    try:
+        item = model.objects.filter(show__slug=slug)[0]
+        view = ItemUpdateView.as_view(model=model, form_class=form, object=item, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}))
+    except IndexError:
+        view = MyCreateView.as_view(model=model, form_class=form, form_kwargs={'show':show}, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}))
+    return view(request, *args, **kwargs)
+     
+
+def related_remove(request):
+    return HttpResponse("Hello World")

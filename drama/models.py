@@ -267,6 +267,8 @@ class AuditionInstance(models.Model):
         self.start_datetime.time()
     start_time = models.TimeField()
     location = models.CharField(max_length=200)
+    def get_cname(*args):
+        return "audition session"
 
 
 class Application(models.Model):
