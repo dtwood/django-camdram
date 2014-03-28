@@ -132,33 +132,45 @@ class VenueForm(FormsetsForm):
         model = Venue
 
 
-class AuditionForm(FormsetsForm):
-    error_css_class = 'error'
-    required_css_class = 'required'
-    formsets = {'audition_formset':AuditionInline}
-    this_show = None
+class ChildForm(FormsetsForm):
+    '''
+    For creating and editing objects with a parent object
+    field, which should not be editable.
+    '''
+    parent = None
+    parent_name = None
 
-    def __init__(self, show=None, *args, **kwargs):
-        super(AuditionForm, self).__init__(*args, **kwargs)
-        self.this_show = show
+    def __init__(self, parent=None, parent_name=None, *args, **kwargs):
+        self.parent = parent
+        self.parent_name = parent_name
+        if self._meta.exclude is not None:
+            if self.parent_name is not None and self.parent_name not in self._meta.exclude:
+                self._meta.exclude = (self.parent_name,) + self._meta.exclude
+        else:
+            self._meta.exclude = (self.parent_name,)
+        super(ChildForm, self).__init__(*args, **kwargs)
+        del self.fields[self.parent_name]
 
     def save(self, *args, **kwargs):
-        if self.this_show is not None:
-            self._meta.exclude = None
-        super(AuditionForm,self).save(*args, **kwargs)
+        super(ChildForm,self).save(*args, **kwargs)
 
 
     def clean(self):
-        if self.this_show is not None:
-            self._meta.exclude = None
-        cleaned_data = super(AuditionForm, self).clean()
-        if self.this_show is not None:
-            cleaned_data['show'] = self.this_show
+        cleaned_data = super(ChildForm, self).clean()
+        if self.parent is not None:
+            self._meta.exclude = tuple(x for x in self._meta.exclude if x != self.parent_name)
+        if self.parent is not None:
+            cleaned_data[self.parent_name] = self.parent
         return cleaned_data
 
+
+class AuditionForm(ChildForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+    formsets = {'audition_formset':AuditionInline}
+    
     class Meta:
         model = Audition
-        exclude = ('show',)
 
 
 class TechieAdForm(FormsetsForm):

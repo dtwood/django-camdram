@@ -235,9 +235,9 @@ def related_edit(request, model, form, slug, *args, **kwargs):
     show = get_object_or_404(Show, slug=slug)
     try:
         item = model.objects.filter(show__slug=slug)[0]
-        view = ItemUpdateView.as_view(model=model, form_class=form, object=item, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}))
+        view = ItemUpdateView.as_view(model=model, form_class=form, object=item, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}), form_kwargs={'parent':show, 'parent_name':'show'})
     except IndexError:
-        view = MyCreateView.as_view(model=model, form_class=form, form_kwargs={'show':show}, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}))
+        view = MyCreateView.as_view(model=model, form_class=form, form_kwargs={'parent':show, 'parent_name':'show'}, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}))
     return view(request, *args, **kwargs)
      
 
