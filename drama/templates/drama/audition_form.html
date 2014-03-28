@@ -28,7 +28,7 @@
 	{% endfor %}
       </div>
       <ul class="inline-list audition-links">
-        <li> <a href="#" id="add_more">Add audition session</a></li>
+        <li> <a href="#empty_form" id="add_more">Add audition session</a></li>
       </ul>
     </div>
     <div id="empty_form" style="display:none">
@@ -38,7 +38,7 @@
   <script>
     $('#add_more').click(function() {
         var form_idx = $('#id_auditioninstance_set-TOTAL_FORMS').val();
-        $('#auditions).append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+        $('#audition_sessions').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
         $('#id_auditioninstance_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
     });
 </script>
