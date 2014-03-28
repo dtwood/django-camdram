@@ -29,7 +29,7 @@
 |             | detail | list  | form | delete |
 |-------------+--------+-------+------+--------|
 | show        | done   | no    | done | done   |
-| person      | done   | no    |      | done   |
+| person      | done   | no    | done | done   |
 | society     | done   | done  | done | done   |
 | venue       | done   | done  | done | done   |
 | role        |        |       |      | done   |

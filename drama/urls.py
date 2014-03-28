@@ -16,9 +16,19 @@ object_patterns = patterns('drama.views',
                            url(r'^remove$', 'remove', name='remove'),
                            )
 
+related_object_patterns  = patterns('drama.views',
+                                    url(r'^edit$', 'related_edit', name='related-edit'),
+                                    url(r'remove$', 'related_remove', name='related_remove'),
+                                    )
+
 redirector_patterns = patterns('drama.views',
                                url(r'^$', 'my_redirect', name='item'),
                                url(r'^', include(object_patterns)),
+                               )
+
+related_redirector_patterns = patterns('drama.views',
+                               url(r'^$', 'my_redirect', name='item'),
+                               url(r'^', include(related_object_patterns)),
                                )
 
 vacancy_patterns = patterns('drama.views',
@@ -31,11 +41,9 @@ vacancy_patterns = patterns('drama.views',
                             url(r'^applications/$', 'applications',
                                 name='applications'),
                             url(r'^(?P<model_name>technical)/(?P<slug>[^/]*)',
-                                include(redirector_patterns), {'model': TechieAd, 'form': None, }),
+                                include(related_redirector_patterns), {'model': TechieAd, 'form': None, }),
                             url(r'^(?P<model_name>auditions)/(?P<slug>[^/]*)',
-                                include(redirector_patterns), {'model': Audition, 'form': None, }),
-                            # society and venue applications must happen
-                            # elsewhere
+                                include(related_redirector_patterns), {'model': Audition, 'form': None, }),
                             url(r'^(?P<model_name>applications)/(?P<slug>[^/]*)',
                                 include(redirector_patterns), {'model': Application, 'form': None, }),
                             url(r'^(?P<show_slug>[^/]*)/(?P<role_slug>[^/]*)',

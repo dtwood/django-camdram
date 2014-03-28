@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from haystack.query import SearchQuerySet
 from django.views.generic import TemplateView, DetailView, CreateView, UpdateView, DeleteView, ListView
 import json
+import autocomplete_light
 
 
 def index(request):
@@ -80,10 +81,6 @@ def contact_us(request):
     return HttpResponse("Hello World")
 
 
-def privacy(request):
-    return HttpResponse("Hello World")
-
-
 def my_redirect(request, model_name, slug, *args, **kwargs):
     return redirect(reverse(model_name) + '#' + slug)
 
@@ -96,7 +93,7 @@ class MyDetailView(DetailView):
         return func(self, **kwargs)
 
 
-class FormSetMixin():
+class FormSetMixin:
 
     def post(self, request, *args, **kwargs):
         """
@@ -136,7 +133,7 @@ class FormSetMixin():
         return context
 
 
-class MyCreateView(FormSetMixin, CreateView):
+class MyCreateView(FormSetMixin, autocomplete_light.CreateView):
 
     def get(self, request, *args, **kwargs):
         self.object = None
@@ -151,35 +148,6 @@ class MyCreateView(FormSetMixin, CreateView):
         context['content_form'] = context['form']
         del context['form']
         return context
-
-    def is_popup(self):
-        return self.request.GET.get('_popup', False)
-
-    def respond_script(self, obj=None):
-        if obj is None:
-            obj = self.object
-
-        html = []
-        html.append(u'<script type="text/javascript">')
-        html.append(u'opener.dismissAddAnotherPopup( window, "%s", "%s" );' % (
-            str(obj.pk), str(obj).replace('"', '\\"')))
-        html.append(u'</script>')
-
-        html = u''.join(html)
-
-        return HttpResponse(html, status=201)
-
-    def form_valid(self, form):
-        """ If request.GET._popup, return some javascript. """
-        if self.is_popup():
-            self.success_url = '/'  # avoid ImproperlyConfigured
-
-        response = super(MyCreateView, self).form_valid(form)
-
-        if not self.is_popup():
-            return response
-
-        return self.respond_script()
 
 
 class MyUpdateView(FormSetMixin, UpdateView):

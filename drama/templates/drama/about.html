@@ -16,18 +16,18 @@
     
     <ul>
       <li>
-        Our <a href="/app_dev.php/diary/">event diary</a> makes it easy to see what’s happening 
+        Our <a href="{% url 'diary' %}">event diary</a> makes it easy to see what’s happening 
         now, in the future, and for more than a decade past.
       </li>
       
       <li>
-        You can easily <a href="/app_dev.php/vacancies/auditions">get involved</a>, thanks to our listings of 
+        You can easily <a href="{% url 'auditions' %}">get involved</a>, thanks to our listings of 
         auditions, production team vacancies, and society funding opportunities.
       </li>
       
       <li>
-        We have information about the city's many <a href="/app_dev.php/societies">societies</a> and 
-        <a href="/app_dev.php/venues">performance spaces</a>.
+        We have information about the city's many <a href="{% url 'list' 'societies' %}">societies</a> and 
+        <a href="{% url 'list' 'venues' %}">performance spaces</a>.
       </li>
       
       <li>
@@ -49,7 +49,7 @@
     <p>
       The site itself is maintained by volunteers in their spare time.  If you’re 
       interested in helping, 
-      <a href="/app_dev.php/contact-us">contact us</a>.
+      <a href="{% url 'contact-us' %}">contact us</a>.
     </p>
     
     <br />

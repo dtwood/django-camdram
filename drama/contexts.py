@@ -23,7 +23,7 @@ def venue(self, **kwargs):
         context['techieads'] = None
 
     context['showapps'] = ShowApplication.objects.filter(
-        show__performance__venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline')
+        show__performance__venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
     try:
         context['showapps'][0]
     except IndexError:

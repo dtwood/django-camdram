@@ -21,69 +21,27 @@
       <label class="right inline required">Dates and times</label>
     </div>
     <div class="large-9 columns">
-      <div class="performances entity_collection">
+      <div id="performances" class="performances entity_collection">
 	{{performance_formset.management_form}}
 	{% for form in performance_formset %}
-	<div class="performance">
-	  {{form.id}}
-	  {{form.show}}
-	  <div class="row">
-	    <div class="large-1 column">
-	      <label class="{{form.start_date.css_classes}} right inline" for="{{form.start_date.id_for_label}}">
-		{{form.start_date.label}}
-	      </label>
-	    </div>
-	    <div class="{{form.start_date.css_classes}} large-3 columns">
-	      {{form.start_date}}
-	      {% for error in form.start_date.errors %}
-	      <small class="error">{{error}}</small>
-	      {% endfor %}
-	    </div>
-	    <div class="large-1 column end_date">
-	      <label class="{{form.end_date.css_classes}} right inline" for="{{form.end_date.id_for_label}}">
-		{{form.end_date.label}}
-	      </label>
-	    </div>
-	    <div class="{{form.end_date.css_classes}} large-3 columns end_date">
-	      {{form.end_date}}
-	      {% for error in form.end_date.errors %}
-	      <small class="error">{{error}}</small>
-	      {% endfor %}
-	    </div>
-	    <div class="large-1 column">
-	      <label class="{{form.time.css_classes}} right inline" for="{{form.time.id_for_label}}">
-		{{form.time.label}}
-	      </label>
-	    </div>
-	    <div class="{{form.time.css_classes}} large-3 columns">
-	      {{form.time}}
-	      {% for error in form.time.errors %}
-	      <small class="error">{{error}}</small>
-	      {% endfor %}
-	      <div class="inline right">
-		{{form.DELETE}}
-	      </div>
-	    </div>
-	  </div>
-	  <div class="row venue-row">
-	    <div class="large-3 columns">
-	      <label class="{{form.venue.css_classes}} right inline" for="{{form.venue.id_for_label}}"> {{form.venue.label}} </label>
-	    </div>
-	    <div class="{{form.venue.css_classes}} large-9 columns">
-	      {{form.venue}}
-	      {% for error in form.venue.errors %}
-	      <small class="error">{{error}}</small>
-	      {% endfor %}
-	    </div>
-	  </div>
-	</div>
+	{% include "drama/performance_form_item.html" %}
 	{% endfor %}
       </div>
       <ul class="inline-list right performance-links">
-        <li> <a href="#" class="add_link">Add date range</a></li>
+        <li> <a href="#" id="add_more">Add date range</a></li>
       </ul>
     </div>
+    <div id="empty_form" style="display:none">
+      {% include "drama/performance_form_item.html" with form=performance_formset.empty_form %}
+    </div>
   </div>
+  <script>
+    $('#add_more').click(function() {
+        var form_idx = $('#id_performance_set-TOTAL_FORMS').val();
+        $('#performances').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+        $('#id_performance_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+    });
+</script>
   {% include "drama/form_field.html" with field=content_form.society %}
   {% include "drama/form_field.html" with field=content_form.desc %}
   {% include "drama/form_field.html" with field=content_form.image %}

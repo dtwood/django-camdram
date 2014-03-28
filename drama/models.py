@@ -12,6 +12,9 @@ class Person(models.Model):
     desc = models.TextField('Bio', blank=True)
     slug = models.SlugField(max_length=200, blank=True, editable=False)
 
+    class Meta:
+        ordering = ['name']
+
     def save(self, *args, **kwargs):
         if not self.slug:
             temp_slug = slugify(self.name)
@@ -65,6 +68,9 @@ class Venue(models.Model):
     address = models.CharField(max_length=200, blank=True)
     slug = models.SlugField(max_length=200, blank=True, editable=False)
 
+    class Meta:
+        ordering = ['name']
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
@@ -91,6 +97,9 @@ class Society(models.Model):
     image = models.ImageField(
         upload_to='images/', blank=True, verbose_name="Logo")
     slug = models.SlugField(max_length=200, blank=True, editable=False)
+
+    class Meta:
+        ordering = ['name']
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -121,6 +130,9 @@ class Show(models.Model):
     year = models.IntegerField()
     image = models.ImageField(upload_to='images/', blank=True)
     slug = models.SlugField(max_length=200, blank=True, unique=True)
+
+    class Meta:
+        ordering = ['name']
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -182,6 +194,9 @@ class Role(models.Model):
         max_length=4, choices=categories, verbose_name='Role Category')
     link = models.BooleanField()
     slug = models.SlugField(max_length=200, blank=True, editable=False)
+
+    class Meta:
+        ordering = ['name']
 
     def save(self, *args, **kwargs):
         if not self.id:
