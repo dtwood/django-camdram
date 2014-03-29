@@ -1,0 +1,59 @@
+{% extends "drama/base.html" %}
+
+{% block title %}{% if object %}Edit{% else %}Add{% endif %} Technical Ad{% endblock %}
+
+{% block content %}
+<div class="row">
+  {% if object %}
+  <h3>Edit Technical Ad</h3>
+  {% else %}
+  <h3>Add Technical Ad</h3>
+  {% endif %}
+  <div class="panel">
+    <p> Use the form below modify or add production team vacancies for your show.</p>
+  </div>
+  <form action="" method="post">
+  {% csrf_token %}
+  <div class="row">
+    <div class="large-3 columns">
+      <label class="right inline required">Vacant positions</label>
+    </div>
+    <div class="large-9 columns">
+      <div id="vacant_positions" class="positions entity_collection">
+	{{techiead_formset.management_form}}
+	{% for form in techiead_formset %}
+	{% include "drama/techiead_form_item.html" %}
+	{% endfor %}
+      </div>
+      <ul class="inline-list audition-links">
+        <li> <a href="#" id="add_more">Add vacant position</a></li>
+      </ul>
+    </div>
+    <div id="empty_form" style="display:none">
+      {% include "drama/techiead_form_item.html" with form=techiead_formset.empty_form %}
+    </div>
+  </div>
+  {% include "drama/form_field.html" with field=content_form.date %}
+  {% include "drama/form_field.html" with field=content_form.time %}
+  {% include "drama/form_field.html" with field=content_form.contact %}
+  {% include "drama/form_field.html" with field=content_form.desc %}
+  <script>
+    $('#add_more').click(function() {
+        var form_idx = $('#id_techieadrole_set-TOTAL_FORMS').val();
+        $('#vacant_positions').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+        $('#id_techieadrole_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+        return false;
+    });
+    $('.show-field').click(function() {
+        var id = $(this).attr('id');
+        $('div #' + id).removeClass('hide')
+        $(this).parent().parent().addClass('hide')
+        return false;
+    });
+</script>
+  <div class="text-right">
+  <button type="submit">Save</button>
+  </div>
+  </form>
+</div>
+{% endblock %}

@@ -117,3 +117,9 @@ def person(self, **kwargs):
     context = {'person': person, 'past_roles': past_roles,
                'current_roles': current_roles, 'future_roles': future_roles}
     return context
+
+def role(self, **kwargs):
+    context = super(MyDetailView, self).get_context_data(**kwargs)
+    role = context['object']
+    context['current_pagetype'] = 'roles'
+    return context

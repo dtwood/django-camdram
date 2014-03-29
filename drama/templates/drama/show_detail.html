@@ -47,7 +47,7 @@
     <h3> Cast </h3>
     <div class="sortable-cast">
       {% for role in cast %}
-      <div class="row" ><div class="small-11 columns">{% if role.role.link %}<a href="{%url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %} - <a href="{% url 'display' model_name='people' slug=role.person.slug %}">{{role.person.name}}</a></div></div>
+      <div class="row" id="{{role.role.id}}"><div class="small-11 columns">{% if role.role.link %}<a href="{%url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %} - <a href="{% url 'display' model_name='people' slug=role.person.slug %}">{{role.person.name}}</a></div></div>
       {% endfor %}
     </div>
   </div>

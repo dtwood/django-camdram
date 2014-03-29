@@ -1,0 +1,11 @@
+{% extends "drama/base.html" %}
+{% block title %}Role: {{society.name}}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="large-12 columns panel">
+    <h2>{{object.name}}<br /><small>{{object.get_cat_display}}</small></h2>
+    <p>{{object.desc|safe}}</p>
+  </div>
+</div>
+{% endblock %}

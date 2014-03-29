@@ -1,0 +1,64 @@
+<div class="audition">
+  {{form.id}}
+  <div class="row">
+    <div class="large-6 columns">
+      <div class="large-4 columns">
+	<label class="{{form.role.css_classes}} right inline required">Role</label>
+      </div>
+      <div class="{{form.role.css_classes}} large-8 columns">
+	{{form.role}}
+	{% for error in form.role.errors %}
+	<small class="error">{{error}}</small>
+	{% endfor %}
+      </div>
+    </div>
+    <div class="large-6 columns">
+      <div class="hide" id="{{form.prefix}}-name">
+	<div class="large-4 columns">
+	  <label class="{{form.name.css_classes}} right inline required">Custom name</label>
+	</div>
+	<div class="{{form.name.css_classes}} large-8 columns">
+	  {{form.name}}
+	  {% for error in form.name.errors %}
+	  <small class="error">{{error}}</small>
+	  {% endfor %}
+	</div>
+      </div>
+      <ul class="inline-list">
+	<li><a href="#" id="{{form.prefix}}-name" class="show-field">Add Custom Name</a></li>
+      </ul>
+    </div>
+  </div>
+  {% if form.desc.value %}
+  <div class="row">
+    <div class="large-2 columns">
+    </div>
+    <div class="{{form.desc.css_classes}} large-10 columns">
+    {{form.desc}}
+    {% for error in form.desc.errors %}
+    <small class="error">{{error}}</small>
+    {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="row hide" id="{{form.prefix}}-desc">
+    <div class="large-2 columns">
+    </div>
+    <div class="{{form.desc.css_classes}} large-10 columns">
+    {{form.desc}}
+    {% for error in form.desc.errors %}
+    <small class="error">{{error}}</small>
+    {% endfor %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-2 columns">
+    </div>
+    <div class="large-10 columns">
+      <ul class="inline-list">
+	<li><a href="#" id="{{form.prefix}}-desc" class="show-field">Add Description</a></li>
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+</div>

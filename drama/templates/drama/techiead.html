@@ -20,7 +20,7 @@
     <strong>Looking for</strong>
     <ul>
       {% for role in ad.techieadrole_set.all %}
-      <li>{% if role.desc %}<a href="{% url 'ad_role' role.ad.show.slug role.slug %}">{% elif role.role.link %}<a href ="{% url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.desc or role.role.name %}</a>{% endif %}</li>
+      <li>{% if role.desc %}<a href="{% url 'ad_role' role.ad.show.slug role.slug %}">{% elif role.role.link %}<a href ="{% url 'display' model_name='roles' slug=role.role.slug %}">{% endif %}{{role.name}}{% if role.desc or role.role.name %}</a>{% endif %}</li>
       {% endfor %}
     </ul>
   </p>

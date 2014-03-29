@@ -239,6 +239,9 @@ class TechieAdRole(models.Model):
             self.slug = slugify(self.name)
         super(TechieAdRole, self).save(*args, **kwargs)
 
+    def get_cname(*args):
+        return "techieadroles"
+
 
 class Audition(models.Model):
     show = models.OneToOneField(Show)

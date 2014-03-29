@@ -52,49 +52,47 @@ class FormsetsForm(forms.ModelForm):
         return result
 
 
+class ChildForm(FormsetsForm):
+    '''
+    For creating and editing objects with a parent object
+    field, which should not be editable.
+    '''
+    parent = None
+    parent_name = None
+
+    def __init__(self, parent=None, parent_name=None, *args, **kwargs):
+        self.parent = parent
+        self.parent_name = parent_name
+        if self._meta.exclude is not None:
+            if self.parent_name is not None and self.parent_name not in self._meta.exclude:
+                self._meta.exclude = (self.parent_name,) + self._meta.exclude
+        else:
+            if self.parent_name is not None:
+                self._meta.exclude = (self.parent_name,)
+        super(ChildForm, self).__init__(*args, **kwargs)
+        if self.parent_name is not None:
+            del self.fields[self.parent_name]
+
+    def save(self, *args, **kwargs):
+        super(ChildForm,self).save(*args, **kwargs)
+
+
+    def clean(self):
+        cleaned_data = super(ChildForm, self).clean()
+        if self.parent is not None:
+            self._meta.exclude = tuple(x for x in self._meta.exclude if x != self.parent_name)
+        if self.parent is not None:
+            cleaned_data[self.parent_name] = self.parent
+        return cleaned_data
+
+
 class PerformanceForm(autocomplete_light.ModelForm):
 
     class Meta:
         model = Performance
 
-class AuditionInstanceForm(forms.ModelForm):
-    date = forms.DateField()
-    end_time = forms.TimeField()
-
-    def __init__(self, instance = None, initial=None, *args, **kwargs):
-        if initial is None:
-            initial = {}
-        if instance is not None:
-            temp = instance.end_datetime
-            initial.update({'date': temp.date(),
-                            'end_time': temp.time(),
-                            })
-        super(AuditionInstanceForm, self).__init__(initial=initial, instance=instance, *args, **kwargs)
-
-        
-    def clean(self):
-        cleaned_data = super(AuditionInstanceForm, self).clean()
-        if 'end_datetime' in self._errors:
-            del self._errors['end_datetime']
-        try:
-            cleaned_data['end_datetime'] = datetime.combine(
-                cleaned_data['date'], cleaned_data['end_time'])
-        except KeyError:
-            pass
-        return cleaned_data
-
-    
-    class Meta:
-        model = AuditionInstance
-
-AuditionInline = inlineformset_factory(
-    Audition, AuditionInstance, AuditionInstanceForm, extra=1)
-
 PerformanceInline = inlineformset_factory(
     Show, Performance, PerformanceForm, extra=1)
-
-RoleInline = inlineformset_factory(Show, RoleInstance)
-
 
 class ShowForm(FormsetsForm, autocomplete_light.ModelForm):
     error_css_class = 'error'
@@ -131,37 +129,49 @@ class VenueForm(FormsetsForm):
     class Meta:
         model = Venue
 
+        
+class RoleForm(FormsetsForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+    formsets = {}
 
-class ChildForm(FormsetsForm):
-    '''
-    For creating and editing objects with a parent object
-    field, which should not be editable.
-    '''
-    parent = None
-    parent_name = None
-
-    def __init__(self, parent=None, parent_name=None, *args, **kwargs):
-        self.parent = parent
-        self.parent_name = parent_name
-        if self._meta.exclude is not None:
-            if self.parent_name is not None and self.parent_name not in self._meta.exclude:
-                self._meta.exclude = (self.parent_name,) + self._meta.exclude
-        else:
-            self._meta.exclude = (self.parent_name,)
-        super(ChildForm, self).__init__(*args, **kwargs)
-        del self.fields[self.parent_name]
-
-    def save(self, *args, **kwargs):
-        super(ChildForm,self).save(*args, **kwargs)
+    class Meta:
+        model = Role
 
 
+class AuditionInstanceForm(forms.ModelForm):
+    date = forms.DateField()
+    end_time = forms.TimeField()
+
+    def __init__(self, instance = None, initial=None, *args, **kwargs):
+        if initial is None:
+            initial = {}
+        if instance is not None:
+            temp = instance.end_datetime
+            initial.update({'date': temp.date(),
+                            'end_time': temp.time(),
+                            })
+        super(AuditionInstanceForm, self).__init__(initial=initial, instance=instance, *args, **kwargs)
+
+        
     def clean(self):
-        cleaned_data = super(ChildForm, self).clean()
-        if self.parent is not None:
-            self._meta.exclude = tuple(x for x in self._meta.exclude if x != self.parent_name)
-        if self.parent is not None:
-            cleaned_data[self.parent_name] = self.parent
+        cleaned_data = super(AuditionInstanceForm, self).clean()
+        if 'end_datetime' in self._errors:
+            del self._errors['end_datetime']
+        try:
+            cleaned_data['end_datetime'] = datetime.combine(
+                cleaned_data['date'], cleaned_data['end_time'])
+        except KeyError:
+            pass
         return cleaned_data
+
+    
+    class Meta:
+        model = AuditionInstance
+
+        
+AuditionInline = inlineformset_factory(
+    Audition, AuditionInstance, AuditionInstanceForm, extra=1)
 
 
 class AuditionForm(ChildForm):
@@ -172,20 +182,46 @@ class AuditionForm(ChildForm):
     class Meta:
         model = Audition
 
+        
+class TechieAdRoleForm(autocomplete_light.ModelForm):
 
-class TechieAdForm(FormsetsForm):
+    class Meta:
+        model = TechieAdRole
+
+        
+TechieAdInline = inlineformset_factory(
+    TechieAd, TechieAdRole, TechieAdRoleForm, extra=5)
+
+
+class TechieAdForm(ChildForm):
     error_css_class = 'error'
     required_css_class = 'required'
-    formsets = {}
+    formsets = {'techiead_formset':TechieAdInline}
+    date = forms.DateField(label="Deadline date")
+    time = forms.TimeField(label="Deadline time")
+
+    def __init__(self, instance = None, initial=None, *args, **kwargs):
+        if initial is None:
+            initial = {}
+        if instance is not None:
+            temp = instance.deadline
+            initial.update({'date': temp.date(),
+                            'time': temp.time(),
+                            })
+        super(TechieAdForm, self).__init__(initial=initial, instance=instance, *args, **kwargs)
+
+        
+    def clean(self):
+        cleaned_data = super(TechieAdForm, self).clean()
+        if 'deadline' in self._errors:
+            del self._errors['deadline']
+        try:
+            cleaned_data['deadline'] = datetime.combine(
+                cleaned_data['date'], cleaned_data['time'])
+        except KeyError:
+            pass
+        return cleaned_data
+    
 
     class Meta:
         model = TechieAd
-
-        
-class RoleForm(FormsetsForm):
-    error_css_class = 'error'
-    required_css_class = 'required'
-    formsets = {}
-
-    class Meta:
-        model = Role

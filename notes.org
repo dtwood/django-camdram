@@ -9,40 +9,36 @@
   - map
 
 * API
-
 * TODO Diary
-
 * TODO users
-
 * TODO administration
 - think about sub url patterns for adverts
 
-
 * social integration
-
 * fun stuff
 - tour map
 - sign in sheets
-- 
 
 * templates
-|             | detail | list  | form | delete |
-|-------------+--------+-------+------+--------|
-| show        | done   | no    | done | done   |
-| person      | done   | no    | done | done   |
-| society     | done   | done  | done | done   |
-| venue       | done   | done  | done | done   |
-| role        |        |       |      | done   |
-| techiead    | other  | other |      |        |
-| audition    | other  | other |      |        |
-| application | other  | other |      |        |
-| ad_role     | other  | no    |      |        |
+
+|                    | detail | list  | form    | delete |
+|--------------------+--------+-------+---------+--------|
+| show               | done   | no    | done    | done   |
+| person             | done   | no    | done    | done   |
+| society            | done   | done  | done    | done   |
+| venue              | done   | done  | done    | done   |
+| role               | done   |       | done    | done   |
+| techiead           | other  | other | started |        |
+| audition           | other  | other | done    |        |
+| application        | other  | other |         |        |
+| showapplication    | no     | no    |         | no     |
+| venueapplication   | no     | no    |         | no     |
+| societyapplication | no     | no    |         | no     |
+| ad_role            | other  | no    | no      | no     |
 - errors
 
 * adding people to shows
-
 * testing
-
 * commenting
-
-* add date range link
+* add jquerry ui sortableness
+* make custom name auto fill in techie add form (alter autocomplete js)

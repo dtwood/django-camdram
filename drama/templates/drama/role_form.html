@@ -1,0 +1,27 @@
+{% extends "drama/base.html" %}
+
+{% block title %}Role: {% if object %}{{object.name}} - Edit{% else %}Create{% endif %}{% endblock %}
+
+{% block content %}
+<div class="row">
+  {% if object %}
+  <h3>Edit Role</h3>
+  {% else %}
+  <h3>Create a new role</h3>
+  <div class="panel">
+    <p>Please fill in the details below to add a new role to Camdram. Required fields are marked with an asterisk (*), and all fields can be modified later if necessary.</p>
+  </div>
+  {% endif %}
+  <form action="" method="post">
+    {% csrf_token %}
+    {% include "drama/form_field.html" with field=content_form.name %}
+    {% include "drama/form_field.html" with field=content_form.desc %}
+    {% include "drama/form_field.html" with field=content_form.cat %}
+    {% include "drama/form_field.html" with field=content_form.link %}
+    <div class="right">
+      <button type="submit">Save</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+    
