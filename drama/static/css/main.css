@@ -4176,11 +4176,10 @@ header {
 
 footer {
   background: #3a393a;
-  color: #fff;
-  height: 21.875em; }
+  color: #fff;}
   @media only screen and (min-width: 768px) {
   footer {
-    height: 10em; } }
+    } }
   footer h5 {
     color: #fff; }
   footer p {
