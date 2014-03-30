@@ -86,6 +86,9 @@ class Venue(models.Model):
     def get_absolute_url(self):
         return reverse('display', kwargs={'model_name': 'venues', 'slug': self.slug})
 
+    def get_applications(self):
+        return VenueApplication.objects.filter(venue=self)
+
 
 class Society(models.Model):
 
@@ -116,6 +119,9 @@ class Society(models.Model):
     def get_cname(*args):
         return "societies"
 
+    def get_applications(self):
+        return SocietyApplication.objects.filter(society=self)
+    
 
 class Show(models.Model):
 
@@ -166,6 +172,9 @@ class Show(models.Model):
 
     def get_absolute_url(self):
         return reverse('display', kwargs={'model_name': 'shows', 'slug': self.slug})
+
+    def get_applications(self):
+        return ShowApplication.objects.filter(show=self)
 
 
 class Performance(models.Model):

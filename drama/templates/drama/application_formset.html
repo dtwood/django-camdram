@@ -1,0 +1,56 @@
+{% extends "drama/base.html" %}
+
+{% block title %}Edit Application{% endblock %}
+
+{% block content %}
+<div class="row">
+  {% if object %}
+  <h3>Edit Applications</h3>
+  {% else %}
+  <h3>Add Applications</h3>
+  {% endif %}
+  <div class="panel">
+    <p>Use the form below modify your application advertisements.</p>
+  </div>
+  <div class="large-12 columns">
+    <form action="" method="post">
+      {{ content_form.management_form }}
+  {% csrf_token %}
+  {% for form in content_form %}
+  <div class="row">
+    {{form.application_ptr}}
+  {% include "drama/application_subform.html" %}
+  <hr />
+  </div>
+  {% endfor %}
+  <div id="empty_form" style="display:none">
+    <div class="row">
+    {% include "drama/application_subform.html" with form=content_form.empty_form %}
+    <hr />
+    </div>
+  </div>
+  <ul class="inline-list audition-links">
+    <li> <a href="#" id="add_more">Add application</a></li>
+  </ul>
+  <script>
+    $('#add_more').click(function() {
+        var form_idx = $('#id_{{prefix}}application_set-TOTAL_FORMS').val();
+        $('#vacant_positions').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+        $('#id_{{prefix}}application_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+        return false;
+    });
+    $('.show-field').click(function() {
+        var id = $(this).attr('id');
+        $('div #' + id).removeClass('hide')
+        $(this).parent().parent().addClass('hide')
+        return false;
+    });
+  </script>
+
+  <div class="text-right">
+  <button type="submit">Save</button>
+  </div>
+  </form>
+  </div>
+</div>
+{% endblock %}

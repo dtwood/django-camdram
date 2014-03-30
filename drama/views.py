@@ -239,7 +239,35 @@ def related_edit(request, model, form, slug, *args, **kwargs):
     except IndexError:
         view = MyCreateView.as_view(model=model, form_class=form, form_kwargs={'parent':show, 'parent_name':'show'}, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}))
     return view(request, *args, **kwargs)
-     
 
-def related_remove(request):
-    return HttpResponse("Hello World")
+def related_remove(request, model, slug, *args, **kwargs):
+    show = get_object_or_404(Show, slug=slug)
+    try:
+        item = model.objects.filter(show__slug=slug)[0]
+    except IndexError:
+        raise Http404
+    view = DeleteView.as_view(model=model, success_url="/")
+    return view(request, pk=item.pk, *args, **kwargs)
+    
+    
+def application_edit(request, model, slug, form, prefix, *args, **kwargs):
+    parent = get_object_or_404(model, slug=slug)
+    if request.method == 'GET':
+        context = {}
+        context['content_form'] = form(instance=parent)
+        context['parent'] = parent
+        context['prefix'] = prefix
+        return render(request, 'drama/application_formset.html', context)
+    elif request.method == 'POST':
+        bound_form = form(request.POST, instance=parent)
+        if bound_form.is_valid():
+            bound_form.save()
+            return redirect(parent.get_absolute_url())
+        else:
+            context = {}
+            context['content_form'] = bound_form
+            context['parent'] = parent
+            context['prefix'] = prefix
+            return render(request, 'drama/application_formset.html', context)
+    else:
+        raise Http404

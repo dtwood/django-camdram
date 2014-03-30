@@ -191,12 +191,7 @@ class TechieAdRoleForm(autocomplete_light.ModelForm):
         
 TechieAdInline = inlineformset_factory(
     TechieAd, TechieAdRole, TechieAdRoleForm, extra=5)
-
-
-class TechieAdForm(ChildForm):
-    error_css_class = 'error'
-    required_css_class = 'required'
-    formsets = {'techiead_formset':TechieAdInline}
+class DeadlineForm(forms.ModelForm):
     date = forms.DateField(label="Deadline date")
     time = forms.TimeField(label="Deadline time")
 
@@ -208,11 +203,11 @@ class TechieAdForm(ChildForm):
             initial.update({'date': temp.date(),
                             'time': temp.time(),
                             })
-        super(TechieAdForm, self).__init__(initial=initial, instance=instance, *args, **kwargs)
+        super(DeadlineForm, self).__init__(initial=initial, instance=instance, *args, **kwargs)
 
         
     def clean(self):
-        cleaned_data = super(TechieAdForm, self).clean()
+        cleaned_data = super(DeadlineForm, self).clean()
         if 'deadline' in self._errors:
             del self._errors['deadline']
         try:
@@ -223,5 +218,25 @@ class TechieAdForm(ChildForm):
         return cleaned_data
     
 
+class TechieAdForm(DeadlineForm, ChildForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+    formsets = {'techiead_formset':TechieAdInline}
+    
+
     class Meta:
         model = TechieAd
+
+
+class ApplicationForm(DeadlineForm, FormsetsForm, autocomplete_light.ModelForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+    formsets = {}
+    
+    class Meta:
+        model = Application
+
+
+ShowApplicationFormset = inlineformset_factory(Show, ShowApplication, ApplicationForm)
+VenueApplicationFormset = inlineformset_factory(Venue, VenueApplication, ApplicationForm)
+SocietyApplicationFormset = inlineformset_factory(Society, SocietyApplication, ApplicationForm)

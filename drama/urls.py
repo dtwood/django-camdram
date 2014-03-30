@@ -45,8 +45,8 @@ vacancy_patterns = patterns('drama.views',
                             url(r'^(?P<model_name>auditions)/(?P<slug>[^/]*)/',
                                 include(related_redirector_patterns), {'model': Audition, 'form': AuditionForm, }),
                             url(r'^(?P<model_name>applications)/(?P<slug>[^/]*)/',
-                                include(redirector_patterns), {'model': Application, 'form': None, }),
-                            url(r'^(?P<show_slug>[^/]*)/(?P<role_slug>[^/]*)$',
+                                include(redirector_patterns), {'model': Application, 'form': ApplicationForm, }),
+                            url(r'^(?P<show_slug>[^/]*)/(?P<role_slug>[^/]*)/$',
                                 'ad_role', name='ad_role'),
                             )
 
@@ -55,6 +55,24 @@ list_patterns = patterns('drama.views',
                          url(r'^new$', 'new', name='new'),
                          url(r'^(?P<slug>[^/]+)/', include(object_patterns)),
                          )
+
+show_patterns = patterns('drama.views',
+                         url(r'(?P<slug>[^/]+)/(?P<submodel_name>applications)/edit', 'application_edit', {'form': ShowApplicationFormset, 'prefix': 'show'}, name='applications-edit'),
+                         url(r'(?P<slug>[^/]+)/(?P<submodel_name>technical)/', include(related_object_patterns), {'model': TechieAd, 'form': TechieAdForm, } ),
+                         url(r'(?P<slug>[^/]+)/(?P<submodel_name>auditions)/', include(related_object_patterns), {'model': Audition, 'form': AuditionForm, } ),
+                         url(r'^', include(list_patterns)),
+                         )
+
+venue_patterns = patterns('drama.views',
+                         url(r'(?P<slug>[^/]+)/applications/edit', 'application_edit', {'form': VenueApplicationFormset, 'prefix': 'venue'}, name='applications-edit'),
+                         url(r'', include(list_patterns)),
+                         )
+
+society_patterns = patterns('drama.views',
+                         url(r'(?P<slug>[^/]+)/applications/edit', 'application_edit', {'form': SocietyApplicationFormset, 'prefix': 'society'}, name='applications-edit'),
+                         url(r'', include(list_patterns)),
+                         )
+
 
 urlpatterns = patterns('',
                        url(r'^$', views.index, name='home'),
@@ -69,15 +87,15 @@ urlpatterns = patterns('',
                            name='contact-us'),
                        url(r'^privacy/$',
                            TemplateView.as_view(template_name="drama/privacy.html"), name='privacy'),
-                       url(r'^(?P<model_name>shows)/', include(list_patterns),
+                       url(r'^(?P<model_name>shows)/', include(show_patterns),
                            {'model': Show, 'form': ShowForm, 'get_context': contexts.show}),
                        url(r'^(?P<model_name>people)/', include(list_patterns),
                            {'model': Person, 'form': PersonForm, 'get_context': contexts.person}),
                        url(r'^(?P<model_name>roles)/', include(list_patterns),
                            {'model': Role, 'form': RoleForm, 'get_context': contexts.role}),
-                       url(r'^(?P<model_name>venues)/', include(list_patterns),
+                       url(r'^(?P<model_name>venues)/', include(venue_patterns),
                            {'model': Venue, 'form': VenueForm, 'get_context': contexts.venue}),
-                       url(r'^(?P<model_name>societies)/', include(list_patterns),
+                       url(r'^(?P<model_name>societies)/', include(society_patterns),
                            {'model': Society, 'form': SocietyForm, 'get_context': contexts.society}),
                        url(r'^vacancies/', include(vacancy_patterns)),
                        url(r'autocomplete/',

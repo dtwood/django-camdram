@@ -1,0 +1,23 @@
+{% extends "drama/base.html" %}
+
+{% block title %}{% if object %}Edit{% else %}Add{% endif %} Application{% endblock %}
+
+{% block content %}
+<div class="row">
+  {% if object %}
+  <h3>Edit Application</h3>
+  {% else %}
+  <h3>Add Application</h3>
+  {% endif %}
+  <div class="panel">
+    <p>Use the form below modify your application advertisement.</p>
+  </div>
+  <form action="" method="post">
+  {% csrf_token %}
+  {% include "drama/application_subform.html" with form=content_form %}
+  <div class="text-right">
+  <button type="submit">Save</button>
+  </div>
+  </form>
+</div>
+{% endblock %}
