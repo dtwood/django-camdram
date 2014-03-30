@@ -1,0 +1,30 @@
+{% extends "drama/base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="large-12 columns">
+    <h4>Log in to camdram.net</h4>
+    {% if form.errors %}
+    <p>Your username and password combination is invalid. Please try again.</p>
+    {% endif %}
+    
+    <form method="post" action="">
+      {% csrf_token %}
+      {% include "drama/form_field.html" with field=form.username label='Email' %}
+      {% include "drama/form_field.html" with field=form.password %}
+      <div class="row">
+        <div class="large-6 columns">
+            <a href="{% url 'password_reset' %}">Forgotten password?</a>
+        </div>
+	<div class="large-6 columns text-right">
+	  <button type="submit">Login</button>
+	</div>
+      </div>
+      
+      <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -26,6 +26,18 @@
 	  </ul>
 	  
 	  <ul class="right">
+	    {% if user.is_authenticated %}
+	    <li id="account-link" class="dropdown-link">
+	      <a href="#">{{user.username}}</a>
+	      <ul id="account-dropdown" class="topbar-dropdown">
+		<li><a href="{% url 'password_change' %}"><i class="fa fa-cogs fa-fw"></i> Account Settings</a></li>
+		<li><a href="{% url 'logout' %}"><i class="fa fa-sign-out fa-fw"></i> Log out</a></li>
+        </ul>
+    </li>
+	    {% else %}
+	    <li><a href="{% url 'registration_register' %}">Create an account</a></li>
+	    <li id="login-link"><a href="{% url 'login' %}">Log in</a></li>
+	    {% endif %}
 	  </ul>
 	</section>
       </nav>
@@ -37,7 +49,7 @@
 	 <div class="large-9 columns search">
 	  <form method="get" action="/search" class="searchform" id="search_form">
 	    <i class="fa fa-search"></i>
-	    {% if form %}{{form.q}}{% else %}{{search_form.q}}{% endif %}
+	    {% if form.q %}{{form.q}}{% else %}{{search_form.q}}{% endif %}
 	    <div class="results">
 	      <ul></ul>
 	      <div class="noresults">No results found for &quot;<span class="query"></span>&quot;</div>
@@ -91,6 +103,33 @@
           Comments &amp; queries to <a href="mailto:websupport@camdram.net">websupport@camdram.net</a>
         </p>
       </div>
+    <script>
+     $(document).bind('ready', function() { 
+      $('.dropdown-link').each(function() {
+            var $link = $(this);
+            var $dropdown = $('.topbar-dropdown', $link);
+            $dropdown.hide();
+            var hideEnabled = true;
+
+            $link.mouseenter(function() {
+                $dropdown.css({
+                    'position': 'absolute',
+                    'top': $link.offset().top + $link.height(),
+                    'left': $link.offset().left + $link.outerWidth() - $dropdown.outerWidth()
+                }).show();
+                $dropdown.show();
+            }).mouseleave(function() {
+                    if (hideEnabled) $dropdown.hide();
+                });
+            $('input', $dropdown).bind('invalid',function() {
+                hideEnabled = false;
+                window.setTimeout(function() {
+                    hideEnabled = true;
+                },200);
+            })
+        })
+    })
+</script>
     </footer>
   </body>
 </html>

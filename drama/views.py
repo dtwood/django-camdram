@@ -3,6 +3,9 @@ from drama.models import *
 from django.utils import timezone
 from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
 from haystack.query import SearchQuerySet
 from django.views.generic import TemplateView, DetailView, CreateView, UpdateView, DeleteView, ListView, View
 import json
@@ -210,20 +213,33 @@ def display(request, model, template=None, get_context=None, *args, **kwargs):
         model=model, get_context=get_context, template_name=template)
     return view(request, *args, **kwargs)
 
-
+@login_required
 def new(request, model, form=None, *args, **kwargs):
-    view = MyCreateView.as_view(model=model, form_class=form)
-    return view(request, *args, **kwargs)
+    if request.user.has_perm('drama.add_' + model.__name__):
+        view = MyCreateView.as_view(model=model, form_class=form)
+        return view(request, *args, **kwargs)
+    else:
+        raise PermissionDenied
 
 
-def edit(request, model, form=None, *args, **kwargs):
-    view = MyUpdateView.as_view(model=model, form_class=form)
-    return view(request, *args, **kwargs)
+@login_required
+def edit(request, model, slug, form=None, *args, **kwargs):
+    item = get_object_or_404(model, slug=slug)
+    if request.user.has_perm('drama.change_' + model.__name__, item):
+        view = MyUpdateView.as_view(model=model, form_class=form)
+        return view(request, slug=slug, *args, **kwargs)
+    else:
+        raise PermissionDenied
 
 
-def remove(request, model, *args, **kwargs):
-    view = DeleteView.as_view(model=model, success_url="/")
-    return view(request, *args, **kwargs)
+@login_required
+def remove(request, model, slug, *args, **kwargs):
+    item = get_object_or_404(model, slug=slug)
+    if request.user.has_perm('drama.delete_' + model.__name__, item):
+        view = DeleteView.as_view(model=model, success_url="/")
+        return view(request, slug=slug, *args, **kwargs)
+    else:
+        raise PermissionDenied
 
 
 def list(request, model, model_name, *args, **kwargs):
@@ -231,43 +247,56 @@ def list(request, model, model_name, *args, **kwargs):
     return view(request, model_name=model_name, *args, **kwargs)
 
 
+@login_required
 def related_edit(request, model, form, slug, *args, **kwargs):
     show = get_object_or_404(Show, slug=slug)
-    try:
-        item = model.objects.filter(show__slug=slug)[0]
-        view = ItemUpdateView.as_view(model=model, form_class=form, object=item, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}), form_kwargs={'parent':show, 'parent_name':'show'})
-    except IndexError:
-        view = MyCreateView.as_view(model=model, form_class=form, form_kwargs={'parent':show, 'parent_name':'show'}, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}))
-    return view(request, *args, **kwargs)
+    if request.user.has_perm('drama.change_' + show.__model__.__name__, show):
+        try:
+            item = model.objects.filter(show__slug=slug)[0]
+            view = ItemUpdateView.as_view(model=model, form_class=form, object=item, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}), form_kwargs={'parent':show, 'parent_name':'show'})
+        except IndexError:
+            view = MyCreateView.as_view(model=model, form_class=form, form_kwargs={'parent':show, 'parent_name':'show'}, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}))
+        return view(request, *args, **kwargs)
+    else:
+        raise PermissionDenied
 
+@login_required
 def related_remove(request, model, slug, *args, **kwargs):
     show = get_object_or_404(Show, slug=slug)
-    try:
-        item = model.objects.filter(show__slug=slug)[0]
-    except IndexError:
-        raise Http404
-    view = DeleteView.as_view(model=model, success_url="/")
-    return view(request, pk=item.pk, *args, **kwargs)
+    if request.user.has_perm('drama.change_' + show.__model__.__name__, show):
+        try:
+            item = model.objects.filter(show__slug=slug)[0]
+        except IndexError:
+            raise Http404
+        view = DeleteView.as_view(model=model, success_url="/")
+        return view(request, pk=item.pk, *args, **kwargs)
+    else:
+        raise PermissionDenied
     
     
+@login_required
+@csrf_protect
 def application_edit(request, model, slug, form, prefix, *args, **kwargs):
     parent = get_object_or_404(model, slug=slug)
-    if request.method == 'GET':
-        context = {}
-        context['content_form'] = form(instance=parent)
-        context['parent'] = parent
-        context['prefix'] = prefix
-        return render(request, 'drama/application_formset.html', context)
-    elif request.method == 'POST':
-        bound_form = form(request.POST, instance=parent)
-        if bound_form.is_valid():
-            bound_form.save()
-            return redirect(parent.get_absolute_url())
-        else:
+    if request.user.has_perm('drama.change_' + model.__name__, parent):
+        if request.method == 'GET':
             context = {}
-            context['content_form'] = bound_form
+            context['content_form'] = form(instance=parent)
             context['parent'] = parent
             context['prefix'] = prefix
             return render(request, 'drama/application_formset.html', context)
+        elif request.method == 'POST':
+            bound_form = form(request.POST, instance=parent)
+            if bound_form.is_valid():
+                bound_form.save()
+                return redirect(parent.get_absolute_url())
+            else:
+                context = {}
+                context['content_form'] = bound_form
+                context['parent'] = parent
+                context['prefix'] = prefix
+                return render(request, 'drama/application_formset.html', context)
+        else:
+            raise Http404
     else:
-        raise Http404
+        raise PermissionDenied

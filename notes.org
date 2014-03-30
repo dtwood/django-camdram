@@ -11,9 +11,6 @@
 * API
 * TODO Diary
 * TODO users
-* TODO administration
-- think about sub url patterns for adverts
-
 * social integration
 * fun stuff
 - tour map
@@ -28,14 +25,15 @@
 | society            | done   | done  | done    | done   |
 | venue              | done   | done  | done    | done   |
 | role               | done   |       | done    | done   |
-| techiead           | other  | other | started |        |
-| audition           | other  | other | done    |        |
-| application        | other  | other |         |        |
-| showapplication    | no     | no    |         | no     |
-| venueapplication   | no     | no    |         | no     |
-| societyapplication | no     | no    |         | no     |
+| techiead           | other  | other | started | done   |
+| audition           | other  | other | done    | done   |
+| application        | other  | other | done    | done   |
+| showapplication    | no     | no    | done    | no     |
+| venueapplication   | no     | no    | done    | no     |
+| societyapplication | no     | no    | done    | no     |
 | ad_role            | other  | no    | no      | no     |
 - errors
+https://github.com/django/django/tree/master/django/contrib/admin/templates/registration
 
 * adding people to shows
 * testing

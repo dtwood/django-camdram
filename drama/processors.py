@@ -12,6 +12,8 @@ def navitems_processor(request):
                  'list', kwargs={'model_name': 'societies'})}),
              ('venues', {'text': 'Venues', 'path': reverse(
                  'list', kwargs={'model_name': 'venues'})}),
+             ('roles', {'text': 'Roles', 'path': reverse(
+                 'list', kwargs={'model_name': 'roles'})}),
              )}
 
 

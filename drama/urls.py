@@ -1,10 +1,13 @@
 import autocomplete_light
 autocomplete_light.autodiscover()
+from django.contrib import auth
 from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView, ListView
 from drama.models import *
 from drama import views, contexts
 from drama.forms import *
+from registration.backends.simple.views import RegistrationView as SimpleRegistrationView
+
 
 # pass in with a slug, model_name, model, form, template and get_context and get apropriate views
 # model_name and slug should be captured, the others passed in a dict
@@ -72,10 +75,15 @@ society_patterns = patterns('drama.views',
                          url(r'(?P<slug>[^/]+)/applications/edit', 'application_edit', {'form': SocietyApplicationFormset, 'prefix': 'society'}, name='applications-edit'),
                          url(r'', include(list_patterns)),
                          )
-
+simple_register_patterns = patterns('',
+url(r'^register/$', SimpleRegistrationView.as_view(), name='registration_register'),
+url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'), name='registration_disallowed'),
+(r'', include('django.contrib.auth.urls')),
+)
 
 urlpatterns = patterns('',
                        url(r'^$', views.index, name='home'),
+                       url(r'^auth/', include(simple_register_patterns)),
                        url(r'^diary/$', views.diary, name='diary'),
                        url(r'^search/', include('drama.haystack_urls'),
                            name='search'),

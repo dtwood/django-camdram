@@ -1,0 +1,27 @@
+{% extends "drama/base.html" %}
+{% block title %}Societies{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="large-12 columns">
+    <h3>Roles</h3>
+  </div>
+</div>
+
+<ul class="large-block-grid-2" id="role_list">
+{% for role in object_list %}
+{% if role.link %}
+<li id="{{role.slug}}">
+  <div class="row">
+    <div class="large-12 columns">
+      <h5><a href="{% url 'display' model_name='roles' slug=role.slug %}">{{role.name}}</a></h5>
+      <p>{{role.desc|truncatechars:200}}<br />
+	[<a href="{% url 'display' model_name='roles' slug=role.slug %}">Read More</a>]
+      </p>
+    </div>
+  </div>
+</li>
+{% endif %}
+{% endfor %}
+</ul>
+{% endblock %}

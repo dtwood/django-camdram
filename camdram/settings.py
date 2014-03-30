@@ -14,6 +14,8 @@ BASE_DIR = '/srv/django/camdram/'
 STATIC_ROOT = '/srv/http/static/'
 MEDIA_ROOT = '/srv/http/'
 MEDIA_URL = '/'
+LOGIN_URL = '/auth/login'
+LOGIN_REDIRECT_URL = '/'
 
 
 # Quick-start development settings - unsuitable for production
@@ -33,12 +35,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-    'django.contrib.admin',
+#    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'registration',
+    'guardian',
     'haystack',
     'south',
     'autocomplete_light',
@@ -114,3 +119,12 @@ HAYSTACK_CONNECTIONS = {
 }
 
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # this is default
+    'guardian.backends.ObjectPermissionBackend',
+    )
+
+ANONYMOUS_USER_ID = -1
+
+GUARDIAN_RAISE_403 = True

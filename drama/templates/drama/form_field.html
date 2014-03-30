@@ -1,7 +1,11 @@
 <div class="row">
   <div class="large-3 columns">
     <label class="{{field.css_classes}} right inline" for="{{field.id_for_label}}">
+      {% if label %}
+      {{label}}
+      {% else %}
       {{field.label}}
+      {% endif %}
     </label>
   </div>
   <div class="{{field.css_classes}} large-9 columns">
