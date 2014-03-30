@@ -250,7 +250,7 @@ def list(request, model, model_name, *args, **kwargs):
 @login_required
 def related_edit(request, model, form, slug, *args, **kwargs):
     show = get_object_or_404(Show, slug=slug)
-    if request.user.has_perm('drama.change_' + show.__model__.__name__, show):
+    if request.user.has_perm('drama.change_' + show.__class__.__name__, show):
         try:
             item = model.objects.filter(show__slug=slug)[0]
             view = ItemUpdateView.as_view(model=model, form_class=form, object=item, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}), form_kwargs={'parent':show, 'parent_name':'show'})
@@ -263,7 +263,7 @@ def related_edit(request, model, form, slug, *args, **kwargs):
 @login_required
 def related_remove(request, model, slug, *args, **kwargs):
     show = get_object_or_404(Show, slug=slug)
-    if request.user.has_perm('drama.change_' + show.__model__.__name__, show):
+    if request.user.has_perm('drama.change_' + show.__class__.__name__, show):
         try:
             item = model.objects.filter(show__slug=slug)[0]
         except IndexError:

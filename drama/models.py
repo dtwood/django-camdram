@@ -58,6 +58,12 @@ class Person(models.Model):
     def get_absolute_url(self):
         return reverse('display', kwargs={'model_name': 'people', 'slug': self.slug})
 
+    def is_show(self):
+        return False
+
+    def has_applications(self):
+        return False
+
 
 class Venue(models.Model):
 
@@ -88,6 +94,12 @@ class Venue(models.Model):
 
     def get_applications(self):
         return VenueApplication.objects.filter(venue=self)
+
+    def is_show(self):
+        return False
+
+    def has_applications(self):
+        return True
 
 
 class Society(models.Model):
@@ -122,6 +134,12 @@ class Society(models.Model):
     def get_applications(self):
         return SocietyApplication.objects.filter(society=self)
     
+    def is_show(self):
+        return False
+
+    def has_applications(self):
+        return True
+
 
 class Show(models.Model):
 
@@ -176,6 +194,12 @@ class Show(models.Model):
     def get_applications(self):
         return ShowApplication.objects.filter(show=self)
 
+    def is_show(self):
+        return True
+
+    def has_applications(self):
+        return True
+
 
 class Performance(models.Model):
 
@@ -214,6 +238,12 @@ class Role(models.Model):
 
     def get_absolute_url(self):
         return reverse('display', kwargs={'model_name': 'roles', 'slug': self.slug})
+
+    def is_show(self):
+        return False
+
+    def has_applications(self):
+        return False
 
 
 class RoleInstance(models.Model):

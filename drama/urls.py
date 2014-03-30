@@ -20,7 +20,7 @@ object_patterns = patterns('drama.views',
                            )
 
 related_object_patterns  = patterns('drama.views',
-                                    url(r'^edit$', 'related_edit', name='related-edit'),
+                                    url(r'^edit$', 'related_edit', name='related_edit'),
                                     url(r'remove$', 'related_remove', name='related_remove'),
                                     )
 
@@ -60,19 +60,19 @@ list_patterns = patterns('drama.views',
                          )
 
 show_patterns = patterns('drama.views',
-                         url(r'(?P<slug>[^/]+)/(?P<submodel_name>applications)/edit', 'application_edit', {'form': ShowApplicationFormset, 'prefix': 'show'}, name='applications-edit'),
+                         url(r'(?P<slug>[^/]+)/applications/edit', 'application_edit', {'form': ShowApplicationFormset, 'prefix': 'show'}, name='applications_edit'),
                          url(r'(?P<slug>[^/]+)/(?P<submodel_name>technical)/', include(related_object_patterns), {'model': TechieAd, 'form': TechieAdForm, } ),
                          url(r'(?P<slug>[^/]+)/(?P<submodel_name>auditions)/', include(related_object_patterns), {'model': Audition, 'form': AuditionForm, } ),
                          url(r'^', include(list_patterns)),
                          )
 
 venue_patterns = patterns('drama.views',
-                         url(r'(?P<slug>[^/]+)/applications/edit', 'application_edit', {'form': VenueApplicationFormset, 'prefix': 'venue'}, name='applications-edit'),
+                         url(r'(?P<slug>[^/]+)/applications/edit', 'application_edit', {'form': VenueApplicationFormset, 'prefix': 'venue'}, name='applications_edit'),
                          url(r'', include(list_patterns)),
                          )
 
 society_patterns = patterns('drama.views',
-                         url(r'(?P<slug>[^/]+)/applications/edit', 'application_edit', {'form': SocietyApplicationFormset, 'prefix': 'society'}, name='applications-edit'),
+                         url(r'(?P<slug>[^/]+)/applications/edit', 'application_edit', {'form': SocietyApplicationFormset, 'prefix': 'society'}, name='applications_edit'),
                          url(r'', include(list_patterns)),
                          )
 simple_register_patterns = patterns('',

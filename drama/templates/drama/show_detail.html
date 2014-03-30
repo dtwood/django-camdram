@@ -1,8 +1,10 @@
 {% extends "drama/base.html" %}
 {% block title %}Show: {{show.name}}{% endblock %}
+{% load drama_admin %}
 
 {% block content %}
 <div class="row">
+    {% admin_panel show %}
   <div class="large-12 columns panel">
       <p class="show-society"><a href="{% url 'display' model_name='societies' slug=show.society.slug%}">{{show.society.name}}</a> presents...</p>
       <h2>{{show.name}}<br />{% if show.author %}<small>By {{show.author}}</small>{% endif %}</h2>

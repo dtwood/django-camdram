@@ -3,14 +3,13 @@
 - diary
 - contact
 - development
-- ad_role
 - auditions_diary
 - venue
   - map
 
+* Application Ordering
 * API
 * TODO Diary
-* TODO users
 * social integration
 * fun stuff
 - tour map
@@ -24,7 +23,7 @@
 | person             | done   | no    | done    | done   |
 | society            | done   | done  | done    | done   |
 | venue              | done   | done  | done    | done   |
-| role               | done   |       | done    | done   |
+| role               | done   | done  | done    | done   |
 | techiead           | other  | other | started | done   |
 | audition           | other  | other | done    | done   |
 | application        | other  | other | done    | done   |
@@ -33,10 +32,10 @@
 | societyapplication | no     | no    | done    | no     |
 | ad_role            | other  | no    | no      | no     |
 - errors
-https://github.com/django/django/tree/master/django/contrib/admin/templates/registration
 
 * adding people to shows
 * testing
 * commenting
 * add jquerry ui sortableness
-* make custom name auto fill in techie add form (alter autocomplete js)
+* add get involved to roles
+* refactor ssttatic files
