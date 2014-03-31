@@ -1,4 +1,5 @@
 from drama.models import *
+from drama.forms import *
 from drama.views import MyDetailView
 from django.views.generic import DetailView
 from django.utils import timezone
@@ -80,6 +81,9 @@ def show(self, user, **kwargs):
     context = super(MyDetailView, self).get_context_data(**kwargs)
     show = context['object']
     context['can_edit'] = user.has_perm('drama.change_show', show)
+    context['cast_form'] = CastForm()
+    context['band_form'] = BandForm()
+    context['prod_form'] = ProdForm()
     company = RoleInstance.objects.filter(show=show)
     cast = company.filter(role__cat='cast')
     if cast.count() == 0:

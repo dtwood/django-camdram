@@ -257,6 +257,10 @@ class RoleInstance(models.Model):
     show = models.ForeignKey(Show)
     person = models.ForeignKey(Person)
     role = models.ForeignKey(Role, verbose_name='Role Type')
+    sort = models.IntegerField(default=1000)
+
+    class Meta:
+        ordering = ['sort']
 
 
 class TechieAd(models.Model):

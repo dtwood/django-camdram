@@ -50,6 +50,20 @@
     <div class="sortable-cast">
       {% include "drama/company_list.html" with roles=cast %}
     </div>
+    {% if can_edit %}
+    <form action="add_cast" method="post">
+      {% csrf_token %}
+      <div class="row">
+	<div class="small-6 columns">
+	  {{cast_form.role}}
+	</div>
+	<div class="small-6 columns">
+	  {{cast_form.person}}
+	</div>
+	<button type="submit">Add Role</button>
+      </div>
+    </form>
+    {% endif %}
   </div>
   {% if band or can_edit %}
   <div class="large-4 columns">
@@ -57,6 +71,26 @@
     <div class="sortable-band">
       {% include "drama/company_list.html" with roles=band %}
     </div>
+    {% if can_edit %}
+    <form action="add_band" method="post">
+      {% csrf_token %}
+      <div class="row">
+	<div class="small-6 columns">
+	  {{band_form.role}}
+	  <div class="namefield hide" id="band-name">
+	    {{band_form.name}}
+	  </div>
+	  <ul class="inline-list">
+	    <li><a href="#" id="band-name" class="show-field">Add Custom Name</a></li>
+	  </ul>
+	</div>
+	<div class="small-6 columns">
+	  {{band_form.person}}
+	</div>
+	<button type="submit">Add Role</button>
+      </div>
+    </form>
+    {% endif %}
   </div>
   {% endif %}
   <div class="large-{% if band or can_edit %}4{% else %}6{% endif %} columns end">
@@ -64,6 +98,69 @@
     <div class="sortable-prod">
       {% include "drama/company_list.html" with roles=prod %}
     </div>
+    {% if can_edit %}
+    <form action="add_prod" method="post">
+      {% csrf_token %}
+      <div class="row">
+	<div class="small-6 columns">
+	  {{prod_form.role}}
+	  <div class="namefield hide" id="prod-name">
+	    {{prod_form.name}}
+	  </div>
+	  <ul class="inline-list">
+	    <li><a href="#" id="prod-name" class="show-field">Add Custom Name</a></li>
+	  </ul>
+	</div>
+	<div class="small-6 columns">
+	  {{prod_form.person}}
+	</div>
+	<button type="submit">Add Role</button>
+      </div>
+    </form>
+    {% endif %}
   </div>
 </div>
+{% if can_edit %}
+<script>
+    $("div[class|='sortable']").sortable({
+        axis: "y",
+        items: "> div",
+        stop: function(event, ui) {
+            $.ajax({
+                url: "{% url 'role_reorder' model_name='shows' slug=show.slug %}",
+                type: 'post',
+                data: $(this).sortable('serialize')
+            });
+        }
+    });
+    $('.show-field').click(function() {
+        var id = $(this).attr('id');
+        $('div #' + id).removeClass('hide')
+        $(this).parent().parent().addClass('hide')
+        return false;
+    });
+    $(document).bind('yourlabsWidgetReady', function() {
+    $('body').on('initialize', '.autocomplete-light-widget[data-widget-bootstrap=fill-field-bootstrap]', function() {
+        $(this).yourlabsWidget({
+            namefield: $(this).parent().find('.namefield input'),
+            addToDeck:  function(choice, value) {
+    var existing_choice = this.deck.find('[data-value="'+value+'"]');
+
+    // Avoid duplicating choices in the deck.
+    if (!existing_choice.length) {
+        var deckChoice = this.deckChoiceHtml(choice);
+        var fieldChoice = choice.clone();
+        this.namefield.val(fieldChoice.text())
+        // In case getValue() actually **created** the value, for example
+        // with a post request.
+        deckChoice.attr('data-value', value);
+
+        this.deck.append(deckChoice);
+    }
+}
+        })
+    });
+});
+</script>
+{% endif %}
 {% endblock %}

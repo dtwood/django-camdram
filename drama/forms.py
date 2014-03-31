@@ -240,3 +240,29 @@ class ApplicationForm(DeadlineForm, FormsetsForm, autocomplete_light.ModelForm):
 ShowApplicationFormset = inlineformset_factory(Show, ShowApplication, ApplicationForm)
 VenueApplicationFormset = inlineformset_factory(Venue, VenueApplication, ApplicationForm)
 SocietyApplicationFormset = inlineformset_factory(Society, SocietyApplication, ApplicationForm)
+
+class CastForm(forms.Form):
+    role = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Role'}))
+    person = forms.ModelChoiceField(Person.objects.all(),
+            widget=autocomplete_light.ChoiceWidget('PersonAutocomplete',
+                    attrs={'placeholder':'Person'}))
+
+class BandForm(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Custom Name'}))
+    role = forms.ModelChoiceField(Role.objects.filter(cat='band'),
+        widget=autocomplete_light.ChoiceWidget('band',
+            attrs={'placeholder':'Role'},
+            widget_attrs = {'data-widget-bootstrap': 'fill-field-bootstrap',}))
+    person = forms.ModelChoiceField(Person.objects.all(),
+            widget=autocomplete_light.ChoiceWidget('PersonAutocomplete',
+                    attrs={'placeholder':'Person'}))
+
+class ProdForm(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Custom Name'}))
+    role = forms.ModelChoiceField(Role.objects.filter(cat='prod'),
+        widget=autocomplete_light.ChoiceWidget('prod',
+            attrs={'placeholder':'Role'},
+            widget_attrs = {'data-widget-bootstrap': 'fill-field-bootstrap',}))
+    person = forms.ModelChoiceField(Person.objects.all(),
+            widget=autocomplete_light.ChoiceWidget('PersonAutocomplete',
+                    attrs={'placeholder':'Person'}))

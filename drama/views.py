@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from drama.models import *
+from drama.forms import *
 from django.utils import timezone
 from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
@@ -318,3 +319,79 @@ def remove_role(request, slug, id, *args, **kwargs):
         return redirect(show.get_absolute_url())
     else:
         raise PermissionDenied
+
+@login_required
+@csrf_protect
+def add_cast(request, slug, *args, **kwargs):
+    show = get_object_or_404(Show, slug=slug)
+    if request.method == "POST":
+        if request.user.has_perm('drama.change_show', show):
+            form = CastForm(request.POST)
+            if form.is_valid():
+                character = get_object_or_404(Role,name='Character')
+                name = form.cleaned_data['role']
+                person = form.cleaned_data['person']
+                r = RoleInstance(name=name, show=show,person=person,role=character)
+                r.save()
+            return redirect(show.get_absolute_url())
+        else:
+            raise PermissionDenied
+    else:
+        return redirect(show.get_absolute_url())
+
+
+@login_required
+@csrf_protect
+def add_band(request, slug, *args, **kwargs):
+    show = get_object_or_404(Show, slug=slug)
+    if request.method == "POST":
+        if request.user.has_perm('drama.change_show', show):
+            form = BandForm(request.POST)
+            if form.is_valid():
+                role = form.cleaned_data['role']
+                name = form.cleaned_data['name']
+                person = form.cleaned_data['person']
+                r = RoleInstance(name=name, show=show,person=person,role=role)
+                r.save()
+            return redirect(show.get_absolute_url())
+        else:
+            raise PermissionDenied
+    else:
+        return redirect(show.get_absolute_url())
+
+
+@login_required
+@csrf_protect
+def add_prod(request, slug, *args, **kwargs):
+    show = get_object_or_404(Show, slug=slug)
+    if request.method == "POST":
+        if request.user.has_perm('drama.change_show', show):
+            form = ProdForm(request.POST)
+            if form.is_valid():
+                role = form.cleaned_data['role']
+                name = form.cleaned_data['name']
+                person = form.cleaned_data['person']
+                r = RoleInstance(name=name, show=show,person=person,role=role)
+                r.save()
+            return redirect(show.get_absolute_url())
+        else:
+            raise PermissionDenied
+    else:
+        return redirect(show.get_absolute_url())
+    
+@login_required
+def role_reorder(request, slug, *args, **kwargs):
+    show = get_object_or_404(Show, slug=slug)
+    if request.method == "POST":
+        if request.user.has_perm('drama.change_show', show):
+            for index, item_id in enumerate(request.POST.getlist('role[]')):
+                item = get_object_or_404(RoleInstance, id=int(str(item_id)))
+                if not item.show == show:
+                    raise PermissionDenied
+                item.sort = index
+                item.save()
+            return HttpResponse('')
+        else:
+            raise PermissionDenied
+    else:
+        return HttpResponse('')
