@@ -63,6 +63,7 @@ show_patterns = patterns('drama.views',
                          url(r'(?P<slug>[^/]+)/applications/edit', 'application_edit', {'form': ShowApplicationFormset, 'prefix': 'show'}, name='applications_edit'),
                          url(r'(?P<slug>[^/]+)/(?P<submodel_name>technical)/', include(related_object_patterns), {'model': TechieAd, 'form': TechieAdForm, } ),
                          url(r'(?P<slug>[^/]+)/(?P<submodel_name>auditions)/', include(related_object_patterns), {'model': Audition, 'form': AuditionForm, } ),
+                         url(r'(?P<slug>[^/]+)/remove_role/(?P<id>[^/]+)/', 'remove_role', name='remove_role'),
                          url(r'^', include(list_patterns)),
                          )
 

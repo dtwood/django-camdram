@@ -1,7 +1,9 @@
 {% extends "drama/base.html" %}
+{% load drama_admin %}
 {% block title %}Venue: {{venue.name}}{% endblock %}
 
 {% block content %}
+{% admin_panel venue %}
 <div class="row">
   <div class="large-12 columns panel">
     <h2>{{venue.name}}{% if venue.address %}<br /><small>{{venue.address}}</small>{% endif %}</h2>

@@ -1,8 +1,9 @@
 {% extends "drama/base.html" %}
-
+{% load drama_admin %}
 {% block title %}Edit Application{% endblock %}
 
 {% block content %}
+{% admin_panel parent %}
 <div class="row">
   {% if object %}
   <h3>Edit Applications</h3>
@@ -15,6 +16,7 @@
   <div class="large-12 columns">
     <form action="" method="post">
       {{ content_form.management_form }}
+      <div id="applications">
   {% csrf_token %}
   {% for form in content_form %}
   <div class="row">
@@ -23,6 +25,7 @@
   <hr />
   </div>
   {% endfor %}
+  </div>
   <div id="empty_form" style="display:none">
     <div class="row">
     {% include "drama/application_subform.html" with form=content_form.empty_form %}
@@ -35,7 +38,7 @@
   <script>
     $('#add_more').click(function() {
         var form_idx = $('#id_{{prefix}}application_set-TOTAL_FORMS').val();
-        $('#vacant_positions').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+        $('#applications').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
         $('#id_{{prefix}}application_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
         return false;
     });

@@ -1,7 +1,9 @@
 {% extends "drama/base.html" %}
-{% block title %}Role: {{society.name}}{% endblock %}
+{% load drama_admin %}
+{% block title %}Role: {{object.name}}{% endblock %}
 
 {% block content %}
+{% admin_panel object%}
 <div class="row">
   <div class="large-12 columns panel">
     <h2>{{object.name}}<br /><small>{{object.get_cat_display}}</small></h2>

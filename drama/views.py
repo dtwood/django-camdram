@@ -90,10 +90,11 @@ def my_redirect(request, model_name, slug, *args, **kwargs):
 
 class MyDetailView(DetailView):
     get_context = None
+    user = None
 
     def get_context_data(self, **kwargs):
         func = self.get_context
-        return func(self, **kwargs)
+        return func(self, user=self.user, **kwargs)
 
 
 class FormSetMixin:
@@ -143,6 +144,7 @@ class FormSetMixin:
 
 
 class MyCreateView(FormSetMixin, autocomplete_light.CreateView):
+    parent = None
 
     def get(self, request, *args, **kwargs):
         self.object = None
@@ -155,6 +157,7 @@ class MyCreateView(FormSetMixin, autocomplete_light.CreateView):
     def get_context_data(self, **kwargs):
         context = super(MyCreateView, self).get_context_data(**kwargs)
         context['content_form'] = context['form']
+        context['parent'] = self.parent
         del context['form']
         return context
 
@@ -192,9 +195,11 @@ class MyListView(ListView):
 
 class ItemUpdateView(FormSetMixin, UpdateView):
     object = None
+    parent = None
     def get_context_data(self, **kwargs):
         context = super(ItemUpdateView, self).get_context_data(**kwargs)
         context['content_form'] = context['form']
+        context['parent'] = self.parent
         del context['form']
         return context
 
@@ -210,7 +215,7 @@ def display(request, model, template=None, get_context=None, *args, **kwargs):
         def get_context(self, **kwargs):
             return super(DetailView, self).get_context_data(**kwargs)
     view = MyDetailView.as_view(
-        model=model, get_context=get_context, template_name=template)
+        model=model, get_context=get_context, template_name=template, user=request.user)
     return view(request, *args, **kwargs)
 
 @login_required
@@ -253,9 +258,9 @@ def related_edit(request, model, form, slug, *args, **kwargs):
     if request.user.has_perm('drama.change_' + show.__class__.__name__, show):
         try:
             item = model.objects.filter(show__slug=slug)[0]
-            view = ItemUpdateView.as_view(model=model, form_class=form, object=item, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}), form_kwargs={'parent':show, 'parent_name':'show'})
+            view = ItemUpdateView.as_view(model=model, form_class=form, object=item, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}), form_kwargs={'parent':show, 'parent_name':'show'}, parent=show)
         except IndexError:
-            view = MyCreateView.as_view(model=model, form_class=form, form_kwargs={'parent':show, 'parent_name':'show'}, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}))
+            view = MyCreateView.as_view(model=model, form_class=form, form_kwargs={'parent':show, 'parent_name':'show'}, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}), parent=show)
         return view(request, *args, **kwargs)
     else:
         raise PermissionDenied
@@ -298,5 +303,18 @@ def application_edit(request, model, slug, form, prefix, *args, **kwargs):
                 return render(request, 'drama/application_formset.html', context)
         else:
             raise Http404
+    else:
+        raise PermissionDenied
+
+@login_required
+@csrf_protect
+def remove_role(request, slug, id, *args, **kwargs):
+    show = get_object_or_404(Show, slug=slug)
+    role = get_object_or_404(RoleInstance, id=id)
+    if role.show != show:
+        raise Http404
+    if request.user.has_perm('drama.change_show', show):
+        role.delete()
+        return redirect(show.get_absolute_url())
     else:
         raise PermissionDenied

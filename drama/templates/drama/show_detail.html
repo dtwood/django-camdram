@@ -45,30 +45,24 @@
 </div>
 {% endif %}
 <div class="row">
-  <div class="large-{% if band %}4{% else %}6{% endif %} columns">
+  <div class="large-{% if band or can_edit%}4{% else %}6{% endif %} columns">
     <h3> Cast </h3>
     <div class="sortable-cast">
-      {% for role in cast %}
-      <div class="row" id="{{role.role.id}}"><div class="small-11 columns">{% if role.role.link %}<a href="{%url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %} - <a href="{% url 'display' model_name='people' slug=role.person.slug %}">{{role.person.name}}</a></div></div>
-      {% endfor %}
+      {% include "drama/company_list.html" with roles=cast %}
     </div>
   </div>
-  {% if band %}
+  {% if band or can_edit %}
   <div class="large-4 columns">
     <h3> Band </h3>
     <div class="sortable-band">
-      {% for role in band %}
-      <div class="row" ><div class="small-11 columns">{% if role.role.link %}<a href="{%url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %} - <a href="{% url 'display' model_name='people' slug=role.person.slug %}">{{role.person.name}}</a></div></div>
-      {% endfor %}
+      {% include "drama/company_list.html" with roles=band %}
     </div>
   </div>
   {% endif %}
-  <div class="large-{% if band %}4{% else %}6{% endif %} columns end">
+  <div class="large-{% if band or can_edit %}4{% else %}6{% endif %} columns end">
     <h3> Production Team </h3>
     <div class="sortable-prod">
-      {% for role in prod %}
-      <div class="row" ><div class="small-11 columns">{% if role.role.link %}<a href="{%url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %} - <a href="{% url 'display' model_name='people' slug=role.person.slug %}">{{role.person.name}}</a></div></div>
-      {% endfor %}
+      {% include "drama/company_list.html" with roles=prod %}
     </div>
   </div>
 </div>

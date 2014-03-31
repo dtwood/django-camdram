@@ -39,3 +39,5 @@
 * add jquerry ui sortableness
 * add get involved to roles
 * refactor ssttatic files
+* audition_form admin panel
+* show ordering in person view

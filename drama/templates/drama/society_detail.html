@@ -1,7 +1,9 @@
 {% extends "drama/base.html" %}
+{% load drama_admin %}
 {% block title %}Society: {{society.name}}{% endblock %}
 
 {% block content %}
+{% admin_panel society %}
 <div class="row">
   <div class="large-12 columns panel">
     <h2>{{society.name}}<small> - {{society.shortname}}</small></h2>

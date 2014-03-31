@@ -1,0 +1,3 @@
+{% for prev,role in roles %}
+      <div class="row" id="{{role.role.id}}"><div class="small-11 columns">{% if role.role.link %}<a href="{%url 'role' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %} - <a href="{% url 'display' model_name='people' slug=role.person.slug %}">{{role.person.name}}</a></div></div>
+      {% endfor %}

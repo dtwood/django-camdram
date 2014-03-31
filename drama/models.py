@@ -239,6 +239,9 @@ class Role(models.Model):
     def get_absolute_url(self):
         return reverse('display', kwargs={'model_name': 'roles', 'slug': self.slug})
 
+    def get_cname(*args):
+        return "roles"
+
     def is_show(self):
         return False
 
