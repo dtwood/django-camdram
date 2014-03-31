@@ -1,0 +1,9 @@
+{% extends "drama/base.html" %}
+
+{% block title %}Permission Denied{% endblock %}
+
+{% block content %}
+<h1>Permission Denied</h1>
+<p>You don't have the required permissions to do what you just tried to do. If you think you should try <a href="{% url 'logout' %}">logging out</a> and logging back in. If that doesn't work feel free to <a href="{% url 'contact-us' %}">contact us</a> to ask for these permissions.</p>
+<p>If you arrived here via a link please <a href="{% url 'contact-us' %}">contact us</a> and tell us how you got here</p>
+{% endblock %}
