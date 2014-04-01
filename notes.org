@@ -31,13 +31,12 @@
 | venueapplication   | no     | no    | done    | no     |
 | societyapplication | no     | no    | done    | no     |
 | ad_role            | other  | no    | no      | no     |
-- errors
 
-* adding people to shows
 * testing
 * commenting
-* add jquerry ui sortableness
 * add get involved to roles
 * refactor ssttatic files
 * audition_form admin panel
 * show ordering in person view
+* delete button in formsets
+* edit/delete links in vacancies section

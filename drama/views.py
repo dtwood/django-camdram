@@ -146,6 +146,7 @@ class FormSetMixin:
 
 class MyCreateView(FormSetMixin, autocomplete_light.CreateView):
     parent = None
+    model_name = None
 
     def get(self, request, *args, **kwargs):
         self.object = None
@@ -159,6 +160,7 @@ class MyCreateView(FormSetMixin, autocomplete_light.CreateView):
         context = super(MyCreateView, self).get_context_data(**kwargs)
         context['content_form'] = context['form']
         context['parent'] = self.parent
+        context['current_pagetype'] = self.model_name
         del context['form']
         return context
 
@@ -170,7 +172,8 @@ class MyCreateView(FormSetMixin, autocomplete_light.CreateView):
 
 
 class MyUpdateView(FormSetMixin, UpdateView):
-
+    model_name = None
+    
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super(MyUpdateView, self).get(request, *args, **kwargs)
@@ -182,6 +185,7 @@ class MyUpdateView(FormSetMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(MyUpdateView, self).get_context_data(**kwargs)
         context['content_form'] = context['form']
+        context['current_pagetype'] = self.model_name
         del context['form']
         return context
 
@@ -220,19 +224,19 @@ def display(request, model, template=None, get_context=None, *args, **kwargs):
     return view(request, *args, **kwargs)
 
 @login_required
-def new(request, model, form=None, *args, **kwargs):
+def new(request, model, model_name=None, form=None, *args, **kwargs):
     if request.user.has_perm('drama.add_' + model.__name__):
-        view = MyCreateView.as_view(model=model, form_class=form)
+        view = MyCreateView.as_view(model=model, model_name=model_name, form_class=form)
         return view(request, *args, **kwargs)
     else:
         raise PermissionDenied
 
 
 @login_required
-def edit(request, model, slug, form=None, *args, **kwargs):
+def edit(request, model, slug, model_name=None, form=None, *args, **kwargs):
     item = get_object_or_404(model, slug=slug)
     if request.user.has_perm('drama.change_' + model.__name__, item):
-        view = MyUpdateView.as_view(model=model, form_class=form)
+        view = MyUpdateView.as_view(model=model, model_name=model_name, form_class=form)
         return view(request, slug=slug, *args, **kwargs)
     else:
         raise PermissionDenied

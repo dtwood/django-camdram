@@ -145,4 +145,5 @@ def role(self, **kwargs):
     context = super(MyDetailView, self).get_context_data(**kwargs)
     role = context['object']
     context['current_pagetype'] = 'roles'
+    context['get_involved'] = TechieAd.objects.filter(techieadrole__role=role).distinct()
     return context

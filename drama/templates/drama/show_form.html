@@ -1,10 +1,12 @@
 {% extends "drama/base.html" %}
+{% load drama_admin %}
 
 {% block title %}Show: {% if object %}{{object.name}} - Edit{% else %}Create{% endif %}{% endblock %}
 
 {% block content %}
 <div class="row">
   {% if object %}
+  {% admin_panel object %}
   <h3>Edit Show</h3>
   {% else %}
   <h3>Create a new show</h3>
