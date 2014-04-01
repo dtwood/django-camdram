@@ -52,6 +52,12 @@
         $(this).parent().parent().addClass('hide')
         return false;
     });
+    $('.delete-link').click(function() {
+        var input_id = $(this).attr('id');
+        $(this).parent().find('input#' + input_id).prop('checked', true);
+        $(this).parent().parent().parent().addClass('hide');
+        return false;
+    });
     $(document).bind('yourlabsWidgetReady', function() {
     $('body').on('initialize', '.autocomplete-light-widget[data-widget-bootstrap=fill-field-bootstrap]', function() {
         $(this).yourlabsWidget({

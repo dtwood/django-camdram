@@ -35,7 +35,10 @@
 	      <small class="error">{{error}}</small>
 	      {% endfor %}
 	      <div class="inline right">
+		<div class="hide">
 		{{form.DELETE}}
+		</div>
+		<a href="#" id="{{form.DELETE.id_for_label}}" class="delete-link"><i class="fa fa-trash-o"></i></a>
 	      </div>
 	    </div>
 	  </div>

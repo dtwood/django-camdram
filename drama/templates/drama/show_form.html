@@ -43,6 +43,12 @@
         $('#performances').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
         $('#id_performance_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
     });
+    $('.delete-link').click(function() {
+        var input_id = $(this).attr('id');
+        $(this).parent().find('input#' + input_id).prop('checked', true);
+        $(this).parent().parent().parent().parent().addClass('hide');
+        return false;
+    });
 </script>
   {% include "drama/form_field.html" with field=content_form.society %}
   {% include "drama/form_field.html" with field=content_form.desc %}
