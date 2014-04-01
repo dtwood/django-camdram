@@ -3,3 +3,11 @@
   {% include "drama/form_field.html" with field=form.date %}
   {% include "drama/form_field.html" with field=form.time %}
   {% include "drama/form_field.html" with field=form.contact %}
+<div class="row">
+  <div class="large-9 large-offset-3 columns">
+    <div class="hide">
+      {{form.DELETE}}
+    </div>
+    <a href="#" id="{{form.DELETE.id_for_label}}" class="delete-link"><i class="fa fa-trash-o"></i> Delete this application</a>
+  </div>
+</div>
