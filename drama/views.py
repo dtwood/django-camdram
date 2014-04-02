@@ -11,6 +11,8 @@ from haystack.query import SearchQuerySet
 from django.views.generic import TemplateView, DetailView, CreateView, UpdateView, DeleteView, ListView, View
 import json
 import autocomplete_light
+import hashlib
+from registration.backends.simple.views import RegistrationView
 
 
 def index(request):
@@ -214,7 +216,13 @@ class ItemUpdateView(FormSetMixin, UpdateView):
         else:
             return super(MyCreateView, self).get_success_url()
     
-   
+class EmailRegistrationView(RegistrationView):
+    form_class = EmailRegistrationForm
+    def register(self, request, **cleaned_data):
+        cleaned_data['username'] = hashlib.md5(cleaned_data['email'].encode('utf-8')).hexdigest()[0:30]
+        return super(EmailRegistrationView, self).register(request, **cleaned_data)
+
+
 def display(request, model, template=None, get_context=None, *args, **kwargs):
     if not get_context:
         def get_context(self, **kwargs):
@@ -225,7 +233,7 @@ def display(request, model, template=None, get_context=None, *args, **kwargs):
 
 @login_required
 def new(request, model, model_name=None, form=None, *args, **kwargs):
-    if request.user.has_perm('drama.add_' + model.__name__):
+    if request.user.has_perm('drama.add_' + model.__name__.lower()):
         view = MyCreateView.as_view(model=model, model_name=model_name, form_class=form)
         return view(request, *args, **kwargs)
     else:
@@ -235,7 +243,7 @@ def new(request, model, model_name=None, form=None, *args, **kwargs):
 @login_required
 def edit(request, model, slug, model_name=None, form=None, *args, **kwargs):
     item = get_object_or_404(model, slug=slug)
-    if request.user.has_perm('drama.change_' + model.__name__, item):
+    if request.user.has_perm('drama.change_' + model.__name__.lower(), item):
         view = MyUpdateView.as_view(model=model, model_name=model_name, form_class=form)
         return view(request, slug=slug, *args, **kwargs)
     else:
@@ -245,7 +253,7 @@ def edit(request, model, slug, model_name=None, form=None, *args, **kwargs):
 @login_required
 def remove(request, model, slug, *args, **kwargs):
     item = get_object_or_404(model, slug=slug)
-    if request.user.has_perm('drama.delete_' + model.__name__, item):
+    if request.user.has_perm('drama.delete_' + model.__name__.lower(), item):
         view = DeleteView.as_view(model=model, success_url="/")
         return view(request, slug=slug, *args, **kwargs)
     else:
@@ -260,7 +268,7 @@ def list(request, model, model_name, *args, **kwargs):
 @login_required
 def related_edit(request, model, form, slug, *args, **kwargs):
     show = get_object_or_404(Show, slug=slug)
-    if request.user.has_perm('drama.change_' + show.__class__.__name__, show):
+    if request.user.has_perm('drama.change_' + show.__class__.__name__.lower(), show):
         try:
             item = model.objects.filter(show__slug=slug)[0]
             view = ItemUpdateView.as_view(model=model, form_class=form, object=item, success_url=reverse('display', kwargs={'model_name':'shows', 'slug':slug}), form_kwargs={'parent':show, 'parent_name':'show'}, parent=show)
@@ -273,7 +281,7 @@ def related_edit(request, model, form, slug, *args, **kwargs):
 @login_required
 def related_remove(request, model, slug, *args, **kwargs):
     show = get_object_or_404(Show, slug=slug)
-    if request.user.has_perm('drama.change_' + show.__class__.__name__, show):
+    if request.user.has_perm('drama.change_' + show.__class__.__name__.lower(), show):
         try:
             item = model.objects.filter(show__slug=slug)[0]
         except IndexError:
@@ -288,7 +296,7 @@ def related_remove(request, model, slug, *args, **kwargs):
 @csrf_protect
 def application_edit(request, model, slug, form, prefix, *args, **kwargs):
     parent = get_object_or_404(model, slug=slug)
-    if request.user.has_perm('drama.change_' + model.__name__, parent):
+    if request.user.has_perm('drama.change_' + model.__name__.lower(), parent):
         if request.method == 'GET':
             context = {}
             context['content_form'] = form(instance=parent)

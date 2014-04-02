@@ -1,10 +1,13 @@
 from haystack.forms import SearchForm
+import hashlib
 import datetime
 import autocomplete_light
 autocomplete_light.autodiscover()
 from django import forms
 from django.forms.models import inlineformset_factory
 from drama.models import *
+from registration.forms import RegistrationForm
+from django.contrib.auth.models import User
 
 
 class CamdramSearchForm(SearchForm):
@@ -266,3 +269,20 @@ class ProdForm(forms.Form):
     person = forms.ModelChoiceField(Person.objects.all(),
             widget=autocomplete_light.ChoiceWidget('PersonAutocomplete',
                     attrs={'placeholder':'Person'}))
+
+
+class EmailRegistrationForm(RegistrationForm):
+    def __init__(self, *args, **kwargs):
+        super(EmailRegistrationForm, self).__init__(*args, **kwargs)
+        del self.fields['username']
+
+    def clean_email(self):
+        """
+        Validate that the email is not already in use.
+        
+        """
+        existing = User.objects.filter(username__iexact=hashlib.md5(self.cleaned_data['email'].encode('utf-8')).hexdigest())[0:30]
+        if existing.exists():
+            raise forms.ValidationError(_("A user with that username already exists."))
+        else:
+            return self.cleaned_data['email']

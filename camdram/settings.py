@@ -122,6 +122,7 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # this is default
+    'drama.auth.EmailBackend',
     'guardian.backends.ObjectPermissionBackend',
     )
 

@@ -28,7 +28,7 @@
 	  <ul class="right">
 	    {% if user.is_authenticated %}
 	    <li id="account-link" class="dropdown-link">
-	      <a href="#">{{user.username}}</a>
+	      <a href="#">{{user.email}}</a>
 	      <ul id="account-dropdown" class="topbar-dropdown">
 		<li><a href="{% url 'password_change' %}"><i class="fa fa-cogs fa-fw"></i> Account Settings</a></li>
 		<li><a href="{% url 'logout' %}"><i class="fa fa-sign-out fa-fw"></i> Log out</a></li>

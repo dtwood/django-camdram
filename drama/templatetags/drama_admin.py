@@ -10,7 +10,7 @@ class AdminPanelNode(template.Node):
     def render(self, context):
         user = context['user']
         item = context[self.item_name]
-        if user.has_perm('drama.change_' + item.__class__.__name__, item):
+        if user.has_perm('drama.change_' + item.__class__.__name__.lower(), item):
             context = {}
             context['type'] = item.__class__.__name__.lower()
             context['item'] = item

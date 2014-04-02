@@ -81,7 +81,7 @@ society_patterns = patterns('drama.views',
                          url(r'', include(list_patterns)),
                          )
 simple_register_patterns = patterns('',
-url(r'^register/$', SimpleRegistrationView.as_view(), name='registration_register'),
+url(r'^register/$', views.EmailRegistrationView.as_view(), name='registration_register'),
 url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'), name='registration_disallowed'),
 (r'', include('django.contrib.auth.urls')),
 )
