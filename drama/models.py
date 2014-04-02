@@ -11,9 +11,13 @@ class Person(models.Model):
     name = models.CharField(max_length=200)
     desc = models.TextField('Bio', blank=True)
     slug = models.SlugField(max_length=200, blank=True, editable=False)
+    approved = models.BooleanField(editable=False, default=False)
 
     class Meta:
         ordering = ['name']
+        permissions = (
+            ('approve_person', 'Approve Person'),
+            )
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -73,9 +77,13 @@ class Venue(models.Model):
     desc = models.TextField('Description', blank=True)
     address = models.CharField(max_length=200, blank=True)
     slug = models.SlugField(max_length=200, blank=True, editable=False)
+    approved = models.BooleanField(editable=False, default=False)
 
     class Meta:
         ordering = ['name']
+        permissions = (
+            ('approve_venue', 'Approve Venue'),
+            )
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -112,9 +120,13 @@ class Society(models.Model):
     image = models.ImageField(
         upload_to='images/', blank=True, verbose_name="Logo")
     slug = models.SlugField(max_length=200, blank=True, editable=False)
+    approved = models.BooleanField(editable=False, default=False)
 
     class Meta:
         ordering = ['name']
+        permissions = (
+            ('approve_society', 'Approve Society'),
+            )
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -154,9 +166,13 @@ class Show(models.Model):
     year = models.IntegerField()
     image = models.ImageField(upload_to='images/', blank=True)
     slug = models.SlugField(max_length=200, blank=True, unique=True)
+    approved = models.BooleanField(editable=False, default=False)
 
     class Meta:
         ordering = ['name']
+        permissions = (
+            ('approve_show', 'Approve Show'),
+            )
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -227,9 +243,13 @@ class Role(models.Model):
         max_length=4, choices=categories, verbose_name='Role Category')
     link = models.BooleanField()
     slug = models.SlugField(max_length=200, blank=True, editable=False)
+    approved = models.BooleanField(editable=False, default=False)
 
     class Meta:
         ordering = ['name']
+        permissions = (
+            ('approve_role', 'Approve Role'),
+            )
 
     def save(self, *args, **kwargs):
         if not self.id:

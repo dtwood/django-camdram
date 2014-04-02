@@ -14,7 +14,7 @@ class AdminPanelNode(template.Node):
             context = {}
             context['type'] = item.__class__.__name__.lower()
             context['item'] = item
-            if user.has_perm('drama.admin_' + item.__class__.__name__, item):
+            if user.has_perm('drama.admin_' + item.__class__.__name__.lower(), item):
                 context['admin'] = True
             return self.template.render(template.Context(context))
         else:
