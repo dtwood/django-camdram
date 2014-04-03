@@ -33,7 +33,7 @@ body {
 
 /* line 300, ../sass/foundation/components/_global.scss */
 body {
-  background: white;
+  background: #fff9e3;
   color: #222222;
   padding: 0;
   margin: 0;
@@ -1100,7 +1100,7 @@ html, body {
 /* line 50, ../sass/app2.scss */
 #wrapper {
   min-height: 100%;
-  margin-bottom: -10em;
+  margin-bottom: -12.5em;
 }
 /* line 54, ../sass/app2.scss */
 #wrapper:before {
@@ -1127,7 +1127,7 @@ html, body {
 #wrapper:after {
   content: "";
   display: block;
-  height: 10em;
+  height: 12.5em;
 }
 
 /* line 81, ../sass/app2.scss */
@@ -1173,7 +1173,7 @@ footer {
 @media only screen and (min-width: 768px) {
   /* line 116, ../sass/app2.scss */
   footer {
-    height: 10em;
+    height: 12.5em;
   }
 }
 /* line 123, ../sass/app2.scss */

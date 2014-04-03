@@ -23,7 +23,7 @@ $section-border-color: #e6e6e6;
 @import "foundation/components/dropdown";
 @import "foundation/components/panels";
 
-$footer-height: emCalc(160);
+$footer-height: emCalc(200);
 $footer-height-mobile: emCalc(350);
 
 @mixin brighten($factor) {

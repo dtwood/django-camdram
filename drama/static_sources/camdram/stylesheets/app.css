@@ -418,10 +418,11 @@ footer #sitemap h5 {
 /* line 354, ../sass/app.scss */
 footer #copyright {
   background: #3a393a;
-  margin: 0;
+  margin: auto;
+  padding: 0 30px 15px 30px;
 }
 
-/* line 358, ../sass/app.scss */
+/* line 359, ../sass/app.scss */
 footer #copyright p {
   max-width: 960px;
   text-align: center;
@@ -431,12 +432,12 @@ footer #copyright p {
 }
 
 /* Override the default panel properties. */
-/* line 371, ../sass/app.scss */
+/* line 372, ../sass/app.scss */
 label.required:after {
   content: "*";
 }
 
-/* line 373, ../sass/app.scss */
+/* line 374, ../sass/app.scss */
 select {
   width: auto;
   background: #fff;
@@ -448,39 +449,39 @@ select {
   border: 1px solid #cccccc;
 }
 
-/* line 384, ../sass/app.scss */
+/* line 385, ../sass/app.scss */
 .dropdown.custom {
   float: left;
 }
 
-/* line 388, ../sass/app.scss */
+/* line 389, ../sass/app.scss */
 .performances .performance:last-child {
   border-bottom: 1px solid #ddd;
 }
 
-/* line 392, ../sass/app.scss */
+/* line 393, ../sass/app.scss */
 .performance {
   border-top: 1px solid #ddd;
   padding: 10px 0 0;
 }
 
-/* line 397, ../sass/app.scss */
+/* line 398, ../sass/app.scss */
 input[type=date], input[type=time] {
   width: auto;
   display: -webkit-inline-flex;
 }
 
-/* line 401, ../sass/app.scss */
+/* line 402, ../sass/app.scss */
 input[type=date] {
   max-width: 150px;
 }
 
-/* line 404, ../sass/app.scss */
+/* line 405, ../sass/app.scss */
 input[type=time] {
   max-width: 120px;
 }
 
-/* line 408, ../sass/app.scss */
+/* line 409, ../sass/app.scss */
 a.infinite_scroll {
   display: block;
   text-align: center;
@@ -490,7 +491,7 @@ a.infinite_scroll {
   color: #333;
 }
 
-/* line 416, ../sass/app.scss */
+/* line 417, ../sass/app.scss */
 a.infinite_scroll:hover {
   background: #f0f0f0;
 }
@@ -498,7 +499,7 @@ a.infinite_scroll:hover {
 /*---------------------------------------
    Entities
 -----------------------------------------*/
-/* line 425, ../sass/app.scss */
+/* line 426, ../sass/app.scss */
 #entity_news {
   height: 500px;
   overflow-y: scroll;
@@ -508,17 +509,17 @@ a.infinite_scroll:hover {
   border: 1px solid #AAA;
 }
 
-/* line 434, ../sass/app.scss */
+/* line 435, ../sass/app.scss */
 #entity_news p {
   font-size: 10px;
 }
 
-/* line 438, ../sass/app.scss */
+/* line 439, ../sass/app.scss */
 #entity_news h6 {
   font-size: 11px;
 }
 
-/* line 442, ../sass/app.scss */
+/* line 443, ../sass/app.scss */
 img.has_media {
   cursor: pointer;
 }
