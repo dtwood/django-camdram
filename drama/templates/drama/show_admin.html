@@ -1,0 +1,28 @@
+{% extends 'drama/base.html' %}
+
+{% block title %}Shows{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="large-12 columns">
+    <h3>Show Administration</h3>
+    <h5>My Shows</h5>
+    <ul class="large-block-grid-2">
+      {% for show in shows %}
+      <li><div class="panel">
+	  <h5><a href="{% url 'display' 'shows' show.slug %}">{{show.name}}</a></h5>
+	  <p>{% for performance in show.performance_set.all %}
+	    {{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="{% url 'display' model_name='venues' slug=performance.venue.slug %}">{{performance.venue.name}}</a><br />
+	    {% endfor %}</p>
+	  <p>{{show.desc}}</p>
+      </div></li>
+      {% empty %}
+      <li>You have not created any shows.</li>
+      {% endfor %}
+    </ul>
+    <p>
+      <a class="button small" href="{% url 'new' 'shows' %}">Create a show</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

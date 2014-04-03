@@ -13,6 +13,7 @@ import json
 import autocomplete_light
 import hashlib
 from registration.backends.simple.views import RegistrationView
+from guardian.shortcuts import assign_perm, get_objects_for_user
 
 
 def index(request):
@@ -165,6 +166,11 @@ class MyCreateView(FormSetMixin, autocomplete_light.CreateView):
         context['current_pagetype'] = self.model_name
         del context['form']
         return context
+
+    def form_valid(self, form):
+        result = super(MyCreateView, self).form_valid(form)
+        assign_perm('drama.change_' + self.object.__class__.__name__.lower(), self.request.user, self.object)
+        return result
 
     def get_success_url(self):
         if self.success_url:
@@ -407,3 +413,8 @@ def role_reorder(request, slug, *args, **kwargs):
             raise PermissionDenied
     else:
         return HttpResponse('')
+
+@login_required
+def show_admin(request):
+    shows = get_objects_for_user(request.user, 'drama.change_show')
+    return render(request, 'drama/show_admin.html', {'shows':shows})

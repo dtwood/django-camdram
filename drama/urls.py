@@ -86,7 +86,7 @@ url(r'^register/closed/$', TemplateView.as_view(template_name='registration/regi
 (r'', include('django.contrib.auth.urls')),
 )
 
-urlpatterns = patterns('',
+urlpatterns = patterns('drama.views',
                        url(r'^$', views.index, name='home'),
                        url(r'^auth/', include(simple_register_patterns)),
                        url(r'^diary/$', views.diary, name='diary'),
@@ -113,4 +113,5 @@ urlpatterns = patterns('',
                        url(r'^vacancies/', include(vacancy_patterns)),
                        url(r'autocomplete/',
                            include('autocomplete_light.urls')),
+                       url(r'show-admin/$', 'show_admin', name='show-admin'), 
                        )
