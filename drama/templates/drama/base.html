@@ -1,12 +1,14 @@
 {% load staticfiles %}
 {% load drama_admin %}
-{% load foundation_tags %}
+{% load compressed %}
 <!DOCTYPE html>
 <html>
   <head>
     <link rel='icon' href='/static/favicon.png' type='image/png' />
-    {{search_form.media}}
-    {{content_form.media}}
+    {% compressed_js 'vendor' %}
+    {% compressed_js 'app' %}
+    {% compressed_css 'app' %}
+    {% compressed_css 'vendor' %}
     {% include 'autocomplete_light/static.html' %}
     <title>{% block title %}{% endblock %} - Camdram</title>
   </head>
@@ -46,7 +48,7 @@
       <header>
 	<div class="row">
 	 <div class="large-3 columns logo">
-	   <h1><a href="{% url 'home' %}"><img src="{% static 'drama/logo.png' %}" alt="camdram" title="camdram"/></a></h1>
+	   <h1><a href="{% url 'home' %}"><img src="{% static 'images/logo.png' %}" alt="camdram" title="camdram"/></a></h1>
 	 </div>
 	 <div class="large-9 columns search">
 	  <form method="get" action="/search" class="searchform" id="search_form">
@@ -73,8 +75,8 @@
 	  </ul>
 	  <ul class="right">
 	    <li class="has-dropdown">
-              <a href="#" id="nav-edit-link"><i class="fa fa-edit"></i></a>
-              <ul class="dropdown">
+              <a href="#" id="nav-edit-link" data-dropdown="edit-menu"><i class="fa fa-edit"></i></a>
+              <ul id="edit-menu" class="f-dropdown" data-dropdown-content="">
 		{% block extra_menu %}{% endblock %}
 		{% default_menu %}
 	      </ul>
@@ -142,5 +144,6 @@
     })
 </script>
     </footer>
+<script> $(document).foundation(); </script>
   </body>
 </html>

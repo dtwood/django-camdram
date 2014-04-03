@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'haystack',
     'south',
     'autocomplete_light',
+    'pipeline',
     'drama',
 )
 
@@ -129,3 +130,45 @@ AUTHENTICATION_BACKENDS = (
 ANONYMOUS_USER_ID = -1
 
 GUARDIAN_RAISE_403 = True
+
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+
+PIPELINE_CSS = {
+    'vendor': {
+        'source_filenames': (
+            'stylesheets/font-awesome/css/font-awesome.css',
+            'stylesheets/jquery-ui/minified/jquery-ui.min.css',
+            'stylesheets/h5bp/*.css',
+            'stylesheets/foundation/*.css',
+        ),
+        'output_filename': 'css/vendor.css',
+    },
+    'app': {
+        'source_filenames': (
+            'stylesheets/camdram/*.css',
+        ),
+        'output_filename': 'css/main.css'
+    },
+}
+
+PIPELINE_JS = {
+    'vendor': {
+        'source_filenames': (
+            'js/jquery/jquery-1.11.0.min.js',
+            'js/jquery-ui/jquery-ui.min.js',
+            'js/foundation/foundation/foundation.js',
+            'js/foundation/foundation/foundation.*.js',
+            'js/foundation/vendor/*.js',
+        ),
+        'output_filename': 'js/vendor.js',
+    },
+    'app': {
+        'source_filenames': (
+            'js/autocomplete.js',
+        ),
+        'output_filename': 'js/app.js'
+    },
+}
+
+PIPELINE_DISABLE_WRAPPER = True
+

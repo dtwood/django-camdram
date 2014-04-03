@@ -1,0 +1,13 @@
+/* line 1, ../sass/news.scss */
+#organisation-news {
+  max-height: 400px;
+  overflow-y: scroll;
+  border: 1px solid #ccc;
+  font-size: 0.9em;
+  padding: 0.5em;
+  clear: both;
+}
+/* line 9, ../sass/news.scss */
+#organisation-news .row {
+  margin: 0;
+}
