@@ -10,3 +10,14 @@ class EmailBackend(backends.ModelBackend):
     def authenticate(self, username=None, password=None, **kwargs):
         new_username = hashlib.md5(username.encode('utf-8')).hexdigest()[0:30]
         return super(EmailBackend, self).authenticate(username=new_username, password=password, **kwargs)
+
+class RulePermissionsBackend(object):
+
+    def authenticate(self, *args, **kwargs):
+        return None
+
+    def has_perm(self, user_obj, perm, obj=None):
+        if obj is None:
+            return False
+        else:
+            return False
