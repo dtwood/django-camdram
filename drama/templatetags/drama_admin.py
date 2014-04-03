@@ -11,12 +11,12 @@ class AdminPanelNode(template.Node):
         user = context['user']
         item = context[self.item_name]
         if user.has_perm('drama.change_' + item.__class__.__name__.lower(), item):
-            context = {}
-            context['type'] = item.__class__.__name__.lower()
-            context['item'] = item
+            subcontext = {}
+            subcontext['type'] = item.__class__.__name__.lower()
+            subcontext['item'] = item
             if user.has_perm('drama.admin_' + item.__class__.__name__.lower(), item):
-                context['admin'] = True
-            return self.template.render(template.Context(context))
+                subcontext['admin'] = True
+            return self.template.render(template.Context(subcontext))
         else:
             return ""
         
@@ -27,3 +27,23 @@ def admin_panel(parser, token):
     except ValueError:
         raise template.TemplateSyntaxError("%r tag requires a single argument" % token.contents.split()[0])
     return AdminPanelNode(item_name)
+
+
+class DefaultMenuNode(template.Node):
+    def __init__(self):
+        self.template = get_template('drama/default_menu.html')
+
+    def render(self, context):
+        user = context['user']
+        subcontext = {
+            'add_show':user.has_perm('drama.add_show'),
+            'add_venue':user.has_perm('drama.add_venue'),
+            'add_role':user.has_perm('drama.add_role'),
+            'add_society':user.has_perm('drama.add_society'),
+            }
+        return self.template.render(template.Context(subcontext))
+        
+        
+@register.tag
+def default_menu(parser, token):
+    return DefaultMenuNode()

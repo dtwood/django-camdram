@@ -1,4 +1,6 @@
 {% load staticfiles %}
+{% load drama_admin %}
+{% load foundation_tags %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -68,6 +70,15 @@
 	      <a href="{{item.path}}">{{item.text}}</a>
 	    </li>
 	    {% endfor %}
+	  </ul>
+	  <ul class="right">
+	    <li class="has-dropdown">
+              <a href="#" id="nav-edit-link"><i class="fa fa-edit"></i></a>
+              <ul class="dropdown">
+		{% block extra_menu %}{% endblock %}
+		{% default_menu %}
+	      </ul>
+	    </li>
 	  </ul>
 	</section>
       </nav>
