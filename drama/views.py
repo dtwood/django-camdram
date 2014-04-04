@@ -13,7 +13,7 @@ import json
 import autocomplete_light
 import hashlib
 from registration.backends.simple.views import RegistrationView
-from guardian.shortcuts import assign_perm, get_objects_for_user
+from guardian.shortcuts import assign_perm, get_objects_for_user, remove_perm
 
 
 def index(request):
@@ -418,3 +418,24 @@ def role_reorder(request, slug, *args, **kwargs):
 def show_admin(request):
     shows = get_objects_for_user(request.user, 'drama.change_show')
     return render(request, 'drama/show_admin.html', {'shows':shows})
+
+@login_required
+def link_user(request, slug, *args, **kwargs):
+    person = get_object_or_404(Person, slug=slug)
+    user = request.user
+    if person.user is not None:
+        raise PermissionDenied
+    else:
+        try:
+            user.person
+        except Person.DoesNotExist:
+            pass
+        else:
+            #May want to think about making this stricter
+           remove_perm('change_person', user, person)
+        person.user = user
+        person.save()
+        assign_perm('change_person', user, person)
+        user.first_name = person.name
+        user.save()
+        return redirect(person.get_absolute_url())

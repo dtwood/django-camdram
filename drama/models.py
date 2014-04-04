@@ -2,6 +2,7 @@ from django.db import models, IntegrityError
 from django.template.defaultfilters import slugify
 from django.core.urlresolvers import reverse
 from datetime import date, timedelta, datetime
+from django.conf import settings
 
 
 class Person(models.Model):
@@ -12,6 +13,7 @@ class Person(models.Model):
     desc = models.TextField('Bio', blank=True)
     slug = models.SlugField(max_length=200, blank=True, editable=False)
     approved = models.BooleanField(editable=False, default=False)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, editable=False, blank=True, null=True)
 
     class Meta:
         ordering = ['name']
