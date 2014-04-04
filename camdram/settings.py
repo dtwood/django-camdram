@@ -10,12 +10,15 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = '/srv/django/camdram/'
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 STATIC_ROOT = '/srv/http/static/'
 MEDIA_ROOT = '/srv/http/'
 MEDIA_URL = '/'
 LOGIN_URL = '/auth/login'
 LOGIN_REDIRECT_URL = '/'
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates'),
+    )
 
 
 # Quick-start development settings - unsuitable for production
@@ -154,17 +157,17 @@ PIPELINE_CSS = {
 PIPELINE_JS = {
     'vendor': {
         'source_filenames': (
-            'js/jquery/jquery-1.11.0.min.js',
-            'js/jquery-ui/jquery-ui.min.js',
-            'js/foundation/foundation/foundation.js',
-            'js/foundation/foundation/foundation.*.js',
-            'js/foundation/vendor/*.js',
+            'javascripts/jquery/jquery-1.11.0.min.js',
+            'javascripts/jquery-ui/jquery-ui.min.js',
+            'javascripts/foundation/foundation/foundation.js',
+            'javascripts/foundation/foundation/foundation.*.js',
+            'javascripts/foundation/vendor/custom.modernizr.js',
         ),
         'output_filename': 'js/vendor.js',
     },
     'app': {
         'source_filenames': (
-            'js/autocomplete.js',
+            'javascripts/camdram/autocomplete.js',
         ),
         'output_filename': 'js/app.js'
     },

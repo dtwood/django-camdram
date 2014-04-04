@@ -104,7 +104,7 @@
 }
 
 /* line 104, ../sass/autocomplete.scss */
-.tt-dropdown-menu {
+.tt-dropdown-menu, span.autocomplete-light-widget.yourlabs-autocomplete {
   background: #eee;
   width: 100%;
   border: 1px solid #777;
@@ -142,4 +142,36 @@
 /* line 137, ../sass/autocomplete.scss */
 .tt-suggestion.tt-is-under-cursor {
   background-color: #ffa;
+}
+
+/* line 142, ../sass/autocomplete.scss */
+span.yourlabs-autocomplete.autocomplete-light-widget span {
+  display: block;
+  border-bottom: 1px solid #CCC;
+  color: #666;
+  background-color: #FFF;
+}
+/* line 148, ../sass/autocomplete.scss */
+span.yourlabs-autocomplete.autocomplete-light-widget span p {
+  margin: 0;
+}
+/* line 152, ../sass/autocomplete.scss */
+span.yourlabs-autocomplete.autocomplete-light-widget span i {
+  float: left;
+  color: #666;
+  margin: 4px 0;
+  margin-left: -24px;
+}
+/* line 159, ../sass/autocomplete.scss */
+span.yourlabs-autocomplete.autocomplete-light-widget span:nth-child(even) {
+  background-color: #F3F3F3;
+}
+/* line 163, ../sass/autocomplete.scss */
+span.yourlabs-autocomplete.autocomplete-light-widget span.tt-is-under-cursor, span.yourlabs-autocomplete.autocomplete-light-widget span.hilight {
+  background-color: #ffa;
+}
+
+/* line 168, ../sass/autocomplete.scss */
+input[type="text"].autocomplete {
+  margin: 0px 0px 0.5em;
 }

@@ -7,9 +7,10 @@
 - venue
   - map
 
-* Application Ordering
+* Application Ordering?
 * API
 * TODO Diary
+- including in society and venue pages
 * social integration
 * fun stuff
 - tour map
@@ -34,9 +35,9 @@
 
 * testing
 * commenting
-* add get involved to roles
-* refactor ssttatic files
-* audition_form admin panel
 * show ordering in person view
-* delete button in formsets
 * edit/delete links in vacancies section
+* imagefield form appearance
+* pretify registration form templates
+* year field
+* add person box sizes
