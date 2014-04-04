@@ -32,7 +32,7 @@ class Person(models.Model):
 
     @property
     def num_shows(self):
-        return self.show_set.distinct().count()
+        return Show.objects.filter(roleinstance__person=self).distinct().count()
 
     @property
     def first_active(self):
