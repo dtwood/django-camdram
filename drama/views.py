@@ -17,7 +17,7 @@ from guardian.shortcuts import assign_perm, get_objects_for_user
 
 
 def index(request):
-    return HttpResponse("Hello World")
+    return render(request, 'drama/base.html')
 
 
 def diary(request):

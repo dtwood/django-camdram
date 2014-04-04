@@ -419,25 +419,23 @@ footer #sitemap h5 {
 footer #copyright {
   background: #3a393a;
   margin: auto;
-  padding: 0 30px 15px 30px;
 }
 
-/* line 359, ../sass/app.scss */
+/* line 358, ../sass/app.scss */
 footer #copyright p {
   max-width: 960px;
   text-align: center;
   margin: auto;
   color: white;
-  padding: 10px 0;
 }
 
 /* Override the default panel properties. */
-/* line 372, ../sass/app.scss */
+/* line 370, ../sass/app.scss */
 label.required:after {
   content: "*";
 }
 
-/* line 374, ../sass/app.scss */
+/* line 372, ../sass/app.scss */
 select {
   width: auto;
   background: #fff;
@@ -449,39 +447,39 @@ select {
   border: 1px solid #cccccc;
 }
 
-/* line 385, ../sass/app.scss */
+/* line 383, ../sass/app.scss */
 .dropdown.custom {
   float: left;
 }
 
-/* line 389, ../sass/app.scss */
+/* line 387, ../sass/app.scss */
 .performances .performance:last-child {
   border-bottom: 1px solid #ddd;
 }
 
-/* line 393, ../sass/app.scss */
+/* line 391, ../sass/app.scss */
 .performance {
   border-top: 1px solid #ddd;
   padding: 10px 0 0;
 }
 
-/* line 398, ../sass/app.scss */
+/* line 396, ../sass/app.scss */
 input[type=date], input[type=time] {
   width: auto;
   display: -webkit-inline-flex;
 }
 
-/* line 402, ../sass/app.scss */
+/* line 400, ../sass/app.scss */
 input[type=date] {
   max-width: 150px;
 }
 
-/* line 405, ../sass/app.scss */
+/* line 403, ../sass/app.scss */
 input[type=time] {
   max-width: 120px;
 }
 
-/* line 409, ../sass/app.scss */
+/* line 407, ../sass/app.scss */
 a.infinite_scroll {
   display: block;
   text-align: center;
@@ -491,7 +489,7 @@ a.infinite_scroll {
   color: #333;
 }
 
-/* line 417, ../sass/app.scss */
+/* line 415, ../sass/app.scss */
 a.infinite_scroll:hover {
   background: #f0f0f0;
 }
@@ -499,7 +497,7 @@ a.infinite_scroll:hover {
 /*---------------------------------------
    Entities
 -----------------------------------------*/
-/* line 426, ../sass/app.scss */
+/* line 424, ../sass/app.scss */
 #entity_news {
   height: 500px;
   overflow-y: scroll;
@@ -509,17 +507,17 @@ a.infinite_scroll:hover {
   border: 1px solid #AAA;
 }
 
-/* line 435, ../sass/app.scss */
+/* line 433, ../sass/app.scss */
 #entity_news p {
   font-size: 10px;
 }
 
-/* line 439, ../sass/app.scss */
+/* line 437, ../sass/app.scss */
 #entity_news h6 {
   font-size: 11px;
 }
 
-/* line 443, ../sass/app.scss */
+/* line 441, ../sass/app.scss */
 img.has_media {
   cursor: pointer;
 }

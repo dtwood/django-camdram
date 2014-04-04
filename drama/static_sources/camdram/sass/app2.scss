@@ -160,12 +160,6 @@ header .search {
   font-size:0.9em;
 }
 
-.topbar-dropdown {
-  position:absolute;
-  top:9999px;
-  z-index:99;
-}
-
 #account-link img {
   margin-right:3px;
   box-shadow: 0 0 3px #fff;
@@ -174,7 +168,6 @@ header .search {
 }
 
 ul.topbar-dropdown {
-  $default-float: right;
   @include dropdown-container(list, true, 300px);
   margin:0;
   width:auto;

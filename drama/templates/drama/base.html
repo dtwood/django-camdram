@@ -31,9 +31,9 @@
 	  
 	  <ul class="right">
 	    {% if user.is_authenticated %}
-	    <li id="account-link" class="dropdown-link">
-	      <a href="#">{{user.email}}</a>
-	      <ul id="account-dropdown" class="topbar-dropdown">
+	    <li id="account-link" data-dropdown="account-dropdown" data-options="is_hover:true">
+	      <a href="#">{% if user.get_full_name %}{{user.get_full_name}}{% elif user.email %}{{user.email}}{% else %}{{user.username}}{% endif %}</a>
+	      <ul id="account-dropdown" class="topbar-dropdown" data-dropdown-content="" data-options="align_right">
 		<li><a href="{% url 'password_change' %}"><i class="fa fa-cogs fa-fw"></i> Account Settings</a></li>
 		<li><a href="{% url 'logout' %}"><i class="fa fa-sign-out fa-fw"></i> Log out</a></li>
         </ul>
@@ -116,33 +116,6 @@
           Comments &amp; queries to <a href="mailto:websupport@camdram.net">websupport@camdram.net</a>
         </p>
       </div>
-    <script>
-     $(document).bind('ready', function() { 
-      $('.dropdown-link').each(function() {
-            var $link = $(this);
-            var $dropdown = $('.topbar-dropdown', $link);
-            $dropdown.hide();
-            var hideEnabled = true;
-
-            $link.mouseenter(function() {
-                $dropdown.css({
-                    'position': 'absolute',
-                    'top': $link.offset().top + $link.height(),
-                    'left': $link.offset().left + $link.outerWidth() - $dropdown.outerWidth()
-                }).show();
-                $dropdown.show();
-            }).mouseleave(function() {
-                    if (hideEnabled) $dropdown.hide();
-                });
-            $('input', $dropdown).bind('invalid',function() {
-                hideEnabled = false;
-                window.setTimeout(function() {
-                    hideEnabled = true;
-                },200);
-            })
-        })
-    })
-</script>
     </footer>
 <script> $(document).foundation(); </script>
   </body>
