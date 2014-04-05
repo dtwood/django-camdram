@@ -1227,7 +1227,7 @@ header .search {
   font-size: 0.9em;
 }
 
-/* line 166, ../sass/app2.scss */
+/* line 163, ../sass/app2.scss */
 #account-link img {
   margin-right: 3px;
   box-shadow: 0 0 3px #fff;
@@ -1235,7 +1235,7 @@ header .search {
   margin-bottom: -4px;
 }
 
-/* line 173, ../sass/app2.scss */
+/* line 170, ../sass/app2.scss */
 ul.topbar-dropdown {
   position: absolute;
   top: -9999px;
@@ -1300,17 +1300,17 @@ ul.topbar-dropdown.right:after {
   left: auto;
   right: 9px;
 }
-/* line 179, ../sass/app2.scss */
+/* line 176, ../sass/app2.scss */
 ul.topbar-dropdown a {
   padding: 0.2em 0.8em;
   display: block;
 }
-/* line 182, ../sass/app2.scss */
+/* line 179, ../sass/app2.scss */
 ul.topbar-dropdown a:hover {
   background: #eee;
 }
 
-/* line 189, ../sass/app2.scss */
+/* line 186, ../sass/app2.scss */
 #login-dropdown {
   width: 300px;
   background: #666666;
@@ -1318,43 +1318,43 @@ ul.topbar-dropdown a:hover {
   font-size: 0.8em;
   padding-top: 1em;
 }
-/* line 196, ../sass/app2.scss */
+/* line 193, ../sass/app2.scss */
 #login-dropdown a, #login-dropdown label {
   color: white;
   font-size: 1em;
 }
-/* line 201, ../sass/app2.scss */
+/* line 198, ../sass/app2.scss */
 #login-dropdown .button {
   margin-bottom: 0;
 }
 
-/* line 206, ../sass/app2.scss */
+/* line 203, ../sass/app2.scss */
 #header-bar {
   background: #3a393a;
 }
-/* line 209, ../sass/app2.scss */
+/* line 206, ../sass/app2.scss */
 #header-bar section {
   max-width: 62.5em;
   margin: auto;
 }
-/* line 213, ../sass/app2.scss */
+/* line 210, ../sass/app2.scss */
 #header-bar section:after {
   content: " ";
   clear: both;
   height: 0;
   display: block;
 }
-/* line 221, ../sass/app2.scss */
+/* line 218, ../sass/app2.scss */
 #header-bar section > ul {
   margin: 0;
 }
-/* line 224, ../sass/app2.scss */
+/* line 221, ../sass/app2.scss */
 #header-bar section > ul > li {
   color: white;
   display: block;
   float: left;
 }
-/* line 227, ../sass/app2.scss */
+/* line 224, ../sass/app2.scss */
 #header-bar section > ul > li > a {
   color: white;
   display: inline-block;
@@ -1362,11 +1362,11 @@ ul.topbar-dropdown a:hover {
   font-size: 0.8em;
   font-weight: bold;
 }
-/* line 234, ../sass/app2.scss */
+/* line 231, ../sass/app2.scss */
 #header-bar section > ul > li > a.icon-link {
   padding: 7px 3px;
 }
-/* line 237, ../sass/app2.scss */
+/* line 234, ../sass/app2.scss */
 #header-bar section > ul > li > a.icon-link:hover {
   filter: brightness(1.5);
   -webkit-filter: brightness(1.5);
@@ -1374,36 +1374,36 @@ ul.topbar-dropdown a:hover {
   -o-filter: brightness(1.5);
   -ms-filter: brightness(1.5);
 }
-/* line 243, ../sass/app2.scss */
+/* line 240, ../sass/app2.scss */
 #header-bar section > ul > li#login-link {
   padding-right: 5px;
 }
-/* line 246, ../sass/app2.scss */
+/* line 243, ../sass/app2.scss */
 #header-bar section > ul > li#login-link > a {
   padding-right: 5px;
 }
-/* line 251, ../sass/app2.scss */
+/* line 248, ../sass/app2.scss */
 #header-bar section > ul > li:hover {
   background: #666666;
 }
 
-/* line 261, ../sass/app2.scss */
+/* line 258, ../sass/app2.scss */
 table {
   border-collapse: collapse;
   width: 100%;
 }
 
-/* line 266, ../sass/app2.scss */
+/* line 263, ../sass/app2.scss */
 #nav-edit-link {
   line-height: inherit;
   padding-top: 0.7em;
 }
-/* line 269, ../sass/app2.scss */
+/* line 266, ../sass/app2.scss */
 #nav-edit-link i {
   font-size: 1.5em;
 }
 
-/* line 274, ../sass/app2.scss */
+/* line 271, ../sass/app2.scss */
 .error_panel {
   border-style: solid;
   border-width: 1px;
@@ -1434,14 +1434,14 @@ table {
   line-height: 1.4;
 }
 
-/* line 278, ../sass/app2.scss */
+/* line 275, ../sass/app2.scss */
 #dev-warning {
   background: #ffdddd;
   text-align: center;
   padding: 0.1em 1em;
   font-size: 0.9em;
 }
-/* line 284, ../sass/app2.scss */
+/* line 281, ../sass/app2.scss */
 #dev-warning h3 {
   color: #a00;
 }

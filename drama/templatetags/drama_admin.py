@@ -2,6 +2,7 @@ from django import template
 from django.template.loader import get_template
 from guardian.shortcuts import get_users_with_perms, get_groups_with_perms, get_perms_for_model
 from django.contrib.auth.models import Permission
+from drama.models import Venue
 
 register = template.Library()
 
@@ -22,7 +23,13 @@ class AdminPanelNode(template.Node):
                 if type == 'show' or type == 'role':
                     subcontext['admin'] = True
                     subcontext['users'] = get_users_with_perms(item, with_group_users=False)
-                    subcontext['groups'] = get_groups_with_perms(item)
+                    groups = list(get_groups_with_perms(item))
+                    if type == 'show':
+                        groups = groups + [item.society.group]
+                        for venue in Venue.objects.filter(performance__show=item).distinct():
+                            groups = groups + [venue.group]
+                    subcontext['groups'] = groups
+                    
                 elif type == 'venue' or type == 'society':
                     subcontext['admin'] = True
                     if item.group:

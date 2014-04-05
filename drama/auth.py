@@ -38,7 +38,7 @@ class RulePermissionsBackend(backends.ModelBackend):
                 raise WrongAppError("Passed perm has app label of '%s' and "
                     "given obj has '%s'" % (app_label, obj._meta.app_label))
         perm_type, obj_type = perm.split('_')
-        if perm_type not in ("change", "delete",):
+        if perm_type not in ("change", "delete", "approve",):
             return False
 
         if obj_type != obj.__class__.__name__.lower():

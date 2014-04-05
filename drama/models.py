@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from datetime import date, timedelta, datetime
 from django.conf import settings
 from django.contrib import auth
+from django.utils.safestring import mark_safe
 
 
 class Person(models.Model):
@@ -72,7 +73,7 @@ class Person(models.Model):
         return False
 
     def get_link(self):
-        return '<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name)
+        return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
 
 
 class Venue(models.Model):
@@ -122,7 +123,7 @@ class Venue(models.Model):
         return True
 
     def get_link(self):
-        return '<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name)
+        return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
 
 
 class Society(models.Model):
@@ -174,7 +175,7 @@ class Society(models.Model):
         return True
 
     def get_link(self):
-        return '<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name)
+        return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
 
 
 class Show(models.Model):
@@ -242,7 +243,7 @@ class Show(models.Model):
         return True
 
     def get_link(self):
-        return '<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name)
+        return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
 
 
 class Performance(models.Model):
@@ -298,7 +299,7 @@ class Role(models.Model):
         return False
 
     def get_link(self):
-        return '<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name)
+        return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
 
 
 class RoleInstance(models.Model):
