@@ -40,4 +40,4 @@
 * imagefield form appearance
 * pretify registration form templates
 * year field
-* add person box sizes
+* remove inline javascript

@@ -68,16 +68,19 @@ show_patterns = patterns('drama.views',
                          url(r'(?P<slug>[^/]+)/add_band', 'add_band', name='add_band'),
                          url(r'(?P<slug>[^/]+)/add_prod', 'add_prod', name='add_prod'),
                          url(r'(?P<slug>[^/]+)/role_reorder', 'role_reorder', name='role_reorder'),
+                         url(r'(?P<slug>[^/]+)/admins', 'change_admins', name='change_admins'),
                          url(r'^', include(list_patterns)),
                          )
 
 venue_patterns = patterns('drama.views',
                          url(r'(?P<slug>[^/]+)/applications/edit', 'application_edit', {'form': VenueApplicationFormset, 'prefix': 'venue'}, name='applications_edit'),
+                         url(r'(?P<slug>[^/]+)/admins', 'change_admin_group', name='change_admins'),
                          url(r'', include(list_patterns)),
                          )
 
 society_patterns = patterns('drama.views',
                          url(r'(?P<slug>[^/]+)/applications/edit', 'application_edit', {'form': SocietyApplicationFormset, 'prefix': 'society'}, name='applications_edit'),
+                         url(r'(?P<slug>[^/]+)/admins', 'change_admin_group', name='change_admins'),
                          url(r'', include(list_patterns)),
                          )
 

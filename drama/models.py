@@ -3,6 +3,7 @@ from django.template.defaultfilters import slugify
 from django.core.urlresolvers import reverse
 from datetime import date, timedelta, datetime
 from django.conf import settings
+from django.contrib import auth
 
 
 class Person(models.Model):
@@ -70,6 +71,9 @@ class Person(models.Model):
     def has_applications(self):
         return False
 
+    def get_link(self):
+        return '<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name)
+
 
 class Venue(models.Model):
 
@@ -80,16 +84,22 @@ class Venue(models.Model):
     address = models.CharField(max_length=200, blank=True)
     slug = models.SlugField(max_length=200, blank=True, editable=False)
     approved = models.BooleanField(editable=False, default=False)
+    group = models.OneToOneField(auth.models.Group, null=True, blank=True, editable=False)
 
     class Meta:
         ordering = ['name']
         permissions = (
             ('approve_venue', 'Approve Venue'),
+            ('admin_venue', 'Change venue admins'),
             )
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+        if not self.group:
+            new_group = auth.models.Group(name=self.name)
+            new_group.save()
+            self.group = new_group
         super(Venue, self).save(*args, **kwargs)
 
     @property
@@ -111,6 +121,9 @@ class Venue(models.Model):
     def has_applications(self):
         return True
 
+    def get_link(self):
+        return '<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name)
+
 
 class Society(models.Model):
 
@@ -123,16 +136,22 @@ class Society(models.Model):
         upload_to='images/', blank=True, verbose_name="Logo")
     slug = models.SlugField(max_length=200, blank=True, editable=False)
     approved = models.BooleanField(editable=False, default=False)
+    group = models.OneToOneField(auth.models.Group, null=True, blank=True, editable=False)
 
     class Meta:
         ordering = ['name']
         permissions = (
             ('approve_society', 'Approve Society'),
+            ('admin_society', 'Change society admins'),
             )
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+        if not self.group:
+            new_group = auth.models.Group(name=self.name)
+            new_group.save()
+            self.group = new_group
         super(Society, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -154,6 +173,9 @@ class Society(models.Model):
     def has_applications(self):
         return True
 
+    def get_link(self):
+        return '<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name)
+
 
 class Show(models.Model):
 
@@ -174,6 +196,7 @@ class Show(models.Model):
         ordering = ['name']
         permissions = (
             ('approve_show', 'Approve Show'),
+            ('admin_show', 'Change show admins'),
             )
 
     def save(self, *args, **kwargs):
@@ -218,6 +241,9 @@ class Show(models.Model):
     def has_applications(self):
         return True
 
+    def get_link(self):
+        return '<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name)
+
 
 class Performance(models.Model):
 
@@ -251,6 +277,7 @@ class Role(models.Model):
         ordering = ['name']
         permissions = (
             ('approve_role', 'Approve Role'),
+            ('admin_role', 'Change role admins'),
             )
 
     def save(self, *args, **kwargs):
@@ -269,6 +296,9 @@ class Role(models.Model):
 
     def has_applications(self):
         return False
+
+    def get_link(self):
+        return '<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name)
 
 
 class RoleInstance(models.Model):

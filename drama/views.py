@@ -169,7 +169,8 @@ class MyCreateView(FormSetMixin, autocomplete_light.CreateView):
 
     def form_valid(self, form):
         result = super(MyCreateView, self).form_valid(form)
-        assign_perm('drama.change_' + self.object.__class__.__name__.lower(), self.request.user, self.object)
+        if self.model_name in ('shows',):
+            assign_perm('drama.change_' + self.object.__class__.__name__.lower(), self.request.user, self.object)
         return result
 
     def get_success_url(self):
@@ -439,3 +440,11 @@ def link_user(request, slug, *args, **kwargs):
         user.first_name = person.name
         user.save()
         return redirect(person.get_absolute_url())
+
+@login_required
+def change_admins(request, slug, *args, **kwargs):
+    return HttpResponse('Hello World')
+
+@login_required
+def change_admin_group(request, slug, model, *args, **kwargs):
+    return HttpResponse('Hello World')

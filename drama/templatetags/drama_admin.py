@@ -1,5 +1,7 @@
 from django import template
 from django.template.loader import get_template
+from guardian.shortcuts import get_users_with_perms, get_groups_with_perms, get_perms_for_model
+from django.contrib.auth.models import Permission
 
 register = template.Library()
 
@@ -12,10 +14,19 @@ class AdminPanelNode(template.Node):
         item = context[self.item_name]
         if user.has_perm('drama.change_' + item.__class__.__name__.lower(), item):
             subcontext = {}
-            subcontext['type'] = item.__class__.__name__.lower()
+            type = item.__class__.__name__.lower()
+            subcontext['type'] = type
             subcontext['item'] = item
-            if user.has_perm('drama.admin_' + item.__class__.__name__.lower(), item):
-                subcontext['admin'] = True
+            admin_perm = 'admin_' + item.__class__.__name__.lower()
+            if user.has_perm(admin_perm, item):
+                if type == 'show' or type == 'role':
+                    subcontext['admin'] = True
+                    subcontext['users'] = get_users_with_perms(item, with_group_users=False)
+                    subcontext['groups'] = get_groups_with_perms(item)
+                elif type == 'venue' or type == 'society':
+                    subcontext['admin'] = True
+                    if item.group:
+                        subcontext['users'] = item.group.user_set.all()
             return self.template.render(template.Context(subcontext))
         else:
             return ""
