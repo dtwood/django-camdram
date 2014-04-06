@@ -474,8 +474,36 @@ def change_admins(request, slug, *args, **kwargs):
         raise PermissionDenied
 
 @login_required
-def change_admin_group(request, slug, model, *args, **kwargs):
-    return HttpResponse('Hello World')
+def change_admin_group(request, slug, model, model_name, *args, **kwargs):
+    item = get_object_or_404(model, slug=slug)
+    if request.user.has_perm('change_' + model.__name__.lower(), item):
+        if request.method == "GET":
+            context = {
+                'users': item.group.user_set.all(),
+                'pending_users': item.group.pendinggroupmember_set.all(),
+                'new_admin_form': AdminForm(),
+                'parent': item,
+                'model_name': model_name,
+            }
+            return render(request, 'drama/change_admins.html', context)
+        elif request.method == "POST":
+            form = AdminForm(request.POST)
+            if form.is_valid():
+                item.add_admin(form.cleaned_data['email'])
+                return redirect(item.get_absolute_url())
+            else:
+                context = {
+                    'users': item.group.user_set.all(),
+                    'pending_users': item.group.pendinggroupmember_set.all(),
+                    'new_admin_form': form,
+                    'parent': item,
+                    'model_name': model_name,
+                }
+                return render(request, 'drama/change_admins.html', context)
+        else:
+            return redirect(item.get_absolute_url())
+    else:
+        raise PermissionDenied
 
 @login_required
 def revoke_admin(request, model, slug, username, *args, **kwargs):

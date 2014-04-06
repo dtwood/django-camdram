@@ -126,6 +126,17 @@ class Venue(models.Model):
     def get_link(self):
         return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
 
+    def add_admin(self, email):
+        """
+        Add the user with this email address to the venue admins.
+        If the user does not exist, add the request to the pending admins list.
+        """
+        try:
+            user = auth.get_user_model().objects.filter(email=email)[0]
+            self.group.user_set.add(user)
+        except IndexError:
+            item = PendingGroupMember(email=email, group=self.group)
+            item.save()
 
 class Society(models.Model):
 
@@ -177,7 +188,18 @@ class Society(models.Model):
 
     def get_link(self):
         return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
-
+    def add_admin(self, email):
+        """
+        Add the user with this email address to the society admins.
+        If the user does not exist, add the request to the pending admins list.
+        """
+        try:
+            user = auth.get_user_model().objects.filter(email=email)[0]
+            self.group.user_set.add(user)
+        except IndexError:
+            item = PendingGroupMember(email=email, group=self.group)
+            item.save()
+        
 
 class Show(models.Model):
 

@@ -41,3 +41,4 @@
 * pretify registration form templates
 * year field
 * remove inline javascript
+* admin panel pending admins

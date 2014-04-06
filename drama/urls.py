@@ -75,13 +75,15 @@ show_patterns = patterns('drama.views',
 
 venue_patterns = patterns('drama.views',
                          url(r'(?P<slug>[^/]+)/applications/edit', 'application_edit', {'form': VenueApplicationFormset, 'prefix': 'venue'}, name='applications_edit'),
-                         url(r'(?P<slug>[^/]+)/admins', 'change_admin_group', name='change_admins'),
+                         url(r'(?P<slug>[^/]+)/admins$', 'change_admin_group', name='change_admins'),
+                         url(r'(?P<slug>[^/]+)/admins/revoke/(?P<username>[^/]+)$', 'revoke_admin', name='revoke_admin'),
                          url(r'', include(list_patterns)),
                          )
 
 society_patterns = patterns('drama.views',
                          url(r'(?P<slug>[^/]+)/applications/edit', 'application_edit', {'form': SocietyApplicationFormset, 'prefix': 'society'}, name='applications_edit'),
-                         url(r'(?P<slug>[^/]+)/admins', 'change_admin_group', name='change_admins'),
+                         url(r'(?P<slug>[^/]+)/admins$', 'change_admin_group', name='change_admins'),
+                         url(r'(?P<slug>[^/]+)/admins/revoke/(?P<username>[^/]+)$', 'revoke_admin', name='revoke_admin'),
                          url(r'', include(list_patterns)),
                          )
 
