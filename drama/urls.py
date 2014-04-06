@@ -68,7 +68,8 @@ show_patterns = patterns('drama.views',
                          url(r'(?P<slug>[^/]+)/add_band', 'add_band', name='add_band'),
                          url(r'(?P<slug>[^/]+)/add_prod', 'add_prod', name='add_prod'),
                          url(r'(?P<slug>[^/]+)/role_reorder', 'role_reorder', name='role_reorder'),
-                         url(r'(?P<slug>[^/]+)/admins', 'change_admins', name='change_admins'),
+                         url(r'(?P<slug>[^/]+)/admins$', 'change_admins', name='change_admins'),
+                         url(r'(?P<slug>[^/]+)/admins/revoke/(?P<username>[^/]+)$', 'revoke_admin', name='revoke_admin'),
                          url(r'^', include(list_patterns)),
                          )
 

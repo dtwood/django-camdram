@@ -5,6 +5,7 @@ from datetime import date, timedelta, datetime
 from django.conf import settings
 from django.contrib import auth
 from django.utils.safestring import mark_safe
+from guardian.shortcuts import assign_perm
 
 
 class Person(models.Model):
@@ -245,6 +246,17 @@ class Show(models.Model):
     def get_link(self):
         return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
 
+    def add_admin(self, email):
+        """
+        Add the user with this email address to the shows admins.
+        If the user does not exist, add the request to the pending admins list.
+        """
+        try:
+            user = auth.get_user_model().objects.filter(email=email)[0]
+            assign_perm('drama.change_show', user, self)
+        except IndexError:
+            item = PendingAdmin(email=email, show=self)
+            item.save()
 
 class Performance(models.Model):
 
@@ -413,3 +425,11 @@ class VenueApplication(Application):
     @property
     def object_name(self):
         return self.venue.name
+
+class PendingAdmin(models.Model):
+    email = models.EmailField()
+    show = models.ForeignKey(Show)
+
+class PendingGroupMember(models.Model):
+    email = models.EmailField()
+    group = models.ForeignKey(auth.models.Group)

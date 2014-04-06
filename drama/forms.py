@@ -280,3 +280,6 @@ class EmailRegistrationForm(RegistrationForm):
             raise forms.ValidationError(_("A user with that username already exists."))
         else:
             return self.cleaned_data['email']
+
+class AdminForm(forms.Form):
+    email = forms.EmailField()

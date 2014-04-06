@@ -1,0 +1,53 @@
+{% extends "drama/base.html" %}
+{% load drama_admin %}
+
+{% block title %}Edit Admins{% endblock %}
+
+{% block content %}  
+<div class="row">
+  {% admin_panel parent %}
+    <div class="large-12 columns">
+      {% if model_name == 'shows' %}
+        <p>Admins are able to edit the details of a show, create adverts for production
+        team vacancies, and edit the people listed who are involved in the show. These
+        lists show the current admins and the list of people who will be able to edit
+        the show after they create an account on Camdram.</p>
+	{% else %}
+      <p>Admins are able to edit the details of your organization, as well as edit and approve shows related to your organization. These lists show the current admins and the list of people who will be able to edit the show after they create an account on Camdram.</p>
+ {% endif %}
+<div class="row">
+    <div class="small-12 large-6 columns">
+        <h4>Existing Admins</h4>
+	{% for user in users %}
+	<div class="row">
+	  <div class="small-11 columns">
+	<p>{% if user.get_full_name %}{{user.get_full_name}}{% elif user.email %}{{user.email}}{% else %}{{user.username}}{% endif %}</p>
+	  </div>
+	  <div class="small-1 columns">
+	    <span data-tooltip class="has-tip" title="Revoke this admin.">
+	      <a href="{% url 'revoke_admin' model_name=model_name slug=parent.slug username=user.username %}">
+		<i class="fa fa-trash-o"></i>
+	      </a>
+	    </span>
+	  </div>
+	</div>
+	{% endfor %}
+	<h4>Pending Admins</h4>
+	{% for user in pending_users %}
+	<div class="row">
+	  <div class="small-12 columns">
+	    <p>{{user.email}}</p>
+	  </div>
+	</div>
+	{% endfor %}
+	<br /><p>Add a new administrator:</p>
+	  <form action="" method="post">
+	    {% csrf_token %}
+	    {% include "drama/form_field.html" with field=new_admin_form.email %}
+	    <div class="row">
+	      <button type="submit">Save</button>
+	    </div>
+	  </form>
+    </div>
+</div>
+{% endblock %}

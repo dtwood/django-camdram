@@ -13,7 +13,7 @@ import json
 import autocomplete_light
 import hashlib
 from registration.backends.simple.views import RegistrationView
-from guardian.shortcuts import assign_perm, get_objects_for_user, remove_perm
+from guardian.shortcuts import assign_perm, get_objects_for_user, remove_perm, get_users_with_perms
 
 
 def index(request):
@@ -443,8 +443,41 @@ def link_user(request, slug, *args, **kwargs):
 
 @login_required
 def change_admins(request, slug, *args, **kwargs):
-    return HttpResponse('Hello World')
+    show = get_object_or_404(Show, slug=slug)
+    if request.user.has_perm('change_show', show):
+        if request.method == "GET":
+            context = {
+                'users': get_users_with_perms(show, with_group_users=False),
+                'pending_users': show.pendingadmin_set.all(),
+                'new_admin_form': AdminForm(),
+                'parent': show,
+                'model_name': 'shows',
+            }
+            return render(request, 'drama/change_admins.html', context)
+        elif request.method == "POST":
+            form = AdminForm(request.POST)
+            if form.is_valid():
+                show.add_admin(form.cleaned_data['email'])
+                return redirect(show.get_absolute_url())
+            else:
+                context = {
+                    'users': get_users_with_perms(show, with_group_users=False),
+                    'pending_users': show.pendingadmin_set.all(),
+                    'new_admin_form': form,
+                    'parent': show,
+                    'model_name': 'shows',
+                }
+                return render(request, 'drama/change_admins.html', context)
+        else:
+            return redirect(show.get_absolute_url())
+    else:
+        raise PermissionDenied
 
 @login_required
 def change_admin_group(request, slug, model, *args, **kwargs):
     return HttpResponse('Hello World')
+
+@login_required
+def revoke_admin(request, model, slug, username, *args, **kwargs):
+    return HttpResponse('Hello World')
+    
