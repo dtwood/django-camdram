@@ -20,7 +20,7 @@ class AdminPanelNode(template.Node):
             subcontext['item'] = item
             admin_perm = 'change_' + item.__class__.__name__.lower()
             if user.has_perm(admin_perm, item):
-                if type == 'show' or type == 'role':
+                if type == 'show':
                     subcontext['admin'] = True
                     subcontext['users'] = get_users_with_perms(item, with_group_users=False)
                     subcontext['pending_users'] = item.pendingadmin_set.all()
