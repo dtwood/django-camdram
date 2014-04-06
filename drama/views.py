@@ -506,6 +506,10 @@ def change_admin_group(request, slug, model, model_name, *args, **kwargs):
         raise PermissionDenied
 
 @login_required
-def revoke_admin(request, model, slug, username, *args, **kwargs):
-    return HttpResponse('Hello World')
-    
+def revoke_admin(request, model, slug, username, model_name, *args, **kwargs):
+    item = get_object_or_404(model, slug=slug)
+    if request.user.has_perm('change_' + model.__name__.lower(), item):
+        item.remove_admin(username)
+        return redirect(reverse('change_admins',kwargs={'model_name':model_name, 'slug':slug}))
+    else:
+        raise PermissionDenied

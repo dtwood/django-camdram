@@ -5,7 +5,7 @@ from datetime import date, timedelta, datetime
 from django.conf import settings
 from django.contrib import auth
 from django.utils.safestring import mark_safe
-from guardian.shortcuts import assign_perm
+from guardian.shortcuts import assign_perm, remove_perm
 
 
 class Person(models.Model):
@@ -137,6 +137,15 @@ class Venue(models.Model):
         except IndexError:
             item = PendingGroupMember(email=email, group=self.group)
             item.save()
+    def remove_admin(self, username):
+        """
+        Remove the user with that username from the venue admins.
+        """
+        try:
+            user = auth.get_user_model().objects.filter(username=username)[0]
+            self.group.user_set.remove(user)
+        except IndexError:
+            pass
 
 class Society(models.Model):
 
@@ -199,6 +208,16 @@ class Society(models.Model):
         except IndexError:
             item = PendingGroupMember(email=email, group=self.group)
             item.save()
+
+    def remove_admin(self, username):
+        """
+        Remove the user with that username from the society admins.
+        """
+        try:
+            user = auth.get_user_model().objects.filter(username=username)[0]
+            self.group.user_set.remove(user)
+        except IndexError:
+            pass
         
 
 class Show(models.Model):
@@ -279,6 +298,17 @@ class Show(models.Model):
         except IndexError:
             item = PendingAdmin(email=email, show=self)
             item.save()
+
+    def remove_admin(self, username):
+        """
+        Remove the user with that username from the show admins.
+        """
+        try:
+            user = auth.get_user_model().objects.filter(username=username)[0]
+            remove_perm('change_show', user, self)
+        except IndexError:
+            pass
+
 
 class Performance(models.Model):
 
