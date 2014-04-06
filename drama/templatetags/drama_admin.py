@@ -18,11 +18,12 @@ class AdminPanelNode(template.Node):
             type = item.__class__.__name__.lower()
             subcontext['type'] = type
             subcontext['item'] = item
-            admin_perm = 'admin_' + item.__class__.__name__.lower()
+            admin_perm = 'change_' + item.__class__.__name__.lower()
             if user.has_perm(admin_perm, item):
                 if type == 'show' or type == 'role':
                     subcontext['admin'] = True
                     subcontext['users'] = get_users_with_perms(item, with_group_users=False)
+                    subcontext['pending_users'] = item.pendingadmin_set.all()
                     groups = list(get_groups_with_perms(item))
                     if type == 'show':
                         groups = groups + [item.society.group]
@@ -34,6 +35,7 @@ class AdminPanelNode(template.Node):
                     subcontext['admin'] = True
                     if item.group:
                         subcontext['users'] = item.group.user_set.all()
+                        subcontext['pending_users'] = item.group.pendinggroupmember_set.all()
             return self.template.render(template.Context(subcontext))
         else:
             return ""

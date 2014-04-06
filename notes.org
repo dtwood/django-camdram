@@ -6,7 +6,7 @@
 - auditions_diary
 - venue
   - map
-
+    
 * Application Ordering?
 * API
 * TODO Diary
@@ -42,3 +42,4 @@
 * year field
 * remove inline javascript
 * admin panel pending admins
+* pending admin account creation
