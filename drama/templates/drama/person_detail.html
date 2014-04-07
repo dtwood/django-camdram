@@ -22,7 +22,7 @@
 <div>
   <h5><a href="{% url 'display' model_name='shows' slug=role.show.slug %}">{{role.show.name}}</a> - {% if role.role.link %}<a href="{%url 'display' 'roles' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %}</h5>
   <p>{% for performance in role.show.performance_set.all %}
-    {{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="{% url 'display' model_name='venues' slug=performance.venue.slug %}">{{performance.venue.name}}</a><br/>
+	{% include "drama/performance_listing.html" %}
     {% endfor %}</p>
   <p>{{role.show.desc}}</p></div>
 {% endfor %}
@@ -35,7 +35,7 @@
   <li>
   <h5><a href="{% url 'display' model_name='shows' slug=role.show.slug %}">{{role.show.name}}</a> - {% if role.role.link %}<a href="{%url 'display' 'roles' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %}</h5>
     <p>{% for performance in role.show.performance_set.all %}
-    {{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="{% url 'display' model_name='venues' slug=performance.venue.slug %}">{{performance.venue.name}}</a><br/>
+	{% include "drama/performance_listing.html" %}
       {% endfor %}</p>
     <p>{{role.show.desc|truncatechars:200}}</p></li>
   {% endfor %}
@@ -49,7 +49,7 @@
 <li>
   <h5><a href="{% url 'display' model_name='shows' slug=role.show.slug %}">{{role.show.name}}</a> - {% if role.role.link %}<a href="{%url 'display' 'roles' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %}</h5>
   <p>{% for performance in role.show.performance_set.all %}
-    {{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="{% url 'display' model_name='venues' slug=performance.venue.slug %}">{{performance.venue.name}}</a><br/>
+	{% include "drama/performance_listing.html" %}
     {% endfor %}</p></li>
 {% endfor %}
 </ul>

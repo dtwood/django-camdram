@@ -12,7 +12,7 @@
       <li><div class="panel" data-equalizer-watch="">
 	  <h5><a href="{% url 'display' 'shows' show.slug %}">{{show.name}}</a></h5>
 	  <p>{% for performance in show.performance_set.all %}
-	    {{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="{% url 'display' model_name='venues' slug=performance.venue.slug %}">{{performance.venue.name}}</a><br />
+	    {% include "drama/performance_listing.html" %}
 	    {% endfor %}</p>
 	  <p>{{show.desc|truncatechars:144}}</p>
       </div></li>
