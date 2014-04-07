@@ -83,6 +83,14 @@ class Person(models.Model):
         else:
             return self.name
 
+    def approve(self):
+        self.approved = True
+        self.save()
+
+    def unapprove(self):
+        self.approved = False
+        self.save()
+
 
 class Venue(models.Model):
 
@@ -159,6 +167,14 @@ class Venue(models.Model):
             self.group.user_set.remove(user)
         except IndexError:
             pass
+
+    def approve(self):
+        self.approved = True
+        self.save()
+
+    def unapprove(self):
+        self.approved = False
+        self.save()
 
 class Society(models.Model):
 
@@ -238,6 +254,14 @@ class Society(models.Model):
         except IndexError:
             pass
         
+    def approve(self):
+        self.approved = True
+        self.save()
+
+    def unapprove(self):
+        self.approved = False
+        self.save()
+
 
 class Show(models.Model):
 
@@ -331,6 +355,14 @@ class Show(models.Model):
         except IndexError:
             pass
 
+    def approve(self):
+        self.approved = True
+        self.save()
+
+    def unapprove(self):
+        self.approved = False
+        self.save()
+
 
 class Performance(models.Model):
 
@@ -392,6 +424,14 @@ class Role(models.Model):
             return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), escape(self.name)))
         else:
             return self.name
+
+    def approve(self):
+        self.approved = True
+        self.save()
+
+    def unapprove(self):
+        self.approved = False
+        self.save()
 
 
 class RoleInstance(models.Model):

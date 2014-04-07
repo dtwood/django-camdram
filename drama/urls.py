@@ -17,6 +17,8 @@ object_patterns = patterns('drama.views',
                            url(r'^$', 'display', name='display'),
                            url(r'^edit$', 'edit', name='edit'),
                            url(r'^remove$', 'remove', name='remove'),
+                           url(r'^approve$', 'approve', name='approve'),
+                           url(r'^unapprove$', 'unapprove', name='unapprove'),
                            )
 
 related_object_patterns  = patterns('drama.views',

@@ -513,3 +513,22 @@ def revoke_admin(request, model, slug, username, model_name, *args, **kwargs):
         return redirect(reverse('change_admins',kwargs={'model_name':model_name, 'slug':slug}))
     else:
         raise PermissionDenied
+
+@login_required
+def approve(request, model, slug, *args, **kwargs):
+    item = get_object_or_404(model, slug=slug)
+    if request.user.has_perm('approve_' + model.__name__.lower(), item):
+        item.approve()
+        return redirect(item.get_absolute_url())
+    else:
+        raise PermissionDenied
+
+@login_required
+def unapprove(request, model, slug, *args, **kwargs):
+    item = get_object_or_404(model, slug=slug)
+    if request.user.has_perm('approve_' + model.__name__.lower(), item):
+        item.unapprove()
+        return redirect(item.get_absolute_url())
+    else:
+        raise PermissionDenied
+
