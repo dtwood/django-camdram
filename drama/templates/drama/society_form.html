@@ -14,7 +14,7 @@
     <p>Please fill in the details below to add a new society to Camdram. Required fields are marked with an asterisk (*), and all fields can be modified later if necessary.</p>
   </div>
   {% endif %}
-  <form action="" method="post">
+  <form action="" enctype="multipart/form-data" method="post">
     {% csrf_token %}
     {% include "drama/form_field.html" with field=content_form.name %}
     {% include "drama/form_field.html" with field=content_form.shortname %}
