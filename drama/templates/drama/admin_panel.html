@@ -14,7 +14,19 @@
     {% endif %}
     {% if admin %}
     <li><a href="{% url 'change_admins' model_name=item.get_cname slug=item.slug %}"><i class="fa fa-pencil"> </i> Edit the {{type}}'s admins</a></li>
+    {% endif %}
+    {% if approve %}
+    {% if approved %}
+    <li><a href="{% url 'unapprove' model_name=item.get_cname slug=item.slug %}"><i class="fa fa-times-circle"> </i> Unapprove this {{type}}</a></li>
+    {% else %}
+    <li><a href="{% url 'approve' model_name=item.get_cname slug=item.slug %}"><i class="fa fa-check-circle"> </i> Approve this {{type}}</a></li>
+    {% endif %}
+    {% endif %}
   </ul>
+    {% if not approved %}
+    <p>This {{type}} is not currently approved, and as such not publicly visible. </p>
+    {% endif %}
+  {% if admin %}
   <p> The following people and/or groups can edit this {{type}}:
     {% for user in users %}{% if not forloop.first %}, {% endif %}{% if user.get_full_name %}{{user.get_full_name}}{% elif user.email %}{{user.email}}{% else %}{{user.username}}{% endif %}{% endfor %}{% for group in groups %}, {% if group.venue %}{{group.venue.get_link}}{% elif group.society %}{{group.society.get_link}}{% else %}{{group.name}}{% endif %}{% endfor %}
   </p>
@@ -22,7 +34,5 @@
   <p>The following people will be admins, pending account creation:
     {% for user in pending_users %}{% if not forloop.first %}, {% endif %}{{user.email}}{% endfor %}</p>
   {% endif %}
-  {% else %}
-</ul>
 {% endif %}
 </div>

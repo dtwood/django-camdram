@@ -13,12 +13,13 @@ class AdminPanelNode(template.Node):
     def render(self, context):
         user = context['user']
         item = context[self.item_name]
-        if user.has_perm('drama.change_' + item.__class__.__name__.lower(), item):
+        type = item.__class__.__name__.lower()
+        if user.has_perm('drama.change_' + type, item):
             subcontext = {}
-            type = item.__class__.__name__.lower()
+            subcontext['approved'] = item.approved
             subcontext['type'] = type
             subcontext['item'] = item
-            admin_perm = 'change_' + item.__class__.__name__.lower()
+            admin_perm = 'change_' + type
             if user.has_perm(admin_perm, item):
                 if type == 'show':
                     subcontext['admin'] = True
@@ -36,6 +37,8 @@ class AdminPanelNode(template.Node):
                     if item.group:
                         subcontext['users'] = item.group.user_set.all()
                         subcontext['pending_users'] = item.group.pendinggroupmember_set.all()
+            if user.has_perm('drama.approve_' + type, item):
+                subcontext['approve'] = True
             return self.template.render(template.Context(subcontext))
         else:
             return ""
