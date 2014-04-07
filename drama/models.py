@@ -74,7 +74,13 @@ class Person(models.Model):
         return False
 
     def get_link(self):
-        return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
+        """
+        Get link text for the item, with appropriate <a> tag if the item is approved.
+        """
+        if self.approved:
+            return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
+        else:
+            return self.name
 
 
 class Venue(models.Model):
@@ -124,7 +130,13 @@ class Venue(models.Model):
         return True
 
     def get_link(self):
-        return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
+        """
+        Get link text for the item, with appropriate <a> tag if the item is approved.
+        """
+        if self.approved:
+            return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
+        else:
+            return self.name
 
     def add_admin(self, email):
         """
@@ -196,7 +208,13 @@ class Society(models.Model):
         return True
 
     def get_link(self):
-        return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
+        """
+        Get link text for the item, with appropriate <a> tag if the item is approved.
+        """
+        if self.approved:
+            return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
+        else:
+            return self.name
     def add_admin(self, email):
         """
         Add the user with this email address to the society admins.
@@ -285,6 +303,9 @@ class Show(models.Model):
         return True
 
     def get_link(self):
+        """
+        Always return link, so show admin works.
+        """
         return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
 
     def add_admin(self, email):
@@ -363,7 +384,13 @@ class Role(models.Model):
         return False
 
     def get_link(self):
-        return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
+        """
+        Get link text for the item, with appropriate <a> tag if the item is approved.
+        """
+        if self.approved:
+            return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
+        else:
+            return self.name
 
 
 class RoleInstance(models.Model):
