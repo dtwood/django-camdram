@@ -5,6 +5,7 @@ from datetime import date, timedelta, datetime
 from django.conf import settings
 from django.contrib import auth
 from django.utils.safestring import mark_safe
+from django.utils.html import escape
 from guardian.shortcuts import assign_perm, remove_perm
 
 
@@ -78,7 +79,7 @@ class Person(models.Model):
         Get link text for the item, with appropriate <a> tag if the item is approved.
         """
         if self.approved:
-            return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
+            return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), escape(self.name)))
         else:
             return self.name
 
@@ -134,7 +135,7 @@ class Venue(models.Model):
         Get link text for the item, with appropriate <a> tag if the item is approved.
         """
         if self.approved:
-            return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
+            return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), escape(self.name)))
         else:
             return self.name
 
@@ -212,7 +213,7 @@ class Society(models.Model):
         Get link text for the item, with appropriate <a> tag if the item is approved.
         """
         if self.approved:
-            return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
+            return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), escape(self.name)))
         else:
             return self.name
     def add_admin(self, email):
@@ -306,7 +307,7 @@ class Show(models.Model):
         """
         Always return link, so show admin works.
         """
-        return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
+        return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), escape(self.name)))
 
     def add_admin(self, email):
         """
@@ -388,7 +389,7 @@ class Role(models.Model):
         Get link text for the item, with appropriate <a> tag if the item is approved.
         """
         if self.approved:
-            return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.name))
+            return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), escape(self.name)))
         else:
             return self.name
 
