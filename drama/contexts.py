@@ -8,15 +8,15 @@ from django.utils import timezone
 def venue(self, **kwargs):
     context = super(MyDetailView, self).get_context_data(**kwargs)
     venue = context['object']
-    context['shows'] = Show.objects.filter(performance__venue=venue).distinct()
+    context['shows'] = Show.objects.filter(performance__venue=venue).filter(approved=True).distinct()
     context['auditions'] = AuditionInstance.objects.filter(audition__show__performance__venue=venue).filter(
-        end_datetime__gte=timezone.now()).order_by('end_datetime', 'start_time').distinct()
+        end_datetime__gte=timezone.now()).filter(audition__show__approved=True).order_by('end_datetime', 'start_time').distinct()
     try:
         context['auditions'][0]
     except IndexError:
         context['auditions'] = None
 
-    context['techieads'] = TechieAd.objects.filter(show__performance__venue=venue).filter(
+    context['techieads'] = TechieAd.objects.filter(show__performance__venue=venue).filter(show__approved=True).filter(
         deadline__gte=timezone.now()).order_by('deadline').distinct()
     try:
         context['techieads'][0]
@@ -24,7 +24,7 @@ def venue(self, **kwargs):
         context['techieads'] = None
 
     context['showapps'] = ShowApplication.objects.filter(
-        show__performance__venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
+        show__performance__venue=venue).filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline').distinct()
     try:
         context['showapps'][0]
     except IndexError:
@@ -44,23 +44,23 @@ def venue(self, **kwargs):
 def society(self, **kwargs):
     context = super(MyDetailView, self).get_context_data(**kwargs)
     society = context['object']
-    context['shows'] = society.show_set
+    context['shows'] = society.show_set.filter(approved=True)
     context['auditions'] = AuditionInstance.objects.filter(audition__show__society=society).filter(
-        end_datetime__gte=timezone.now()).order_by('end_datetime', 'start_time')
+        end_datetime__gte=timezone.now()).filter(audition__show__approved=True).order_by('end_datetime', 'start_time')
     try:
         context['auditions'][0]
     except IndexError:
         context['auditions'] = None
 
     context['techieads'] = TechieAd.objects.filter(show__society=society).filter(
-        deadline__gte=timezone.now()).order_by('deadline')
+        deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline')
     try:
         context['techieads'][0]
     except IndexError:
         context['techieads'] = None
 
     context['showapps'] = ShowApplication.objects.filter(
-        show__society=society).filter(deadline__gte=timezone.now()).order_by('deadline')
+        show__society=society).filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline')
     try:
         context['showapps'][0]
     except IndexError:
@@ -131,7 +131,7 @@ def show(self, user, **kwargs):
 def person(self, **kwargs):
     context = super(MyDetailView, self).get_context_data(**kwargs)
     person = context['object']
-    roles = person.roleinstance_set.select_related('show__performace')
+    roles = person.roleinstance_set.select_related('show__performace').filter(show__approved=True)
     past_roles = roles.exclude(show__performance__end_date__gte=timezone.now()).distinct()
     future_roles = roles.exclude(
         show__performance__start_date__lte=timezone.now()).distinct()
@@ -145,5 +145,5 @@ def role(self, **kwargs):
     context = super(MyDetailView, self).get_context_data(**kwargs)
     role = context['object']
     context['current_pagetype'] = 'roles'
-    context['get_involved'] = TechieAd.objects.filter(techieadrole__role=role).distinct()
+    context['get_involved'] = TechieAd.objects.filter(techieadrole__role=role).filter(show__approved=True).distinct()
     return context

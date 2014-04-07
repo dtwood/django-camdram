@@ -36,19 +36,19 @@ class Person(models.Model):
 
     @property
     def num_shows(self):
-        return Show.objects.filter(roleinstance__person=self).distinct().count()
+        return Show.objects.filter(roleinstance__person=self).filter(approved=True).distinct().count()
 
     @property
     def first_active(self):
         try:
-            return Performance.objects.filter(show__roleinstance__person=self).order_by('start_date')[0].start_date
+            return Performance.objects.filter(show__roleinstance__person=self).filter(show__approved=True).order_by('start_date')[0].start_date
         except IndexError:
             return None
 
     @property
     def last_active(self):
         try:
-            return Performance.objects.filter(show__roleinstance__person=self).order_by('-end_date')[0].end_date
+            return Performance.objects.filter(show__roleinstance__person=self).filter(show__approved=True).order_by('-end_date')[0].end_date
         except IndexError:
             return None
 
