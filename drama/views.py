@@ -26,7 +26,7 @@ def diary(request):
 
 def auditions(request):
     aud_instances = AuditionInstance.objects.filter(end_datetime__gte=timezone.now()).order_by(
-        'end_datetime', 'start_time').select_related('audition')
+        'end_datetime', 'start_time').filter(audition__show__approved=True).select_related('audition')
     seen = set()
     seen_add = seen.add
     ads = [i.audition for i in aud_instances if i.audition.id not in seen and not seen_add(
@@ -42,11 +42,11 @@ def auditions_diary(request):
 
 def applications(request):
     showads = ShowApplication.objects.filter(
-        deadline__gte=timezone.now()).order_by('deadline')
+        deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline')
     socads = SocietyApplication.objects.filter(
-        deadline__gte=timezone.now()).order_by('deadline')
+        deadline__gte=timezone.now()).filter(society__approved=True).order_by('deadline')
     venueads = VenueApplication.objects.filter(
-        deadline__gte=timezone.now()).order_by('deadline')
+        deadline__gte=timezone.now()).filter(venue__approved=True).order_by('deadline')
     context = {'showads': showads, 'venueads': venueads, 'socads': socads,
                'current_roletype': 'applications', 'current_pagetype': 'vacancies'}
     return render(request, 'drama/applications.html', context)
@@ -62,7 +62,7 @@ def ad_role(request, show_slug, role_slug):
 
 def techieads(request):
     ads = TechieAd.objects.filter(
-        deadline__gte=timezone.now()).order_by('deadline')
+        deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline')
     context = {'ads': ads, 'current_roletype': 'techie',
                'current_pagetype': 'vacancies'}
     return render(request, 'drama/techiead.html', context)
