@@ -207,6 +207,9 @@ class MyListView(ListView):
         context['current_pagetype'] = self.model_name
         return context
 
+    def get_queryset(self, *args, **kwargs):
+        return super(MyListView, self).get_queryset(*args, **kwargs).filter(approved=True)
+
 class ItemUpdateView(FormSetMixin, UpdateView):
     object = None
     parent = None
