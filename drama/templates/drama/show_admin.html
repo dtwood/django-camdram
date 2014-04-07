@@ -10,7 +10,7 @@
     <ul class="large-block-grid-2">
       {% for show in shows %}
       <li><div class="panel" data-equalizer-watch="">
-	  <h5><a href="{% url 'display' 'shows' show.slug %}">{{show.name}}</a></h5>
+	  <h5>{{show.get_link}}</h5>
 	  <p>{% for performance in show.performance_set.all %}
 	    {% include "drama/performance_listing.html" %}
 	    {% endfor %}</p>

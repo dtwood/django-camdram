@@ -9,7 +9,8 @@
   {% for result in page.object_list %}
   <div class="panel">
     <h5><div class="entity_type entity_{{result.object.get_cname}}">{{result.object.get_cname}}</div>
-    <a href="{% url 'display' model_name=result.object.get_cname slug=result.object.slug %}">{{ result.object.name }}</a></h5>
+      {{result.object.get_link}}
+    </h5>
     <p>
       {{result.object.desc}}
     </p>

@@ -1,1 +1,1 @@
-{{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at <a href="{% url 'display' model_name='venues' slug=performance.venue.slug %}">{{performance.venue.name}}</a><br />
+{{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D dS F Y"}} - {{performance.end_date|date:"D dS F Y"}} at {{performance.venue.get_link}}<br />

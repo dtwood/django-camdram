@@ -16,7 +16,7 @@
     <h5>Get involved: these shows need a {{object.name}}</h5>
     <ul>
       {% for vacancy in get_involved %}
-      <li><a href="{% url 'display' 'shows' vacancy.show.slug %}">{{vacancy.show.name}}</a> - <a href="{% url 'item' 'technical' vacancy.show.slug %}">more details</a></li>
+      <li>{{vacancy.show.get_link}} - <a href="{% url 'item' 'technical' vacancy.show.slug %}">more details</a></li>
       {% endfor %}
     </ul>
   </div>

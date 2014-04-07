@@ -1,5 +1,5 @@
 <div class="admin-panel">
-  <h6>{{type|title}} Administration: <a href="{% url 'display' item.get_cname item.slug %}">{{item.name}}</a></h6>
+  <h6>{{type|title}} Administration: {{item.get_link}}</h6>
   <ul class="inline-list">
     <li><a href="{% url 'edit' item.get_cname item.slug %}"><i class="fa fa-pencil"> </i> Edit this {{type}}</a></li>
     <li><a href="{% url 'remove' item.get_cname item.slug %}"><i class="fa fa-eraser"> </i> Delete this {{type}}</a></li>

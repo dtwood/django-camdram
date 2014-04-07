@@ -20,7 +20,7 @@
 <h4>{{person.name}} is currently involved with</h4>
 {% for role in current_roles %}
 <div>
-  <h5><a href="{% url 'display' model_name='shows' slug=role.show.slug %}">{{role.show.name}}</a> - {% if role.role.link %}<a href="{%url 'display' 'roles' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %}</h5>
+  <h5>{{role.show.get_link}} - {{ role.role.get_link }}</h5>
   <p>{% for performance in role.show.performance_set.all %}
 	{% include "drama/performance_listing.html" %}
     {% endfor %}</p>
@@ -33,7 +33,7 @@
 <ul class="large-block-grid-2">
   {% for role in future_roles %}
   <li>
-  <h5><a href="{% url 'display' model_name='shows' slug=role.show.slug %}">{{role.show.name}}</a> - {% if role.role.link %}<a href="{%url 'display' 'roles' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %}</h5>
+  <h5>{{role.show.get_link}} - {{ role.role.get_link }}</h5>
     <p>{% for performance in role.show.performance_set.all %}
 	{% include "drama/performance_listing.html" %}
       {% endfor %}</p>
@@ -47,7 +47,7 @@
 <ul class="no-bullet">
 {% for role in past_roles %}
 <li>
-  <h5><a href="{% url 'display' model_name='shows' slug=role.show.slug %}">{{role.show.name}}</a> - {% if role.role.link %}<a href="{%url 'display' 'roles' role.role.slug %}">{% endif %}{{role.name}}{% if role.role.link %}</a>{% endif %}</h5>
+  <h5>{{role.show.get_link}} - {{ role.role.get_link }}</h5>
   <p>{% for performance in role.show.performance_set.all %}
 	{% include "drama/performance_listing.html" %}
     {% endfor %}</p></li>

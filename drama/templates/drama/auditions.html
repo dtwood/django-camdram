@@ -10,7 +10,7 @@
 {% for ad in ads %}
 <hr>
 <div id="{{ad.show.slug}}">
-  <h4><a href="{% url 'display' model_name='shows' slug=ad.show.slug %}">{{ad.show.name}}</a></h4>
+  <h4>{{ad.show.get_link}}</h4>
   <p>
     {% if ad.show.performance_set.all %}
     {% for performance in ad.show.performance_set.all %}

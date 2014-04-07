@@ -14,9 +14,9 @@
 <li id="{{role.slug}}">
   <div class="row">
     <div class="large-12 columns">
-      <h5><a href="{% url 'display' model_name='roles' slug=role.slug %}">{{role.name}}</a></h5>
+      <h5>{{role.get_link}}</h5>
       <p>{{role.desc|truncatechars:200}}<br />
-	[<a href="{% url 'display' model_name='roles' slug=role.slug %}">Read More</a>]
+	[<a href="{{role.get_absolute_url}}">Read More</a>]
       </p>
     </div>
   </div>

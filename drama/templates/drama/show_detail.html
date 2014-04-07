@@ -6,7 +6,7 @@
 <div class="row">
     {% admin_panel show %}
   <div class="large-12 columns panel">
-      <p class="show-society"><a href="{% url 'display' model_name='societies' slug=show.society.slug%}">{{show.society.name}}</a> presents...</p>
+      <p class="show-society">{{show.society.get_link}} presents...</p>
       <h2>{{show.name}}<br />{% if show.author %}<small>By {{show.author}}</small>{% endif %}</h2>
     {% if show.image %}
     <div class="large-3 columns text-center">
