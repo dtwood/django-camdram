@@ -4,6 +4,8 @@
 - contact
 - development
 - auditions_diary
+- show
+  - ticket prices/link
 - venue
   - map
     
@@ -43,3 +45,19 @@
 * remove inline javascript
 * admin panel pending admins
 * pending admin account creation
+* ical and/or rss
+* loging
+* markdown
+* old camdram url compatability?
+* old camdram database?
+* email builder
+* issue tracker
+* approval queue
+* infobase
+* admin requests
+* email on being granted admin
+* email on approval
+* cookie law
+* society (venue?) commities
+* links shows to plays (freebase)
+* 
