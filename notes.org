@@ -1,4 +1,4 @@
-* TODO Views:
+* Views:
 - home
 - diary
 - contact
@@ -10,8 +10,8 @@
   - map
     
 * Application Ordering?
-* API
-* TODO Diary
+* API serialization
+* Diary
 - including in society and venue pages
 * social integration
 * fun stuff
@@ -53,6 +53,7 @@
 * email builder
 * issue tracker
 * approval queue
+* approval in search
 * infobase
 * admin requests
 * email on being granted admin
@@ -60,4 +61,3 @@
 * cookie law
 * society (venue?) commities
 * links shows to plays (freebase)
-* 

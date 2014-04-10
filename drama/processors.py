@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from drama.forms import CamdramSearchForm
+from drama.models import Society, Venue, Role
 
 
 def navitems_processor(request):
@@ -8,12 +9,9 @@ def navitems_processor(request):
              ('diary', {'text': 'Diary', 'path': reverse('diary')}),
              ('vacancies', {
               'text': 'Vacancies', 'path': reverse('auditions')}),
-             ('societies', {'text': 'Societies', 'path': reverse(
-                 'list', kwargs={'model_name': 'societies'})}),
-             ('venues', {'text': 'Venues', 'path': reverse(
-                 'list', kwargs={'model_name': 'venues'})}),
-             ('roles', {'text': 'Roles', 'path': reverse(
-                 'list', kwargs={'model_name': 'roles'})}),
+             ('societies', {'text': 'Societies', 'path': Society.get_list_url()}),
+             ('venues', {'text': 'Venues', 'path': Venue.get_list_url()}),
+             ('roles', {'text': 'Roles', 'path': Role.get_list_url()}),
              )}
 
 

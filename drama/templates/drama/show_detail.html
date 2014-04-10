@@ -51,7 +51,7 @@
       {% include "drama/company_list.html" with roles=cast %}
     </div>
     {% if can_edit %}
-    <form action="add_cast" method="post">
+    <form action="{% url 'show-add-cast' slug=object.slug %}" method="post">
       {% csrf_token %}
       <div class="row">
 	<div class="small-6 columns">
@@ -72,7 +72,7 @@
       {% include "drama/company_list.html" with roles=band %}
     </div>
     {% if can_edit %}
-    <form action="add_band" method="post">
+    <form action="{% url 'show-add-band' slug=object.slug %}" method="post">
       {% csrf_token %}
       <div class="row">
 	<div class="small-6 columns">
@@ -99,7 +99,7 @@
       {% include "drama/company_list.html" with roles=prod %}
     </div>
     {% if can_edit %}
-    <form action="add_prod" method="post">
+    <form action="{% url 'show-add-prod' slug=object.slug %}" method="post">
       {% csrf_token %}
       <div class="row">
 	<div class="small-6 columns">
@@ -127,7 +127,7 @@
         items: "> div",
         stop: function(event, ui) {
             $.ajax({
-                url: "{% url 'role_reorder' model_name='shows' slug=show.slug %}",
+                url: "{% url 'show-role-reorder' slug=show.slug %}",
                 type: 'post',
                 data: $(this).sortable('serialize')
             });

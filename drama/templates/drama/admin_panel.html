@@ -1,25 +1,25 @@
 <div class="admin-panel">
   <h6>{{type|title}} Administration: {{item.get_link}}</h6>
   <ul class="inline-list">
-    <li><a href="{% url 'edit' item.get_cname item.slug %}"><i class="fa fa-pencil"> </i> Edit this {{type}}</a></li>
-    <li><a href="{% url 'remove' item.get_cname item.slug %}"><i class="fa fa-eraser"> </i> Delete this {{type}}</a></li>
+    <li><a href="{{item.get_edit_url}}"><i class="fa fa-pencil"> </i> Edit this {{type}}</a></li>
+    <li><a href="{{item.get_remove_url}}"><i class="fa fa-eraser"> </i> Delete this {{type}}</a></li>
     {% if item.is_show %}
-    <li><a href="{% url 'related_edit' model_name=item.get_cname submodel_name='auditions' slug=item.slug %}"><i class="fa fa-pencil"> </i> Add/edit auditions</a></li>
-    <li><a href="{% url 'related_remove' model_name=item.get_cname submodel_name='auditions' slug=item.slug %}"><i class="fa fa-eraser"> </i> Delete auditions</a></li>
-    <li><a href="{% url 'related_edit' model_name=item.get_cname submodel_name='technical' slug=item.slug %}"><i class="fa fa-pencil"> </i> Add/edit technical team advert</a></li>
-    <li><a href="{% url 'related_remove' model_name=item.get_cname submodel_name='technical' slug=item.slug %}"><i class="fa fa-eraser"> </i> Delete technical team advert</a></li>
-    <li><a href="{% url 'applications_edit' model_name=item.get_cname slug=item.slug %}"><i class="fa fa-pencil"> </i> Add/edit director/producer applications</a></li>
+    <li><a href="{% url 'show-auditions' slug=item.slug %}"><i class="fa fa-pencil"> </i> Add/edit auditions</a></li>
+    <li><a href="{% url 'show-remove-auditions' slug=item.slug %}"><i class="fa fa-eraser"> </i> Delete auditions</a></li>
+    <li><a href="{% url 'show-technical' slug=item.slug %}"><i class="fa fa-pencil"> </i> Add/edit technical team advert</a></li>
+    <li><a href="{% url 'show-remove-technical' slug=item.slug %}"><i class="fa fa-eraser"> </i> Delete technical team advert</a></li>
+    <li><a href="{{item.get_applications_url}}"><i class="fa fa-pencil"> </i> Add/edit director/producer applications</a></li>
     {% elif item.has_applications %}
-    <li><a href="{% url 'applications_edit' model_name=item.get_cname slug=item.slug %}"><i class="fa fa-pencil"> </i> Add/edit show applications</a></li>
+    <li><a href="{{item.get_applications_url}}"><i class="fa fa-pencil"> </i> Add/edit show applications</a></li>
     {% endif %}
     {% if admin %}
-    <li><a href="{% url 'change_admins' model_name=item.get_cname slug=item.slug %}"><i class="fa fa-pencil"> </i> Edit the {{type}}'s admins</a></li>
+    <li><a href="{{item.get_admins_url}}"><i class="fa fa-pencil"> </i> Edit the {{type}}'s admins</a></li>
     {% endif %}
     {% if approve %}
     {% if approved %}
-    <li><a href="{% url 'unapprove' model_name=item.get_cname slug=item.slug %}"><i class="fa fa-times-circle"> </i> Unapprove this {{type}}</a></li>
+    <li><a href="{{item.get_unapprove_url}}"><i class="fa fa-times-circle"> </i> Unapprove this {{type}}</a></li>
     {% else %}
-    <li><a href="{% url 'approve' model_name=item.get_cname slug=item.slug %}"><i class="fa fa-check-circle"> </i> Approve this {{type}}</a></li>
+    <li><a href="{{item.get_approve_url}}"><i class="fa fa-check-circle"> </i> Approve this {{type}}</a></li>
     {% endif %}
     {% endif %}
   </ul>

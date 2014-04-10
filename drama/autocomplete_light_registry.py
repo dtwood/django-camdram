@@ -18,16 +18,13 @@ class PersonAutocomplete(autocomplete_light.AutocompleteModelBase):
 class RoleAutocomplete(autocomplete_light.AutocompleteModelBase):
     search_fields = ['name']
     
-autocomplete_light.register(Society, SocietyAutocomplete, add_another_url_name='new', add_another_url_kwargs={
-                            'model_name': 'societies'}, field_name='society')
+autocomplete_light.register(Society, SocietyAutocomplete, add_another_url_name='society-new', field_name='society')
 
-autocomplete_light.register(Venue, VenueAutocomplete, add_another_url_name='new', add_another_url_kwargs={
-                            'model_name': 'venues'}, field_name='venue')
+autocomplete_light.register(Venue, VenueAutocomplete, add_another_url_name='venue-new', field_name='venue')
 
-autocomplete_light.register(Person, PersonAutocomplete, add_another_url_name='new', add_another_url_kwargs={
-                            'model_name': 'people'}, field_name='person')
+autocomplete_light.register(Person, PersonAutocomplete, add_another_url_name='person-new', field_name='person')
 
-autocomplete_light.register(Role, RoleAutocomplete, add_another_url_name='new', add_another_url_kwargs={'model_name': 'roles'}, field_name='role', widget_attrs = {'data-widget-bootstrap': 'fill-field-bootstrap',})
+autocomplete_light.register(Role, RoleAutocomplete, add_another_url_name='role-new', field_name='role', widget_attrs = {'data-widget-bootstrap': 'fill-field-bootstrap',})
 
 autocomplete_light.register(RoleAutocomplete, name='cast', choices=Role.objects.filter(cat='cast'))
 

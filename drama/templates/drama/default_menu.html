@@ -1,13 +1,13 @@
 <li><a href="{% url 'show-admin'%}"><i class="fa fa-ticket fa-fw"></i> Show Admin</a></li>
 {% if add_show %}
-<li><a href="{% url 'new' 'shows' %}"><i class="fa fa-plus-circle fa-fw"></i> Add a show</a></li>
+<li><a href="{% url 'show-new' %}"><i class="fa fa-plus-circle fa-fw"></i> Add a show</a></li>
 {% endif %}
 {% if add_venue %}
-<li><a href="{% url 'new' 'venues' %}"><i class="fa fa-plus-circle fa-fw"></i> Add a venue</a></li>
+<li><a href="{% url 'venue-new' %}"><i class="fa fa-plus-circle fa-fw"></i> Add a venue</a></li>
 {% endif %}
 {% if add_society %}
-<li><a href="{% url 'new' 'societies' %}"><i class="fa fa-plus-circle fa-fw"></i> Add a society</a></li>
+<li><a href="{% url 'society-new' %}"><i class="fa fa-plus-circle fa-fw"></i> Add a society</a></li>
 {% endif %}
 {% if add_role %}
-<li><a href="{% url 'new' 'roles' %}"><i class="fa fa-plus-circle fa-fw"></i> Add a role</a></li>
+<li><a href="{% url 'role-new' %}"><i class="fa fa-plus-circle fa-fw"></i> Add a role</a></li>
 {% endif %}

@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'south',
     'autocomplete_light',
     'pipeline',
+    'rest_framework',
     'drama',
 )
 
