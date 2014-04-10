@@ -5,7 +5,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets, routers
-from rest_framework.renderers import JSONRenderer, YAMLRenderer, BrowsableAPIRenderer, TemplateHTMLRenderer
+from rest_framework.renderers import JSONRenderer, YAMLRenderer, BrowsableAPIRenderer, TemplateHTMLRenderer, XMLRenderer
 from rest_framework.decorators import link, action
 from rest_framework.response import Response
 from drama import serializers, models, views, forms
@@ -14,7 +14,7 @@ Route = namedtuple('Route', ['url', 'mapping', 'name', 'initkwargs'])
 
 class ObjectViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
-    renderer_classes = (TemplateHTMLRenderer, BrowsableAPIRenderer, JSONRenderer, YAMLRenderer)
+    renderer_classes = (TemplateHTMLRenderer, BrowsableAPIRenderer, JSONRenderer, YAMLRenderer, XMLRenderer)
 
     def new(self, request, *args, **kwargs):
         if request.user.has_perm('drama.create_' + self.model.class_name()):

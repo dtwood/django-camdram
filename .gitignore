@@ -5,3 +5,5 @@
 .\#*
 .sass-cache
 *.scssc
+env
+migrations
