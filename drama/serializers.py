@@ -33,5 +33,3 @@ class ShowSerializer(serializers.ModelSerializer):
         model = models.Show
         lookup_field = 'slug'
         fields = ('id','name','desc', 'slug')
-
-        

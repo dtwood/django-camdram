@@ -11,6 +11,9 @@
     
 * Application Ordering?
 * API serialization
+* API write permissions
+* API Keys
+* API Throttling
 * Diary
 - including in society and venue pages
 * social integration
@@ -47,7 +50,7 @@
 * pending admin account creation
 * ical and/or rss
 * loging
-* markdown
+* markdown conversion
 * old camdram url compatability?
 * old camdram database?
 * email builder

@@ -7,7 +7,7 @@
 <div class="row">
   <div class="large-12 columns panel">
     <h2>{{venue.name}}{% if venue.address %}<br /><small>{{venue.address}}</small>{% endif %}</h2>
-    <p>{{venue.desc|safe}}</p>
+    <p>{{venue.desc|markdown}}</p>
   </div>
 </div>
 

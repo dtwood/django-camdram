@@ -19,7 +19,7 @@
 	{% include "drama/performance_listing.html" %}
 	{% endfor %}
       </p>
-     <p>{{show.desc}}</p>
+     <p>{{show.desc|markdown}}</p>
     </div>
     {% if show.image %}</div>{% endif %}
 </div>

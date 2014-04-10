@@ -14,7 +14,7 @@ Route = namedtuple('Route', ['url', 'mapping', 'name', 'initkwargs'])
 
 class ObjectViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
-    renderer_classes = (TemplateHTMLRenderer, BrowsableAPIRenderer, JSONRenderer, YAMLRenderer, XMLRenderer)
+    renderer_classes = (TemplateHTMLRenderer, BrowsableAPIRenderer, JSONRenderer, YAMLRenderer)
 
     def new(self, request, *args, **kwargs):
         if request.user.has_perm('drama.create_' + self.model.class_name()):

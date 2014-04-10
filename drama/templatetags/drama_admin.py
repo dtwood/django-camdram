@@ -1,4 +1,7 @@
+import markdown as markdown_lib
 from django import template
+from django.template.defaultfilters import stringfilter
+from django.utils.safestring import mark_safe
 from django.template.loader import get_template
 from guardian.shortcuts import get_users_with_perms, get_groups_with_perms, get_perms_for_model
 from django.contrib.auth.models import Permission
@@ -70,3 +73,13 @@ class DefaultMenuNode(template.Node):
 @register.tag
 def default_menu(parser, token):
     return DefaultMenuNode()
+
+@register.filter(is_safe=True)
+@stringfilter
+def markdown(value):
+    extensions = []
+
+    return mark_safe(markdown_lib.markdown(value,
+                                       extensions,
+                                       safe_mode='escape',
+                                       enable_attributes=False))
