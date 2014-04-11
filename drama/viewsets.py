@@ -4,17 +4,33 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
-from rest_framework import viewsets, routers
-from rest_framework.renderers import JSONRenderer, YAMLRenderer, BrowsableAPIRenderer, TemplateHTMLRenderer, XMLRenderer
-from rest_framework.decorators import link, action
+from rest_framework import viewsets, routers, permissions
+from rest_framework.renderers import JSONRenderer, YAMLRenderer, BrowsableAPIRenderer, StaticHTMLRenderer, XMLRenderer
+from rest_framework.decorators import link, action, permission_classes, api_view
 from rest_framework.response import Response
+from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, BasePermission
 from drama import serializers, models, views, forms
 
 Route = namedtuple('Route', ['url', 'mapping', 'name', 'initkwargs'])
 
+class CamdramPermissions(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        else:
+            return request.user.has_perm('drama.add_' + view.model.class_name())
+        
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        else:
+            return request.user.has_perm('drama.change_' + obj.class_name(),obj)
+    
+
 class ObjectViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
-    renderer_classes = (TemplateHTMLRenderer, BrowsableAPIRenderer, JSONRenderer, YAMLRenderer)
+    renderer_classes = (StaticHTMLRenderer, BrowsableAPIRenderer, JSONRenderer, YAMLRenderer, XMLRenderer)
+    permission_classes = (CamdramPermissions,)
 
     def new(self, request, *args, **kwargs):
         if request.user.has_perm('drama.create_' + self.model.class_name()):
@@ -61,6 +77,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         response = super(ObjectViewSet, self).list(request, *args, **kwargs)
+        print(request.accepted_renderer)
         if request.accepted_renderer.format == 'html':
             view = views.MyListView.as_view(model=self.model, model_name=self.model.get_cname())
             return view(request, *args, **kwargs)
@@ -72,6 +89,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
             view = views.MyDetailView.as_view(model=self.model)
             return view(request, slug=slug, *args, **kwargs)
         return response
+
 
 class OrganizationViewSet(ObjectViewSet):
     @action(methods=['GET', 'POST'])
@@ -321,7 +339,7 @@ class DramaRouter(routers.DefaultRouter):
             url=r'^{prefix}{trailing_slash}$',
             mapping={
                 'get': 'list',
-#                'post': 'create'
+                'post': 'create'
             },
             name='{basename}-list',
             initkwargs={'suffix': 'List'}
@@ -341,9 +359,9 @@ class DramaRouter(routers.DefaultRouter):
             url=r'^{prefix}/{lookup}{trailing_slash}$',
             mapping={
                 'get': 'retrieve',
-#                'put': 'update',
-#                'patch': 'partial_update',
-#                'delete': 'destroy'
+                'put': 'update',
+                'patch': 'partial_update',
+                'delete': 'destroy'
             },
             name='{basename}-detail',
             initkwargs={'suffix': 'Instance'}

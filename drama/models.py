@@ -403,6 +403,18 @@ class Show(models.Model, DramaObjectMixin):
             super(Show, self).save(*args, **kwargs)
 
     @property
+    def cast(self):
+        return self.roleinstance_set.filter(role__cat='cast')
+
+    @property
+    def band(self):
+        return self.roleinstance_set.filter(role__cat='band')
+
+    @property
+    def prod(self):
+        return self.roleinstance_set.filter(role__cat='prod')
+
+    @property
     def opening_night(self):
         try:
             return self.performance_set.order_by('start_date')[0].start_date

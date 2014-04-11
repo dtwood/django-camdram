@@ -10,10 +10,9 @@
   - map
     
 * Application Ordering?
-* API serialization
-* API write permissions
 * API Keys
 * API Throttling
+* API filtering?
 * Diary
 - including in society and venue pages
 * social integration
@@ -52,6 +51,7 @@
 * loging
 * markdown conversion
 * old camdram url compatability?
+* legacy api?
 * old camdram database?
 * email builder
 * issue tracker
