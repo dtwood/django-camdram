@@ -16,10 +16,10 @@
   <div class="large-12 columns">
     <form action="" method="post">
       {{ content_form.management_form }}
-      <div id="applications">
+      <div id="applications" class="{{prefix}}application_set collection">
   {% csrf_token %}
   {% for form in content_form %}
-  <div class="row">
+  <div class="row" id="{{form.DELETE.id_for_label}}">
     {{form.application_ptr}}
   {% include "drama/application_subform.html" %}
   <hr />
@@ -27,41 +27,14 @@
   {% endfor %}
   </div>
   <div id="empty_form" style="display:none">
-    <div class="row">
+    <div class="row" id="{{content_form.empty_form.DELETE.id_for_label}}">
     {% include "drama/application_subform.html" with form=content_form.empty_form %}
     <hr />
     </div>
   </div>
   <ul class="inline-list audition-links">
-    <li> <a href="#" id="add_more">Add application</a></li>
+    <li> <a href="#" id="{{prefix}}application_set" class="add_more">Add application</a></li>
   </ul>
-  <script>
-    $('#add_more').click(function() {
-        var form_idx = $('#id_{{prefix}}application_set-TOTAL_FORMS').val();
-        $('#applications').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
-        $('#id_{{prefix}}application_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-    $('.delete-link').click(function() {
-        var input_id = $(this).attr('id');
-        $(this).parent().find('input#' + input_id).prop('checked', true);
-        $(this).parent().parent().parent().addClass('hide');
-        return false;
-    });
-        return false;
-    });
-    $('.delete-link').click(function() {
-        var input_id = $(this).attr('id');
-        $(this).parent().find('input#' + input_id).prop('checked', true);
-        $(this).parent().parent().parent().addClass('hide');
-        return false;
-    });
-    $('.show-field').click(function() {
-        var id = $(this).attr('id');
-        $('div #' + id).removeClass('hide')
-        $(this).parent().parent().addClass('hide')
-        return false;
-    });
-  </script>
-
   <div class="text-right">
   <button type="submit">Save</button>
   </div>

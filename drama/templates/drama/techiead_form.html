@@ -21,14 +21,14 @@
       <label class="right inline required">Vacant positions</label>
     </div>
     <div class="large-9 columns">
-      <div id="vacant_positions" class="positions entity_collection">
+      <div id="vacant_positions" class="positions techieadrole_set collection">
 	{{techiead_formset.management_form}}
 	{% for form in techiead_formset %}
 	{% include "drama/techiead_form_item.html" %}
 	{% endfor %}
       </div>
       <ul class="inline-list audition-links">
-        <li> <a href="#" id="add_more">Add vacant position</a></li>
+        <li> <a href="#" id="techieadrole_set" class="add_more">Add vacant position</a></li>
       </ul>
     </div>
     <div id="empty_form" style="display:none">
@@ -39,54 +39,6 @@
   {% include "drama/form_field.html" with field=content_form.time %}
   {% include "drama/form_field.html" with field=content_form.contact %}
   {% include "drama/form_field.html" with field=content_form.desc %}
-  <script>
-    $('#add_more').click(function() {
-        var form_idx = $('#id_techieadrole_set-TOTAL_FORMS').val();
-        $('#vacant_positions').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
-        $('#id_techieadrole_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-    $('.delete-link').click(function() {
-        var input_id = $(this).attr('id');
-        $(this).parent().find('input#' + input_id).prop('checked', true);
-        $(this).parent().parent().parent().addClass('hide');
-        return false;
-    });
-        return false;
-    });
-    $('.show-field').click(function() {
-        var id = $(this).attr('id');
-        $('div #' + id).removeClass('hide')
-        $(this).parent().parent().addClass('hide')
-        return false;
-    });
-    $('.delete-link').click(function() {
-        var input_id = $(this).attr('id');
-        $(this).parent().find('input#' + input_id).prop('checked', true);
-        $(this).parent().parent().parent().addClass('hide');
-        return false;
-    });
-    $(document).bind('yourlabsWidgetReady', function() {
-    $('body').on('initialize', '.autocomplete-light-widget[data-widget-bootstrap=fill-field-bootstrap]', function() {
-        $(this).yourlabsWidget({
-            namefield: $(this).parent().parent().parent().find('div .namefield input'),
-            addToDeck:  function(choice, value) {
-    var existing_choice = this.deck.find('[data-value="'+value+'"]');
-
-    // Avoid duplicating choices in the deck.
-    if (!existing_choice.length) {
-        var deckChoice = this.deckChoiceHtml(choice);
-        var fieldChoice = choice.clone();
-        this.namefield.val(fieldChoice.text())
-        // In case getValue() actually **created** the value, for example
-        // with a post request.
-        deckChoice.attr('data-value', value);
-
-        this.deck.append(deckChoice);
-    }
-}
-        })
-    });
-});
-</script>
   <div class="text-right">
   <button type="submit">Save</button>
   </div>

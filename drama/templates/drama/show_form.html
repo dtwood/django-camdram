@@ -23,40 +23,20 @@
       <label class="right inline required">Dates and times</label>
     </div>
     <div class="large-9 columns">
-      <div id="performances" class="performances entity_collection">
+      <div id="performances" class="performances performance_set collection">
 	{{performance_formset.management_form}}
 	{% for form in performance_formset %}
 	{% include "drama/performance_form_item.html" %}
 	{% endfor %}
       </div>
       <ul class="inline-list right performance-links">
-        <li> <a href="#" id="add_more">Add date range</a></li>
+        <li> <a href="#" class="add_more" id="performance_set">Add date range</a></li>
       </ul>
     </div>
     <div id="empty_form" style="display:none">
       {% include "drama/performance_form_item.html" with form=performance_formset.empty_form %}
     </div>
   </div>
-  <script>
-    $('#add_more').click(function() {
-        var form_idx = $('#id_performance_set-TOTAL_FORMS').val();
-        $('#performances').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
-        $('#id_performance_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-    $('.delete-link').click(function() {
-        var input_id = $(this).attr('id');
-        $(this).parent().find('input#' + input_id).prop('checked', true);
-        $(this).parent().parent().parent().parent().addClass('hide');
-        return false;
-    });
-    return false;
-    });
-    $('.delete-link').click(function() {
-        var input_id = $(this).attr('id');
-        $(this).parent().find('input#' + input_id).prop('checked', true);
-        $(this).parent().parent().parent().parent().addClass('hide');
-        return false;
-    });
-</script>
   {% include "drama/form_field.html" with field=content_form.society %}
   {% include "drama/form_field.html" with field=content_form.desc %}
   {% include "drama/form_field.html" with field=content_form.image %}

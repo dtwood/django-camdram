@@ -11,6 +11,7 @@
     
 * Application Ordering?
 * API Keys
+* API Deserialization
 * API Throttling
 * API filtering?
 * Diary
@@ -44,8 +45,7 @@
 * imagefield form appearance
 * pretify registration form templates
 * year field
-* remove inline javascript
-* admin panel pending admins
+* pending admin removal
 * pending admin account creation
 * ical and/or rss
 * loging

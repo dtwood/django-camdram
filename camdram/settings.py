@@ -170,6 +170,7 @@ PIPELINE_JS = {
     'app': {
         'source_filenames': (
             'javascripts/camdram/autocomplete.js',
+            'javascripts/camdram/camdram.js',
         ),
         'output_filename': 'js/app.js'
     },
