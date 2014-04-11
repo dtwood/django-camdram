@@ -41,7 +41,6 @@
 * testing
 * commenting
 * show ordering in person view
-* edit/delete links in vacancies section
 * imagefield form appearance
 * pretify registration form templates
 * year field

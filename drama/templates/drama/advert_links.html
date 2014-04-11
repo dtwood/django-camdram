@@ -1,0 +1,6 @@
+<ul class="inline-list">
+  <li><a href="{{advert.get_edit_url}}"><i class="fa fa-pencil"> </i> Edit</a></li>
+  {% if advert.get_remove_url %}
+  <li><a href="{{advert.get_remove_url}}"><i class="fa fa-eraser"> </i> Remove</a></li>
+  {% endif %}
+</ul>

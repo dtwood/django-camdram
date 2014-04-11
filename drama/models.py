@@ -620,6 +620,12 @@ class TechieAd(models.Model):
     deadline = models.DateTimeField()
     def get_absolute_url(self):
         return self.show.get_absolute_url()
+    def get_edit_url(self):
+        return self.show.get_url('technical')
+    def get_remove_url(self):
+        return self.show.get_url('remove-technical')
+    def can_edit(self, user):
+        return user.has_perm('drama.change_show',self.show)
 
 
 class TechieAdRole(models.Model):
@@ -645,6 +651,12 @@ class Audition(models.Model):
 
     def get_absolute_url(self):
         return self.show.get_absolute_url()
+    def get_edit_url(self):
+        return self.show.get_url('auditions')
+    def get_remove_url(self):
+        return self.show.get_url('remove-auditions')
+    def can_edit(self, user):
+        return user.has_perm('drama.change_show',self.show)
 
 
 class AuditionInstance(models.Model):
@@ -688,6 +700,12 @@ class ShowApplication(Application):
     @property
     def object_name(self):
         return self.show.name
+    def can_edit(self, user):
+        return user.has_perm('drama.change_show',self.show)
+    def get_edit_url(self):
+        return self.show.get_url('applications')
+    def get_remove_url(self):
+        return False
 
 
 class SocietyApplication(Application):
@@ -696,6 +714,12 @@ class SocietyApplication(Application):
     @property
     def object_name(self):
         return self.society.name
+    def can_edit(self, user):
+        return user.has_perm('drama.change_society',self.society)
+    def get_edit_url(self):
+        return self.venue.get_url('applications')
+    def get_remove_url(self):
+        return False
 
 
 class VenueApplication(Application):
@@ -704,6 +728,12 @@ class VenueApplication(Application):
     @property
     def object_name(self):
         return self.venue.name
+    def can_edit(self, user):
+        return user.has_perm('drama.change_venue',self.venue)
+    def get_edit_url(self):
+        return self.venue.get_url('applications')
+    def get_remove_url(self):
+        return False
 
 class PendingAdmin(models.Model):
     email = models.EmailField()

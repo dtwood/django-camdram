@@ -1,4 +1,5 @@
 {% extends "drama/vacancy.html" %}
+{% load drama_admin %}
 {% block title %}Technical and Design Roles{% endblock %}
 
 {% block adverts %}
@@ -7,6 +8,7 @@
 <hr>
 <div id="{{ad.show.slug}}">
   <h4>{{ad.show.get_link}}</h4>
+  {% advert_links ad %}
   <p>
     {% if ad.show.performance_set.all %}
     {% for performance in ad.show.performance_set.all %}
@@ -17,7 +19,7 @@
     {% endif %}
   </p>
   <p>
-    <strong>Looking for</strong>
+    <strong>Looking for:</strong>
     <ul>
       {% for role in ad.techieadrole_set.all %}
       <li>{% if role.desc %}<a href="{% url 'ad_role' role.ad.show.slug role.slug %}">{% endif %}{{role.name}}{% if role.desc %}</a>{% endif %}{% if role.role.link %} <small>[<a href ="{{role.role.get_absolute_url}}">Whats this?</a>]</small>{% endif %}</li>

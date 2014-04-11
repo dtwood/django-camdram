@@ -74,6 +74,31 @@ class DefaultMenuNode(template.Node):
 def default_menu(parser, token):
     return DefaultMenuNode()
 
+class AdvertLinksNode(template.Node):
+    def __init__(self, item_name):
+        self.item_name = item_name
+        self.template = get_template('drama/advert_links.html')
+
+    def render(self, context):
+        user = context['user']
+        advert = context[self.item_name]
+        if advert.can_edit(user):
+            advert = context[self.item_name]
+            subcontext = {
+                'advert': advert
+                }
+            return self.template.render(template.Context(subcontext))
+        return HttpResponse('')
+
+@register.tag
+def advert_links(parser, token):
+    try:
+        tag_name, item_name = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError("%r tag requires a single argument" % token.contents.split()[0])
+    return AdvertLinksNode(item_name)
+        
+
 @register.filter(is_safe=True)
 @stringfilter
 def markdown(value):

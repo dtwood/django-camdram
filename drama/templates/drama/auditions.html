@@ -1,4 +1,5 @@
 {% extends "drama/vacancy.html" %}
+{% load drama_admin %}
 {% block title %}Auditions{% endblock %}
 
 {% block adverts %}
@@ -11,6 +12,7 @@
 <hr>
 <div id="{{ad.show.slug}}">
   <h4>{{ad.show.get_link}}</h4>
+  {% advert_links ad %}
   <p>
     {% if ad.show.performance_set.all %}
     {% for performance in ad.show.performance_set.all %}
