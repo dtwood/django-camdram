@@ -10,7 +10,6 @@
 
 <ul class="large-block-grid-2" id="role_list">
 {% for role in object_list %}
-{% if role.link %}
 <li id="{{role.slug}}">
   <div class="row">
     <div class="large-12 columns">
@@ -21,7 +20,6 @@
     </div>
   </div>
 </li>
-{% endif %}
 {% endfor %}
 </ul>
 {% endblock %}

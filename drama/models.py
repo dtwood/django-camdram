@@ -549,7 +549,6 @@ class Role(models.Model, DramaObjectMixin):
         ('cast', 'Cast'), ('band', 'Band'), ('prod', 'Production Team')]
     cat = models.CharField(
         max_length=4, choices=categories, verbose_name='Role Category')
-    link = models.BooleanField()
     slug = models.SlugField(max_length=200, blank=True, editable=False)
     approved = models.BooleanField(editable=False, default=False)
 

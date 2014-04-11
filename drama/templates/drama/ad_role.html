@@ -3,7 +3,7 @@
 {% block title %}Role Description: {{role.name}} for {{role.ad.show.name}}{% endblock %}
 
 {% block adverts %}
-<h2>{{role.ad.show.get_link}}<br /><small>{% if role.role.link %}{{role.role.get_link}}</small></h2>
+<h2>{{role.ad.show.get_link}}<br /><small>{{role.role.get_link}}</small></h2>
 <p>{% if role.ad.show.performance_set.all %}
 {% for performance in role.ad.show.performance_set.all %}
 	{% include "drama/performance_listing.html" %}
