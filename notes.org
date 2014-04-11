@@ -17,9 +17,8 @@
 * Diary
 - including in society and venue pages
 * social integration
-* fun stuff
-- tour map
-- sign in sheets
+* tour map
+* sign in sheets
 
 * templates
 
@@ -63,3 +62,5 @@
 * cookie law
 * society (venue?) commities
 * links shows to plays (freebase)
+* fixtures
+* autifixtures?

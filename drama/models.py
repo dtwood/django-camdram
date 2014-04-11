@@ -378,7 +378,7 @@ class Show(models.Model, DramaObjectMixin):
     name = models.CharField(max_length=200)
     desc = models.TextField('Description', blank=True)
     book = models.URLField('Booking Link', blank=True)
-    prices = models.TextField(blank=True)
+    prices = models.CharField(max_length=30, blank=True)
     author = models.CharField(max_length=200, blank=True)
     society = models.ForeignKey(Society)
     year = models.IntegerField()

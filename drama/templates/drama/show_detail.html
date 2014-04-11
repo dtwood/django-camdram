@@ -6,6 +6,18 @@
 <div class="row">
     {% admin_panel show %}
   <div class="large-12 columns panel">
+    {% if show.book %}
+    <ul class="inline-list right">
+      <li><a href="{{show.book}}"><i class="fa fa-ticket"></i> Buy tickets
+	  {% if show.prices %}({{show.prices}}){% endif %}</a></li>
+    </ul>
+    {% else %}
+    {% if show.prices %}
+    <ul class="inline-list right">
+      <li>{{show.prices}}</li>
+    </ul>
+    {% endif %}
+    {% endif %}
       <p class="show-society">{{show.society.get_link}} presents...</p>
       <h2>{{show.name}}<br />{% if show.author %}<small>By {{show.author}}</small>{% endif %}</h2>
     {% if show.image %}
