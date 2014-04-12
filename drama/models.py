@@ -237,7 +237,7 @@ class Venue(models.Model, DramaObjectMixin):
     def get_detail_context(self, request):
         venue = self
         context = {}
-        context['shows'] = Show.objects.filter(performance__venue=venue).filter(approved=True).distinct()
+        context['events'] = Performance.objects.filter(venue=self).filter(show__approved=True).filter(end_date__gte=timezone.now())
         context['auditions'] = AuditionInstance.objects.filter(audition__show__performance__venue=venue).filter(
         end_datetime__gte=timezone.now()).filter(audition__show__approved=True).order_by('end_datetime', 'start_time').distinct()
         try:
@@ -352,7 +352,7 @@ class Society(models.Model, DramaObjectMixin):
     def get_detail_context(self, request):
         society = self
         context = {}    
-        context['shows'] = society.show_set.filter(approved=True)
+        context['events'] = Performance.objects.filter(show__approved=True).filter(show__society=self).filter(end_date__gte=timezone.now())
         context['auditions'] = AuditionInstance.objects.filter(audition__show__society=society).filter(end_datetime__gte=timezone.now()).filter(audition__show__approved=True).order_by('end_datetime', 'start_time')
         try:
             context['auditions'][0]

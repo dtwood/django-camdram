@@ -1,0 +1,13 @@
+<div class="diary-week" data-start="{{start_date}}" data-end="{{end_date}}">
+  <h5 class="diary-week-label">{{label}}</h5>
+  <ul class="diary-header">
+    {% for date in dates %}
+    <li>{{date}}</li>
+    {% endfor %}
+  </ul>
+  <div class="diary-content">
+    {% for row in rows %}
+    {{row}}
+    {% endfor %}
+  </div>
+</div>

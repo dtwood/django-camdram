@@ -10,8 +10,7 @@
 * API Deserialization
 * API Throttling
 * API filtering?
-* Diary
-- including in society and venue pages
+* Diary skip blank weeks?
 * social integration
 * tour map
 * sign in sheets

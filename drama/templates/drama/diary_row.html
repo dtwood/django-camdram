@@ -1,0 +1,9 @@
+<div class="diary-row">
+  {% for event in events %}
+  <div class="diary-item diary-{{event.days}}-days diary-skip-left-{{event.skip}}">
+    <span class="diary-time">{{event.performance.time|date:"g:iA"|lower}}</span>
+    {{event.performance.show.get_link}}
+    <span class="diary-venue">{{event.performance.venue.get_link}}</span>
+  </div>
+  {% endfor %}
+</div>

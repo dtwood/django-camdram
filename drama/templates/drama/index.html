@@ -1,0 +1,10 @@
+{% extends "drama/base.html" %}
+{% load drama_admin %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div id="diary">
+{% diary events %}
+</div>
+{% endblock %}

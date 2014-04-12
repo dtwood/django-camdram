@@ -1,5 +1,7 @@
 import string
+import math
 import itertools
+import datetime
 import markdown as markdown_lib
 from django import template
 from django.template.defaultfilters import stringfilter
@@ -8,6 +10,7 @@ from django.template.loader import get_template
 from guardian.shortcuts import get_users_with_perms, get_groups_with_perms, get_perms_for_model
 from django.contrib.auth.models import Permission
 from drama.models import Venue
+from drama import util
 
 register = template.Library()
 
@@ -112,6 +115,28 @@ class AlphabetNode(template.Node):
 def alphabet(parser, token):
     return AlphabetNode()
         
+    
+class DiaryNode(template.Node):
+    def __init__(self, item_name):
+        self.item_name = item_name
+
+    def render(self, context):
+        diary_events = context[self.item_name]
+        try:
+            start_date = diary_events.order_by('start_date')[0].start_date
+            end_date = diary_events.order_by('-end_date')[0].end_date
+        except IndexError:
+            return ''
+        return util.diary(start_date, end_date, diary_events)
+
+@register.tag
+def diary(parser, token):
+    try:
+        tag_name, item_name = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError("%r tag requires a single argument" % token.contents.split()[0])
+    return DiaryNode(item_name)
+
 
 @register.filter(is_safe=True)
 @stringfilter

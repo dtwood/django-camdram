@@ -17,7 +17,7 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, remove_perm, g
 
 
 def index(request):
-    return render(request, 'drama/base.html')
+    return render(request, 'drama/index.html', {'events': Performance.objects.all()})
 
 
 def diary(request):
