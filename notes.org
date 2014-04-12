@@ -4,10 +4,6 @@
 - contact
 - development
 - auditions_diary
-- show
-  - ticket prices/link
-- venue
-  - map
     
 * Application Ordering?
 * API Keys

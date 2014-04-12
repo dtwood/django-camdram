@@ -36,7 +36,7 @@
       
       function codeAddress() {
       var address = $('input#id_address').val()
-      geocoder.geocode({'address': address}, function(results, status) {
+      geocoder.geocode({'address': address, 'bounds':bounds}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
       map.setCenter(results[0].geometry.location);
       setPosition(results[0].geometry.location);
@@ -50,6 +50,7 @@
       var map;
       var marker;
       
+      var bounds = new google.maps.LatLngBounds(new google.maps.LatLng(52.197109252120306, 0.07865957641604382), new google.maps.LatLng(52.21288934689779, 0.15934042358401257));
       function setPosition(position) {
       $('input#id_lat').val(position.lat());
       $('input#id_lng').val(position.lng());
