@@ -162,6 +162,8 @@ class Venue(models.Model, DramaObjectMixin):
     name = models.CharField(max_length=200)
     desc = models.TextField('Description', blank=True)
     address = models.CharField(max_length=200, blank=True)
+    lat = models.FloatField('Latitude', blank=True)
+    lng = models.FloatField('Longditude', blank=True)
     slug = models.SlugField(max_length=200, blank=True, editable=False)
     approved = models.BooleanField(editable=False, default=False)
     group = models.OneToOneField(auth.models.Group, null=True, blank=True, editable=False)
@@ -181,6 +183,10 @@ class Venue(models.Model, DramaObjectMixin):
             new_group.save()
             self.group = new_group
         super(Venue, self).save(*args, **kwargs)
+
+    def delete(self):
+        self.group.delete()
+        super(Venue, self).delete()
 
     @property
     def dec_string(self):
@@ -291,6 +297,10 @@ class Society(models.Model, DramaObjectMixin):
             new_group.save()
             self.group = new_group
         super(Society, self).save(*args, **kwargs)
+
+    def delete(self):
+        self.group.delete()
+        super(Society, self).delete()
 
     @property
     def dec_string(self):

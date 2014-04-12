@@ -3,6 +3,61 @@
 
 {% block title %}Venue: {% if object %}{{object.name}} - Edit{% else %}Create{% endif %}{% endblock %}
 
+{% block extra_headers %}
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHMSSEipRCEuOhkEcSGgC5IaJOcA1zHyQ&sensor=false">
+    </script>
+    <script type="text/javascript">
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(52.2050, 0.1190),
+          zoom: 13
+        };
+        map = new google.maps.Map(document.getElementById("map-canvas"),
+            mapOptions);
+
+      marker = new google.maps.Marker({
+      draggable: true,
+      {% if object.lat and object.lng %}
+      position: new google.maps.LatLng({{object.lat}}, {{object.lng}}),
+      {% endif %}
+      map: map,
+      });
+
+      google.maps.event.addListener(map, 'click', function(event) {
+      setPosition(event.latLng);
+      });
+      
+      google.maps.event.addListener(marker, 'dragend', function(event) {
+      setPosition(event.latLng);
+      });
+
+      }
+      
+      function codeAddress() {
+      var address = $('input#id_address').val()
+      geocoder.geocode({'address': address}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+      map.setCenter(results[0].geometry.location);
+      setPosition(results[0].geometry.location);
+      }else {
+        alert("Geocode was not successful for the following reason: " + status);
+      }
+      })}
+      
+      google.maps.event.addDomListener(window, 'load', initialize);
+      var geocoder = new google.maps.Geocoder();
+      var map;
+      var marker;
+      
+      function setPosition(position) {
+      $('input#id_lat').val(position.lat());
+      $('input#id_lng').val(position.lng());
+      marker.setPosition(position);
+      }
+    </script>
+{% endblock %}
+
 {% block content %}
 <div class="row">
   {% if object %}
@@ -17,8 +72,40 @@
   <form action="" enctype="multipart/form-data" method="post">
     {% csrf_token %}
     {% include "drama/form_field.html" with field=content_form.name %}
-    {% include "drama/form_field.html" with field=content_form.address %}
     {% include "drama/form_field.html" with field=content_form.desc %}
+<div class="row">
+  <div class="large-3 columns">
+    <label class="{{content_form.address.css_classes}} right inline" for="{{content_form.address.id_for_label}}">
+      {% if label %}
+      {{label}}
+      {% else %}
+      {{content_form.address.label}}
+      {% endif %}
+    </label>
+  </div>
+  <div class="{{content_form.address.css_classes}} large-8 columns">
+    {{content_form.address}}
+    {% for error in content_form.address.errors %}
+    <small class="error">{{error}}</small>
+    {% endfor %}
+  </div>
+  <div class="large-1 columns right">
+    <button onclick="codeAddress(); return false;" class="small">Find</button>
+</div>
+    <div class="row">
+      <div class="large-3 columns">
+	<label class="right inline">
+	  Location
+	</label>
+      </div>
+      <div class="large-9 columns">
+	<div class="map-large" id="map-canvas"></div>
+      </div>
+    </div>
+    <div class="hidden">
+    {% include "drama/form_field.html" with field=content_form.lat %}
+    {% include "drama/form_field.html" with field=content_form.lng %}
+    </div>
     <div class="right">
       <button type="submit">Save</button>
     </div>

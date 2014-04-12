@@ -2,12 +2,50 @@
 {% load drama_admin %}
 {% block title %}Venue: {{venue.name}}{% endblock %}
 
+{% block extra_headers %}
+{% if object.lat and object.lng %}
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHMSSEipRCEuOhkEcSGgC5IaJOcA1zHyQ&sensor=false">
+    </script>
+    <script type="text/javascript">
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng({{object.lat}}, {{object.lng}}),
+          zoom: 16
+        };
+        map = new google.maps.Map(document.getElementById("map-canvas"),
+            mapOptions);
+
+      marker = new google.maps.Marker({
+      draggable: true,
+      position: new google.maps.LatLng({{object.lat}}, {{object.lng}}),
+      map: map,
+      });
+
+      }
+      
+      google.maps.event.addDomListener(window, 'load', initialize);
+      var map;
+      var marker;
+    </script>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 {% admin_panel venue %}
 <div class="row">
   <div class="large-12 columns panel">
-    <h2>{{venue.name}}{% if venue.address %}<br /><small>{{venue.address}}</small>{% endif %}</h2>
-    <p>{{venue.desc|markdown}}</p>
+{% if object.lat and object.lng %}
+    <div class="large-4 columns">
+      <div class="map-small" id="map-canvas"></div>
+    </div>
+    <div class="large-8 columns">
+{% else %}
+    <div class="large-12 columns">
+{% endif %}
+      <h2>{{venue.name}}{% if venue.address %}<br /><small>{{venue.address}}</small>{% endif %}</h2>
+      <p>{{venue.desc|markdown}}</p>
+    </div>
   </div>
 </div>
 

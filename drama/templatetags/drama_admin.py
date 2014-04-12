@@ -1,3 +1,5 @@
+import string
+import itertools
 import markdown as markdown_lib
 from django import template
 from django.template.defaultfilters import stringfilter
@@ -97,6 +99,18 @@ def advert_links(parser, token):
     except ValueError:
         raise template.TemplateSyntaxError("%r tag requires a single argument" % token.contents.split()[0])
     return AdvertLinksNode(item_name)
+
+_the_string = ''.join([string.ascii_uppercase,string.ascii_lowercase])
+class AlphabetNode(template.Node):
+    def render(self, context):
+        if self not in context.render_context:
+            context.render_context[self] = itertools.cycle(_the_string)
+        alph_iter = context.render_context[self]
+        return next(alph_iter)
+
+@register.tag
+def alphabet(parser, token):
+    return AlphabetNode()
         
 
 @register.filter(is_safe=True)

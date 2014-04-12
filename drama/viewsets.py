@@ -77,7 +77,6 @@ class ObjectViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         response = super(ObjectViewSet, self).list(request, *args, **kwargs)
-        print(request.accepted_renderer)
         if request.accepted_renderer.format == 'html':
             view = views.MyListView.as_view(model=self.model, model_name=self.model.get_cname())
             return view(request, *args, **kwargs)

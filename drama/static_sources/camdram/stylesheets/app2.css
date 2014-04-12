@@ -1445,3 +1445,8 @@ table {
 #dev-warning h3 {
   color: #a00;
 }
+
+/* line 286, ../sass/app2.scss */
+.gmnoprint img {
+  max-width: none;
+}
