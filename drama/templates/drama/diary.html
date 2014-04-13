@@ -1,0 +1,29 @@
+{% extends "drama/base.html" %}
+{% load compressed %}
+
+{% block title %}Diary{% endblock %}
+
+{% block extra_headers %}
+{% compressed_js 'diary' %}
+<script>
+var diary_start = moment({{start|date:'U'}}, 'X')
+var diary_end = moment({{end|date:'U'}}, 'X')
+$(function () {
+var diary = new Diary({});
+diary.initialize();
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<h3>Diary</h3>
+<div class="row">
+  <div class="large-6 columns">
+    <a id="load_today" class="button small" href="{% url 'diary' %}">This Week</a>
+    <a id="load" class="button small" href="{% url 'diary' week=prev|date:'Y-m-d' %}">Previous Week</a>
+  </div>
+  <div class="laarge-6 columns right">
+  </div>
+</div>
+{{diary|safe}}
+{% endblock %}

@@ -164,6 +164,7 @@ PIPELINE_JS = {
             'javascripts/foundation/foundation/foundation.js',
             'javascripts/foundation/foundation/foundation.*.js',
             'javascripts/foundation/vendor/custom.modernizr.js',
+            'javascripts/moment.js',
         ),
         'output_filename': 'js/vendor.js',
     },
@@ -173,6 +174,12 @@ PIPELINE_JS = {
             'javascripts/camdram/camdram.js',
         ),
         'output_filename': 'js/app.js'
+    },
+    'diary': {
+        'source_filenames': (
+            'javascripts/camdram/diary.js',
+            ),
+        'output_filename':' js/diary.js'
     },
 }
 

@@ -9,7 +9,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from haystack.query import SearchQuerySet
 from django.views.generic import TemplateView, DetailView, CreateView, UpdateView, DeleteView, ListView, View
+from drama import util
 import json
+import datetime
 import autocomplete_light
 import hashlib
 from registration.backends.simple.views import RegistrationView
@@ -20,9 +22,29 @@ def index(request):
     return render(request, 'drama/index.html', {'events': Performance.objects.all()})
 
 
-def diary(request):
-    return HttpResponse("Hello World")
+def diary(request, week=None):
+    if week is None:
+        week = timezone.now().date()
+    else:
+        week = datetime.datetime.strptime(week,"%Y-%m-%d")
+    if 'end' in request.GET:
+        end = datetime.datetime.strptime(request.GET['end'],"%Y-%m-%d")
+    else:
+        end = week + datetime.timedelta(days=56)
+    prev = week - datetime.timedelta(days=7)
+    events = Performance.objects.filter(show__approved=True)
+    diary = util.diary(week, end, events)
+    return render(request, "drama/diary.html", {'diary': diary, 'start':week, 'end':end, 'prev':prev})
 
+def diary_week(request):
+    if 'week' in request.GET:
+        week = datetime.datetime.strptime(request.GET['week'],"%Y-%m-%d")
+    else:
+        raise Http404
+    events = Performance.objects.filter(show__approved=True)
+    diary_week = {'html':util.diary_week(events, week)}
+    data = json.dumps(diary_week)
+    return HttpResponse(data, content_type='application/json')
 
 def auditions(request):
     aud_instances = AuditionInstance.objects.filter(end_datetime__gte=timezone.now()).order_by(

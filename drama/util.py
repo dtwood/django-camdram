@@ -66,7 +66,11 @@ def diary_row(events, start_date, row_template):
         last_date = min(end_date, event.end_date)
     return row_template.render(template.Context({'events': diary_events}))
 
-def diary_week(events, week, week_template, row_template):
+def diary_week(events, week, week_template=None, row_template=None, label=None):
+    if not week_template:
+        week_template = get_template('drama/diary_week.html')
+    if not row_template:
+        row_template = get_template('drama/diary_row.html')
     #TODO: Label
     """
     Events is a queryset of events, week is a datetime.date within the week,
@@ -77,17 +81,17 @@ def diary_week(events, week, week_template, row_template):
     packed = box_pack(events, start_date)
     dates = []
     for i in range(7):
-        dates.append(start_date + datetime.timedelta(days=i))
+        dates.append((start_date + datetime.timedelta(days=i)).strftime('%a %e %b'))
     rows = []
     for row in packed:
         rows.append(diary_row(row, start_date, row_template))
-    return week_template.render(template.Context({'dates':dates, 'rows':rows, 'start_date': start_date, 'end_date': end_date}))
+    return week_template.render(template.Context({'dates':dates, 'rows':rows, 'start_date': start_date.strftime("%Y-%m-%d"), 'end_date': end_date.strftime("%Y-%m-%d"),'label':label}))
 
 def diary(start_date, end_date, events):
     diary_week_template = get_template('drama/diary_week.html')
     diary_row_template = get_template('drama/diary_row.html')
     diary = '<div id="diary">'
-    for i in range(math.ceil((end_date - start_date).days/7)):
+    for i in range(math.ceil((end_date - start_date).days/7) + 1):
         week = diary_week(events, start_date + datetime.timedelta(days=7*i), diary_week_template, diary_row_template)
         diary = '\n'.join([diary, week])
     return '\n'.join([diary, "</div>"])
