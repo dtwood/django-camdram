@@ -3,6 +3,7 @@ import math
 import datetime
 from django import template
 from django.template.loader import get_template
+from drama.models import TermDate
 
 def fits(diary_row, performance):
     for p in diary_row:
@@ -67,15 +68,14 @@ def diary_row(events, start_date, row_template):
     return row_template.render(template.Context({'events': diary_events}))
 
 def diary_week(events, week, week_template=None, row_template=None, label=None):
-    if not week_template:
-        week_template = get_template('drama/diary_week.html')
-    if not row_template:
-        row_template = get_template('drama/diary_row.html')
-    #TODO: Label
     """
     Events is a queryset of events, week is a datetime.date within the week,
     week_template and row_template are self explanitory.
     """
+    if not week_template:
+        week_template = get_template('drama/diary_week.html')
+    if not row_template:
+        row_template = get_template('drama/diary_row.html')
     start_date = datetime.date.fromordinal(week.toordinal() - week.weekday())
     end_date = datetime.date.fromordinal(week.toordinal() - week.weekday() + 6)
     packed = box_pack(events, start_date)
@@ -87,11 +87,19 @@ def diary_week(events, week, week_template=None, row_template=None, label=None):
         rows.append(diary_row(row, start_date, row_template))
     return week_template.render(template.Context({'dates':dates, 'rows':rows, 'start_date': start_date.strftime("%Y-%m-%d"), 'end_date': end_date.strftime("%Y-%m-%d"),'label':label}))
 
-def diary(start_date, end_date, events):
+def diary(start_date, end_date, events, with_labels=False):
     diary_week_template = get_template('drama/diary_week.html')
     diary_row_template = get_template('drama/diary_row.html')
     diary = '<div id="diary">'
+    label = None
+    week_label = None
     for i in range(math.ceil((end_date - start_date).days/7) + 1):
-        week = diary_week(events, start_date + datetime.timedelta(days=7*i), diary_week_template, diary_row_template)
+        date = start_date + datetime.timedelta(days=7*i)
+        if with_labels:
+            term_label, week_label = TermDate.get_label(date)
+            if term_label != label:
+                label = term_label
+                diary = '\n'.join([diary, '<h4>' + label + '</h4>'])
+        week = diary_week(events, date, diary_week_template, diary_row_template, week_label)
         diary = '\n'.join([diary, week])
     return '\n'.join([diary, "</div>"])

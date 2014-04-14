@@ -53,3 +53,5 @@ admin.site.register(Audition, AuditionAdmin)
 admin.site.register(SocietyApplication)
 admin.site.register(VenueApplication)
 admin.site.register(ShowApplication)
+admin.site.register(TermDate)
+

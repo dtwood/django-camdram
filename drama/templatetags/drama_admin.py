@@ -93,7 +93,7 @@ class AdvertLinksNode(template.Node):
                 'advert': advert
                 }
             return self.template.render(template.Context(subcontext))
-        return HttpResponse('')
+        return ''
 
 @register.tag
 def advert_links(parser, token):

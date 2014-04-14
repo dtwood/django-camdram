@@ -26,23 +26,24 @@ def diary(request, week=None):
     if week is None:
         week = timezone.now().date()
     else:
-        week = datetime.datetime.strptime(week,"%Y-%m-%d")
+        week = datetime.datetime.strptime(week,"%Y-%m-%d").date()
     if 'end' in request.GET:
-        end = datetime.datetime.strptime(request.GET['end'],"%Y-%m-%d")
+        end = datetime.datetime.strptime(request.GET['end'],"%Y-%m-%d").date()
     else:
         end = week + datetime.timedelta(days=56)
     prev = week - datetime.timedelta(days=7)
     events = Performance.objects.filter(show__approved=True)
-    diary = util.diary(week, end, events)
+    diary = util.diary(week, end, events, with_labels=True)
     return render(request, "drama/diary.html", {'diary': diary, 'start':week, 'end':end, 'prev':prev})
 
 def diary_week(request):
     if 'week' in request.GET:
-        week = datetime.datetime.strptime(request.GET['week'],"%Y-%m-%d")
+        week = datetime.datetime.strptime(request.GET['week'],"%Y-%m-%d").date()
     else:
         raise Http404
     events = Performance.objects.filter(show__approved=True)
-    diary_week = {'html':util.diary_week(events, week)}
+    term_label, week_label = TermDate.get_label(week)
+    diary_week = {'html':util.diary_week(events, week, label=week_label), 'term_label':term_label}
     data = json.dumps(diary_week)
     return HttpResponse(data, content_type='application/json')
 

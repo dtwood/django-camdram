@@ -1,3 +1,4 @@
+import math
 from django.db import models, IntegrityError
 from django.template.defaultfilters import slugify
 from django.core.urlresolvers import reverse
@@ -752,3 +753,42 @@ class PendingAdmin(models.Model):
 class PendingGroupMember(models.Model):
     email = models.EmailField()
     group = models.ForeignKey(auth.models.Group)
+
+class TermDate(models.Model):
+    YEAR_CHOICES = []
+    for i in range(2000, (timezone.now().year + 2)):
+        YEAR_CHOICES.append((i,i))
+
+    MICH = 'MT'
+    LENT = 'LT'
+    EASTER = 'ET'
+    CHRIST_VAC = 'CB'
+    EASTER_VAC = 'EB'
+    SUMMER_VAC = 'SB'
+    TERM_CHOICES = (
+        ('Terms', ((MICH, 'Michaelmas Term'),
+                    (LENT, 'Lent Term'),
+                    (EASTER, 'Easter Term'))),
+        ('Breaks', ((CHRIST_VAC, 'Christmas Break'),
+                    (EASTER_VAC, 'Easter Break'),
+                    (SUMMER_VAC, 'Summer Break'))))
+    
+    year = models.IntegerField(choices=YEAR_CHOICES)
+    term = models.CharField(max_length=2, choices=TERM_CHOICES)
+    start = models.DateField()
+
+    @classmethod
+    def get_term(cls, date):
+        try:
+            return cls.objects.filter(start__lte=date).order_by('-start')[0]
+        except IndexError:
+            return None
+
+    @classmethod
+    def get_label(cls, date):
+        term = cls.get_term(date)
+        if term:
+            week = math.floor((date - term.start)/timedelta(days=7))
+            return (term.get_term_display(), 'Week ' + str(week))
+        else:
+            return (None, None)

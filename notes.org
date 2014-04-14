@@ -1,6 +1,5 @@
 * Views:
 - home
-- diary
 - contact
 - development
 - auditions_diary
@@ -10,6 +9,8 @@
 * API Deserialization
 * API Throttling
 * API filtering?
+* diary week labels
+* diary jump to
 * Diary skip blank weeks?
 * social integration
 * tour map
