@@ -34,7 +34,7 @@ def diary(request, week=None):
     prev = week - datetime.timedelta(days=7)
     events = Performance.objects.filter(show__approved=True)
     diary = util.diary(week, end, events, with_labels=True)
-    return render(request, "drama/diary.html", {'diary': diary, 'start':week, 'end':end, 'prev':prev})
+    return render(request, "drama/diary.html", {'diary': diary, 'start':week, 'end':end, 'prev':prev, 'jump_form': DiaryJumpForm()})
 
 def diary_week(request):
     if 'week' in request.GET:
@@ -46,6 +46,14 @@ def diary_week(request):
     diary_week = {'html':util.diary_week(events, week, label=week_label), 'term_label':term_label}
     data = json.dumps(diary_week)
     return HttpResponse(data, content_type='application/json')
+
+def diary_jump(request):
+    form = DiaryJumpForm(request.GET)
+    if form.is_valid():
+        term = TermDate.objects.filter(term=form.cleaned_data['term'], year=form.cleaned_data['year']).get()
+        return redirect(reverse('diary', kwargs={'week': term.start.strftime('%Y-%m-%d')}))
+    else:
+        raise Http404
 
 def auditions(request):
     aud_instances = AuditionInstance.objects.filter(end_datetime__gte=timezone.now()).order_by(

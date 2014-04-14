@@ -22,7 +22,10 @@ diary.initialize();
     <a id="load_today" class="button small" href="{% url 'diary' %}">This Week</a>
     <a id="load_previous" class="button small" href="{% url 'diary' week=prev|date:'Y-m-d' %}">Previous Week</a>
   </div>
-  <div class="large-6 columns right">
+  <div class="large-6 columns text-right">
+    <form method="get" action="{% url 'diary_jump' %}" id="diary_jump_form">
+      Jump to {{jump_form.year}}{{jump_form.term}}<button class="small submit">Go</button>
+    </form>
   </div>
 </div>
 {{diary|safe}}

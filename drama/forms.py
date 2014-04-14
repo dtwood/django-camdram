@@ -283,3 +283,7 @@ class EmailRegistrationForm(RegistrationForm):
 
 class AdminForm(forms.Form):
     email = forms.EmailField()
+
+class DiaryJumpForm(forms.Form):
+    term = forms.ChoiceField(choices=TermDate.TERM_CHOICES)
+    year = forms.ChoiceField(choices=TermDate.YEAR_CHOICES)

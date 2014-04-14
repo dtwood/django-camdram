@@ -131,11 +131,6 @@ textarea {
   min-height: 50px;
 }
 
-/* line 361, ../sass/foundation/components/_global.scss */
-select {
-  width: 100%;
-}
-
 /* Grid HTML Classes */
 /* line 116, ../sass/foundation/components/_grid.scss */
 .row {
