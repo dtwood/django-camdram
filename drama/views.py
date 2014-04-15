@@ -34,7 +34,9 @@ def diary(request, week=None):
     prev = week - datetime.timedelta(days=7)
     events = Performance.objects.filter(show__approved=True)
     diary = util.diary(week, end, events, with_labels=True)
-    return render(request, "drama/diary.html", {'diary': diary, 'start':week, 'end':end, 'prev':prev, 'jump_form': DiaryJumpForm()})
+    current_term = TermDate.get_term(timezone.now())
+    jump_form = DiaryJumpForm(initial={'term':current_term.term, 'year':current_term.year})
+    return render(request, "drama/diary.html", {'diary': diary, 'start':week, 'end':end, 'prev':prev, 'jump_form': jump_form})
 
 def diary_week(request):
     if 'week' in request.GET:
