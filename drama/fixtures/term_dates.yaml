@@ -11,27 +11,27 @@
   model: drama.TermDate
   pk: 2
 - fields:
-    start: 2007-01-15
+    start: 2008-01-14
     term: LT
-    year: 2007
+    year: 2008
   model: drama.TermDate
   pk: 3
 - fields:
-    start: 2007-03-19
+    start: 2008-03-17
     term: EB
-    year: 2007
+    year: 2008
   model: drama.TermDate
   pk: 4
 - fields:
-    start: 2007-04-16
+    start: 2008-04-21
     term: ET
-    year: 2007
+    year: 2008
   model: drama.TermDate
   pk: 5
 - fields:
-    start: 2007-06-18
+    start: 2008-06-16
     term: SB
-    year: 2007
+    year: 2008
   model: drama.TermDate
   pk: 6
 - fields:
@@ -47,27 +47,27 @@
   model: drama.TermDate
   pk: 8
 - fields:
-    start: 2008-01-07
+    start: 2009-01-12
     term: LT
-    year: 2008
+    year: 2009
   model: drama.TermDate
   pk: 9
 - fields:
-    start: 2008-03-17
+    start: 2009-03-16
     term: EB
-    year: 2008
+    year: 2009
   model: drama.TermDate
   pk: 10
 - fields:
-    start: 2008-04-21
+    start: 2009-04-20
     term: ET
-    year: 2008
+    year: 2009
   model: drama.TermDate
   pk: 11
 - fields:
-    start: 2008-06-16
+    start: 2009-06-15
     term: SB
-    year: 2008
+    year: 2009
   model: drama.TermDate
   pk: 12
 - fields:
@@ -83,27 +83,27 @@
   model: drama.TermDate
   pk: 14
 - fields:
-    start: 2009-01-12
+    start: 2010-01-11
     term: LT
-    year: 2009
+    year: 2010
   model: drama.TermDate
   pk: 15
 - fields:
-    start: 2009-03-16
+    start: 2010-03-15
     term: EB
-    year: 2009
+    year: 2010
   model: drama.TermDate
   pk: 16
 - fields:
-    start: 2009-04-20
+    start: 2010-04-19
     term: ET
-    year: 2009
+    year: 2010
   model: drama.TermDate
   pk: 17
 - fields:
-    start: 2009-06-15
+    start: 2010-06-14
     term: SB
-    year: 2009
+    year: 2010
   model: drama.TermDate
   pk: 18
 - fields:
@@ -119,27 +119,27 @@
   model: drama.TermDate
   pk: 20
 - fields:
-    start: 2010-01-18
+    start: 2011-01-17
     term: LT
-    year: 2010
+    year: 2011
   model: drama.TermDate
   pk: 21
 - fields:
-    start: 2010-03-22
+    start: 2011-03-21
     term: EB
-    year: 2010
+    year: 2011
   model: drama.TermDate
   pk: 22
 - fields:
-    start: 2010-04-26
+    start: 2011-04-25
     term: ET
-    year: 2010
+    year: 2011
   model: drama.TermDate
   pk: 23
 - fields:
-    start: 2010-06-21
+    start: 2011-06-20
     term: SB
-    year: 2010
+    year: 2011
   model: drama.TermDate
   pk: 24
 - fields:
@@ -155,27 +155,27 @@
   model: drama.TermDate
   pk: 26
 - fields:
-    start: 2011-01-17
+    start: 2012-01-16
     term: LT
-    year: 2011
+    year: 2012
   model: drama.TermDate
   pk: 27
 - fields:
-    start: 2011-03-21
+    start: 2012-03-19
     term: EB
-    year: 2011
+    year: 2012
   model: drama.TermDate
   pk: 28
 - fields:
-    start: 2011-04-18
+    start: 2012-04-23
     term: ET
-    year: 2011
+    year: 2012
   model: drama.TermDate
   pk: 29
 - fields:
-    start: 2011-06-20
+    start: 2012-06-18
     term: SB
-    year: 2011
+    year: 2012
   model: drama.TermDate
   pk: 30
 - fields:
@@ -191,27 +191,27 @@
   model: drama.TermDate
   pk: 32
 - fields:
-    start: 2012-01-09
+    start: 2013-01-14
     term: LT
-    year: 2012
+    year: 2013
   model: drama.TermDate
   pk: 33
 - fields:
-    start: 2012-03-19
+    start: 2013-03-18
     term: EB
-    year: 2012
+    year: 2013
   model: drama.TermDate
   pk: 34
 - fields:
-    start: 2012-04-23
+    start: 2013-04-22
     term: ET
-    year: 2012
+    year: 2013
   model: drama.TermDate
   pk: 35
 - fields:
-    start: 2012-06-18
+    start: 2013-06-17
     term: SB
-    year: 2012
+    year: 2013
   model: drama.TermDate
   pk: 36
 - fields:
@@ -227,27 +227,27 @@
   model: drama.TermDate
   pk: 38
 - fields:
-    start: 2013-01-14
+    start: 2014-01-13
     term: LT
-    year: 2013
+    year: 2014
   model: drama.TermDate
   pk: 39
 - fields:
-    start: 2013-03-18
+    start: 2014-03-17
     term: EB
-    year: 2013
+    year: 2014
   model: drama.TermDate
   pk: 40
 - fields:
-    start: 2013-04-22
+    start: 2014-04-21
     term: ET
-    year: 2013
+    year: 2014
   model: drama.TermDate
   pk: 41
 - fields:
-    start: 2013-06-17
+    start: 2014-06-16
     term: SB
-    year: 2013
+    year: 2014
   model: drama.TermDate
   pk: 42
 - fields:
@@ -263,27 +263,27 @@
   model: drama.TermDate
   pk: 44
 - fields:
-    start: 2014-01-13
+    start: 2015-01-12
     term: LT
-    year: 2014
+    year: 2015
   model: drama.TermDate
   pk: 45
 - fields:
-    start: 2014-03-17
+    start: 2015-03-16
     term: EB
-    year: 2014
+    year: 2015
   model: drama.TermDate
   pk: 46
 - fields:
-    start: 2014-04-21
+    start: 2015-04-20
     term: ET
-    year: 2014
+    year: 2015
   model: drama.TermDate
   pk: 47
 - fields:
-    start: 2014-06-16
+    start: 2015-06-15
     term: SB
-    year: 2014
+    year: 2015
   model: drama.TermDate
   pk: 48
 - fields:
@@ -299,27 +299,27 @@
   model: drama.TermDate
   pk: 50
 - fields:
-    start: 2015-01-12
+    start: 2016-01-11
     term: LT
-    year: 2015
+    year: 2016
   model: drama.TermDate
   pk: 51
 - fields:
-    start: 2015-03-16
+    start: 2016-03-14
     term: EB
-    year: 2015
+    year: 2016
   model: drama.TermDate
   pk: 52
 - fields:
-    start: 2015-04-13
+    start: 2016-04-18
     term: ET
-    year: 2015
+    year: 2016
   model: drama.TermDate
   pk: 53
 - fields:
-    start: 2015-06-15
+    start: 2016-06-13
     term: SB
-    year: 2015
+    year: 2016
   model: drama.TermDate
   pk: 54
 - fields:
@@ -335,27 +335,27 @@
   model: drama.TermDate
   pk: 56
 - fields:
-    start: 2016-01-11
+    start: 2017-01-16
     term: LT
-    year: 2016
+    year: 2017
   model: drama.TermDate
   pk: 57
 - fields:
-    start: 2016-03-21
+    start: 2017-03-20
     term: EB
-    year: 2016
+    year: 2017
   model: drama.TermDate
   pk: 58
 - fields:
-    start: 2016-04-25
+    start: 2017-04-24
     term: ET
-    year: 2016
+    year: 2017
   model: drama.TermDate
   pk: 59
 - fields:
-    start: 2016-06-20
+    start: 2017-06-19
     term: SB
-    year: 2016
+    year: 2017
   model: drama.TermDate
   pk: 60
 - fields:
@@ -371,27 +371,27 @@
   model: drama.TermDate
   pk: 62
 - fields:
-    start: 2017-01-16
+    start: 2018-01-15
     term: LT
-    year: 2017
+    year: 2018
   model: drama.TermDate
   pk: 63
 - fields:
-    start: 2017-03-20
+    start: 2018-03-19
     term: EB
-    year: 2017
+    year: 2018
   model: drama.TermDate
   pk: 64
 - fields:
-    start: 2017-04-24
+    start: 2018-04-23
     term: ET
-    year: 2017
+    year: 2018
   model: drama.TermDate
   pk: 65
 - fields:
-    start: 2017-06-19
+    start: 2018-06-18
     term: SB
-    year: 2017
+    year: 2018
   model: drama.TermDate
   pk: 66
 - fields:
@@ -407,27 +407,27 @@
   model: drama.TermDate
   pk: 68
 - fields:
-    start: 2018-01-15
+    start: 2019-01-14
     term: LT
-    year: 2018
+    year: 2019
   model: drama.TermDate
   pk: 69
 - fields:
-    start: 2018-03-19
+    start: 2019-03-18
     term: EB
-    year: 2018
+    year: 2019
   model: drama.TermDate
   pk: 70
 - fields:
-    start: 2018-04-23
+    start: 2019-04-22
     term: ET
-    year: 2018
+    year: 2019
   model: drama.TermDate
   pk: 71
 - fields:
-    start: 2018-06-18
+    start: 2019-06-17
     term: SB
-    year: 2018
+    year: 2019
   model: drama.TermDate
   pk: 72
 - fields:
@@ -443,27 +443,27 @@
   model: drama.TermDate
   pk: 74
 - fields:
-    start: 2019-01-14
+    start: 2020-01-13
     term: LT
-    year: 2019
+    year: 2020
   model: drama.TermDate
   pk: 75
 - fields:
-    start: 2019-03-18
+    start: 2020-03-16
     term: EB
-    year: 2019
+    year: 2020
   model: drama.TermDate
   pk: 76
 - fields:
-    start: 2019-04-15
+    start: 2020-04-20
     term: ET
-    year: 2019
+    year: 2020
   model: drama.TermDate
   pk: 77
 - fields:
-    start: 2019-06-17
+    start: 2020-06-15
     term: SB
-    year: 2019
+    year: 2020
   model: drama.TermDate
   pk: 78
 - fields:
@@ -479,27 +479,27 @@
   model: drama.TermDate
   pk: 80
 - fields:
-    start: 2020-01-13
+    start: 2021-01-18
     term: LT
-    year: 2020
+    year: 2021
   model: drama.TermDate
   pk: 81
 - fields:
-    start: 2020-03-23
+    start: 2021-03-22
     term: EB
-    year: 2020
+    year: 2021
   model: drama.TermDate
   pk: 82
 - fields:
-    start: 2020-04-27
+    start: 2021-04-26
     term: ET
-    year: 2020
+    year: 2021
   model: drama.TermDate
   pk: 83
 - fields:
-    start: 2020-06-22
+    start: 2021-06-21
     term: SB
-    year: 2020
+    year: 2021
   model: drama.TermDate
   pk: 84
 - fields:
@@ -515,27 +515,27 @@
   model: drama.TermDate
   pk: 86
 - fields:
-    start: 2021-01-18
+    start: 2022-01-17
     term: LT
-    year: 2021
+    year: 2022
   model: drama.TermDate
   pk: 87
 - fields:
-    start: 2021-03-22
+    start: 2022-03-21
     term: EB
-    year: 2021
+    year: 2022
   model: drama.TermDate
   pk: 88
 - fields:
-    start: 2021-04-26
+    start: 2022-04-25
     term: ET
-    year: 2021
+    year: 2022
   model: drama.TermDate
   pk: 89
 - fields:
-    start: 2021-06-21
+    start: 2022-06-20
     term: SB
-    year: 2021
+    year: 2022
   model: drama.TermDate
   pk: 90
 - fields:
@@ -551,27 +551,27 @@
   model: drama.TermDate
   pk: 92
 - fields:
-    start: 2022-01-17
+    start: 2023-01-16
     term: LT
-    year: 2022
+    year: 2023
   model: drama.TermDate
   pk: 93
 - fields:
-    start: 2022-03-21
+    start: 2023-03-20
     term: EB
-    year: 2022
+    year: 2023
   model: drama.TermDate
   pk: 94
 - fields:
-    start: 2022-04-25
+    start: 2023-04-24
     term: ET
-    year: 2022
+    year: 2023
   model: drama.TermDate
   pk: 95
 - fields:
-    start: 2022-06-20
+    start: 2023-06-19
     term: SB
-    year: 2022
+    year: 2023
   model: drama.TermDate
   pk: 96
 - fields:
@@ -587,27 +587,27 @@
   model: drama.TermDate
   pk: 98
 - fields:
-    start: 2023-01-16
+    start: 2024-01-15
     term: LT
-    year: 2023
+    year: 2024
   model: drama.TermDate
   pk: 99
 - fields:
-    start: 2023-03-20
+    start: 2024-03-18
     term: EB
-    year: 2023
+    year: 2024
   model: drama.TermDate
   pk: 100
 - fields:
-    start: 2023-04-17
+    start: 2024-04-22
     term: ET
-    year: 2023
+    year: 2024
   model: drama.TermDate
   pk: 101
 - fields:
-    start: 2023-06-19
+    start: 2024-06-17
     term: SB
-    year: 2023
+    year: 2024
   model: drama.TermDate
   pk: 102
 - fields:
@@ -623,27 +623,27 @@
   model: drama.TermDate
   pk: 104
 - fields:
-    start: 2024-01-15
+    start: 2025-01-20
     term: LT
-    year: 2024
+    year: 2025
   model: drama.TermDate
   pk: 105
 - fields:
-    start: 2024-03-25
+    start: 2025-03-24
     term: EB
-    year: 2024
+    year: 2025
   model: drama.TermDate
   pk: 106
 - fields:
-    start: 2024-04-29
+    start: 2025-04-28
     term: ET
-    year: 2024
+    year: 2025
   model: drama.TermDate
   pk: 107
 - fields:
-    start: 2024-06-24
+    start: 2025-06-23
     term: SB
-    year: 2024
+    year: 2025
   model: drama.TermDate
   pk: 108
 - fields:
@@ -659,27 +659,27 @@
   model: drama.TermDate
   pk: 110
 - fields:
-    start: 2025-01-20
+    start: 2026-01-19
     term: LT
-    year: 2025
+    year: 2026
   model: drama.TermDate
   pk: 111
 - fields:
-    start: 2025-03-24
+    start: 2026-03-23
     term: EB
-    year: 2025
+    year: 2026
   model: drama.TermDate
   pk: 112
 - fields:
-    start: 2025-04-28
+    start: 2026-04-27
     term: ET
-    year: 2025
+    year: 2026
   model: drama.TermDate
   pk: 113
 - fields:
-    start: 2025-06-23
+    start: 2026-06-22
     term: SB
-    year: 2025
+    year: 2026
   model: drama.TermDate
   pk: 114
 - fields:
@@ -695,27 +695,27 @@
   model: drama.TermDate
   pk: 116
 - fields:
-    start: 2026-01-19
+    start: 2027-01-18
     term: LT
-    year: 2026
+    year: 2027
   model: drama.TermDate
   pk: 117
 - fields:
-    start: 2026-03-23
+    start: 2027-03-22
     term: EB
-    year: 2026
+    year: 2027
   model: drama.TermDate
   pk: 118
 - fields:
-    start: 2026-04-27
+    start: 2027-04-26
     term: ET
-    year: 2026
+    year: 2027
   model: drama.TermDate
   pk: 119
 - fields:
-    start: 2026-06-22
+    start: 2027-06-21
     term: SB
-    year: 2026
+    year: 2027
   model: drama.TermDate
   pk: 120
 - fields:
@@ -731,27 +731,27 @@
   model: drama.TermDate
   pk: 122
 - fields:
-    start: 2027-01-18
+    start: 2028-01-17
     term: LT
-    year: 2027
+    year: 2028
   model: drama.TermDate
   pk: 123
 - fields:
-    start: 2027-03-22
+    start: 2028-03-20
     term: EB
-    year: 2027
+    year: 2028
   model: drama.TermDate
   pk: 124
 - fields:
-    start: 2027-04-19
+    start: 2028-04-24
     term: ET
-    year: 2027
+    year: 2028
   model: drama.TermDate
   pk: 125
 - fields:
-    start: 2027-06-21
+    start: 2028-06-19
     term: SB
-    year: 2027
+    year: 2028
   model: drama.TermDate
   pk: 126
 - fields:
@@ -767,27 +767,27 @@
   model: drama.TermDate
   pk: 128
 - fields:
-    start: 2028-01-10
+    start: 2029-01-15
     term: LT
-    year: 2028
+    year: 2029
   model: drama.TermDate
   pk: 129
 - fields:
-    start: 2028-03-20
+    start: 2029-03-19
     term: EB
-    year: 2028
+    year: 2029
   model: drama.TermDate
   pk: 130
 - fields:
-    start: 2028-04-24
+    start: 2029-04-23
     term: ET
-    year: 2028
+    year: 2029
   model: drama.TermDate
   pk: 131
 - fields:
-    start: 2028-06-19
+    start: 2029-06-18
     term: SB
-    year: 2028
+    year: 2029
   model: drama.TermDate
   pk: 132
 - fields:
@@ -803,27 +803,27 @@
   model: drama.TermDate
   pk: 134
 - fields:
-    start: 2029-01-15
+    start: 2030-01-14
     term: LT
-    year: 2029
+    year: 2030
   model: drama.TermDate
   pk: 135
 - fields:
-    start: 2029-03-19
+    start: 2030-03-18
     term: EB
-    year: 2029
+    year: 2030
   model: drama.TermDate
   pk: 136
 - fields:
-    start: 2029-04-23
+    start: 2030-04-22
     term: ET
-    year: 2029
+    year: 2030
   model: drama.TermDate
   pk: 137
 - fields:
-    start: 2029-06-18
+    start: 2030-06-17
     term: SB
-    year: 2029
+    year: 2030
   model: drama.TermDate
   pk: 138
 

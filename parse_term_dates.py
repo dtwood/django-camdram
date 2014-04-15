@@ -19,10 +19,10 @@ for row in reader:
     e_end_month = 6
     mt_start = datetime.date(year=year, month=m_start_month, day=int(row[1]))
     cb_start = datetime.date(year=year, month=m_end_month, day=int(row[2]))
-    lt_start = datetime.date(year=year, month=l_start_month, day=int(row[3]))
-    eb_start = datetime.date(year=year, month=l_end_month, day=int(row[4]))
-    et_start = datetime.date(year=year, month=e_start_month, day=int(row[5]))
-    sb_start = datetime.date(year=year, month=e_end_month, day=int(row[6]))
+    lt_start = datetime.date(year=year + 1, month=l_start_month, day=int(row[3]))
+    eb_start = datetime.date(year=year + 1, month=l_end_month, day=int(row[4]))
+    et_start = datetime.date(year=year + 1, month=e_start_month, day=int(row[5]))
+    sb_start = datetime.date(year=year + 1, month=e_end_month, day=int(row[6]))
     mt_start = datetime.date.fromordinal(mt_start.toordinal() - mt_start.weekday())
     lt_start = datetime.date.fromordinal(lt_start.toordinal() - lt_start.weekday())
     et_start = datetime.date.fromordinal(et_start.toordinal() - et_start.weekday())
@@ -33,13 +33,13 @@ for row in reader:
     counter += 1
     term_dates.append({'model':'drama.TermDate', 'pk':counter, 'fields':{'term':'CB', 'year':year, 'start':cb_start}})
     counter += 1
-    term_dates.append({'model':'drama.TermDate', 'pk':counter, 'fields':{'term':'LT', 'year':year, 'start':lt_start}})
+    term_dates.append({'model':'drama.TermDate', 'pk':counter, 'fields':{'term':'LT', 'year':year + 1, 'start':lt_start}})
     counter += 1
-    term_dates.append({'model':'drama.TermDate', 'pk':counter, 'fields':{'term':'EB', 'year':year, 'start':eb_start}})
+    term_dates.append({'model':'drama.TermDate', 'pk':counter, 'fields':{'term':'EB', 'year':year + 1, 'start':eb_start}})
     counter += 1
-    term_dates.append({'model':'drama.TermDate', 'pk':counter, 'fields':{'term':'ET', 'year':year, 'start':et_start}})
+    term_dates.append({'model':'drama.TermDate', 'pk':counter, 'fields':{'term':'ET', 'year':year + 1, 'start':et_start}})
     counter += 1
-    term_dates.append({'model':'drama.TermDate', 'pk':counter, 'fields':{'term':'SB', 'year':year, 'start':sb_start}})
+    term_dates.append({'model':'drama.TermDate', 'pk':counter, 'fields':{'term':'SB', 'year':year + 1, 'start':sb_start}})
     counter += 1
 print(yaml.dump(term_dates, default_flow_style=False))
     
