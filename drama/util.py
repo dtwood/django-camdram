@@ -20,7 +20,7 @@ def box_pack(events, week):
     """
     week_start = datetime.date.fromordinal(week.toordinal() - week.weekday())
     week_end = datetime.date.fromordinal(week.toordinal() - week.weekday() + 6)
-    events = events.filter(end_date__gte=week_start).filter(start_date__lte=week_end)
+    events = list(events.filter(end_date__gte=week_start).filter(start_date__lte=week_end))
     row_height = settings.DRAMA_DIARY_ROW_HEIGHT
     row_timedelta = datetime.timedelta(minutes=row_height)
     time_rows = [] #these rows contain all performances in a timeslot, may be rendered as multiple iary rows
@@ -32,10 +32,10 @@ def box_pack(events, week):
             end_time = end_datetime.time()
         else:
             end_time = datetime.time.max
-        row_events = events.filter(time__lt=end_time).filter(time__gte=start_time)
+        row_events = [x for x in events if x.time < end_time and x.time >= start_time]
         time_rows.append(row_events)
     for row in time_rows:
-        performances = list(row.order_by('venue', 'time'))
+        performances = sorted(sorted(row, key=lambda x: x.time), key=lambda x: x.venue.name)
         while len(performances) > 0:
             diary_row = []
             for performance in performances.copy():

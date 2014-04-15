@@ -1,0 +1,27 @@
+- model: drama.Role
+  pk: 1
+  fields:
+    name: Character
+    cat: cast
+    desc: This role intentionally left unapproved.
+    slug: character
+    approved: n
+
+- model: drama.Role
+  pk: 2
+  fields:
+    name: Generic Band
+    cat: band
+    desc: This role intentionally left unapproved.
+    slug: character
+    approved: n
+
+- model: drama.Role
+  pk: 3
+  fields:
+    name: Generic Production Team
+    cat: prod
+    desc: This role intentionally left unapproved.
+    slug: character
+    approved: n
+
