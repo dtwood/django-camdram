@@ -4,7 +4,62 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div id="diary">
-{% diary events %}
+<div class="row">
+  <div class="large-12 columns">
+    <h3>Welcome to Camdram <small>- the portal website for student theatre in Cambridge</small></h3>
+  </div>
 </div>
+
+<div class="row">
+  <div id="home-diary-container" style="height: auto;">
+    <div id="home-diary-nav">
+      <ul class="ui-dragable">
+	{% for date in dates %}
+	<li class="week-link" id="{{date.start_date|date:'Y-m-d'}}"><a>{{date.label}}<em>{{date.start_date}} - {{date.end_date}}</em></a></li>
+	{% endfor %}
+      </ul>
+    </div>
+    <div id="home-diary">
+      {{diary|safe}}
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="large-5 columns">
+    <div id="home_statistics">
+      <h5>This week</h5>
+      <p>
+	<strong>{{performances}}</strong> performance{% if performances > 1 %}s{% endif %} of <strong>{{shows}}</strong> show{% if shows > 1 %}s{% endif %} {% if performances > 1 %}are{% else %}is{% endif %} happening in <strong>{{venues}}</strong> venue{% if venues > 1 %}s{% endif %} involving <strong>{{people}}</strong> {% if people > 1 %}people{% else %}person{% endif %}
+      </p>
+    </div>
+    <div id="home_vacancies">
+      <h5>Get Involved</h5>
+      <ul>
+	{% for audition in auditions %}
+	<li>{{audition.audition.show.get_link}} is holding auditions in {{audition.location}} from {{audition.start_time}} to {{audition.end_datetime.time}} on {{audition.end_datetime|date:'D dS F'}} - <a href="{% url 'item' model_name='auditions' slug=audition.audition.show.slug %}">more details</a></li>
+	{% endfor %}
+	{% for techiead in techieads %}
+	<li>{{techiead.show.get_link}} is looking for: {% for role in techiead.techieadrole_set.all %}{% if not forloop.first %}, {% endif %}{{role.name}}{% endfor %} - <a href="{% url 'item' model_name='technical' slug=techiead.show.slug %}">more details</a></li>
+	{% endfor %}
+	{% for societyapp in societyapps %}
+	<li>{{societyapp.society.get_link}} has announced: {{societyapp.name}} - <a href="{% url 'item' model_name='applications' slug=societyapp.society.slug %}">more details</a></li>
+	{% endfor %}
+	{% for venueapp in venueapps %}
+	<li>{{venueapp.venue.get_link}} has announced: {{venueapp.name}} - <a href="{% url 'item' model_name='applications' slug=venueapp.venue.slug %}">more details</a></li>
+	{% endfor %}
+	{% for showapp in showapps %}
+	<li>{{showapp.show.get_link}} has announced: {{showapp.name}} - <a href="{% url 'item' model_name='applications' slug=showapp.show.slug %}">more details</a></li>
+	{% endfor %}
+      </ul>
+    </div>
+    <div id="home_historic">
+    </div>
+  </div>
+  <div class="large-7 columns">
+    <h4>News</h4>
+    <hr />
+  </div>
+</div>
+    
 {% endblock %}

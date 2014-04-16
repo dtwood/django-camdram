@@ -16,10 +16,31 @@ import autocomplete_light
 import hashlib
 from registration.backends.simple.views import RegistrationView
 from guardian.shortcuts import assign_perm, get_objects_for_user, remove_perm, get_users_with_perms
+from collections import namedtuple
 
+WeekContainer = namedtuple('WeekContainer', 'label start_date end_date')
 
 def index(request):
-    return render(request, 'drama/index.html', {'events': Performance.objects.all()})
+    today = timezone.now().date()
+    start_date = datetime.date.fromordinal(today.toordinal() - today.weekday())
+    end_date = datetime.date.fromordinal(today.toordinal() - today.weekday() + 6)
+    performance_objects = Performance.objects.filter(end_date__gte=start_date, start_date__lte=end_date, show__approved=True).distinct()
+    performances = 0
+    for p in performance_objects:
+        performances += p.performance_count(start_date, end_date)
+    context = {
+        'shows': Show.objects.filter(performance__end_date__gte=start_date, performance__start_date__lte=end_date).filter(approved=True).distinct().count(),
+        'venues': Venue.objects.filter(performance__end_date__gte=start_date, performance__start_date__lte=end_date).filter(performance__show__approved=True).distinct().count(),
+        'people': Person.objects.filter(roleinstance__show__performance__end_date__gte=start_date, roleinstance__show__performance__start_date__lte=end_date, roleinstance__show__approved=True).distinct().count(),
+        'performances': performances,
+        'auditions': AuditionInstance.objects.filter(end_datetime__gte=timezone.now()).order_by('end_datetime', 'start_time').filter(audition__show__approved=True).select_related('audition'),
+        'techieads': TechieAd.objects.filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline'),
+        'societyapps': SocietyApplication.objects.filter(deadline__gte=timezone.now()).filter(society__approved=True).order_by('deadline'),
+        'venueapps': VenueApplication.objects.filter(deadline__gte=timezone.now()).filter(venue__approved=True).order_by('deadline'),
+        'showapps': ShowApplication.objects.filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline'),
+        'diary': util.diary_week(Performance.objects.filter(show__approved=True), today),
+    }
+    return render(request, 'drama/index.html', context)
 
 
 def diary(request, week=None):
@@ -52,7 +73,7 @@ def diary_week(request):
 def diary_jump(request):
     form = DiaryJumpForm(request.GET)
     if form.is_valid():
-        term = TermDate.objects.filter(term=form.cleaned_data['term'], year=form.cleaned_data['year']).get()
+        term = get_object_or_404(TermDate,term=form.cleaned_data['term'], year=form.cleaned_data['year'])
         return redirect(reverse('diary', kwargs={'week': term.start.strftime('%Y-%m-%d')}))
     else:
         raise Http404

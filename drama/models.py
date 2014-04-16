@@ -561,6 +561,9 @@ class Performance(models.Model):
     def get_cname(*args):
         return "performances"
 
+    def performance_count(self, start_date, end_date):
+        return (min(end_date, self.end_date) - max(start_date, self.start_date)).days + 1
+
 
 class Role(models.Model, DramaObjectMixin):
 
@@ -789,6 +792,6 @@ class TermDate(models.Model):
         term = cls.get_term(date)
         if term:
             week = math.floor((date - term.start)/timedelta(days=7))
-            return (term.get_term_display(), 'Week ' + str(week))
+            return (term.get_term_display() + ' ' + str(term.year), 'Week ' + str(week))
         else:
             return (None, None)

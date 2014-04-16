@@ -1,5 +1,6 @@
 * Views:
 - home
+  - diary nav
 - contact
 - development
 - auditions_diary
@@ -11,28 +12,10 @@
 * API filtering?
 * diary week labels
 * diary jump to
-* Diary skip blank weeks?
+* Diary skip blank weeks (in soc/venue)?
 * social integration
 * tour map
 * sign in sheets
-
-* templates
-
-|                    | detail | list  | form    | delete |
-|--------------------+--------+-------+---------+--------|
-| show               | done   | no    | done    | done   |
-| person             | done   | no    | done    | done   |
-| society            | done   | done  | done    | done   |
-| venue              | done   | done  | done    | done   |
-| role               | done   | done  | done    | done   |
-| techiead           | other  | other | started | done   |
-| audition           | other  | other | done    | done   |
-| application        | other  | other | done    | done   |
-| showapplication    | no     | no    | done    | no     |
-| venueapplication   | no     | no    | done    | no     |
-| societyapplication | no     | no    | done    | no     |
-| ad_role            | other  | no    | no      | no     |
-
 * testing
 * commenting
 * show ordering in person view
@@ -58,5 +41,4 @@
 * cookie law
 * society (venue?) commities
 * links shows to plays (freebase)
-* fixtures
-* autifixtures?
+* autofixtures?
