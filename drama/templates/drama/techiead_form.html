@@ -22,8 +22,8 @@
     </div>
     <div class="large-9 columns">
       <div id="vacant_positions" class="positions techieadrole_set collection">
-	{{techiead_formset.management_form}}
-	{% for form in techiead_formset %}
+	{{content_form.context.techiead_formset.management_form}}
+	{% for form in content_form.context.techiead_formset %}
 	{% include "drama/techiead_form_item.html" %}
 	{% endfor %}
       </div>

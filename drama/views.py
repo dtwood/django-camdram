@@ -156,55 +156,15 @@ class MyDetailView(DetailView):
         return context
 
 
-class FormSetMixin:
+class MyCreateView(autocomplete_light.CreateView):
+    parent = None
+    model_name = None
     form_kwargs={}
 
     def get_form_kwargs(self):
-        kwargs = super(FormSetMixin, self).get_form_kwargs()
+        kwargs = super(MyCreateView, self).get_form_kwargs()
         kwargs.update(self.form_kwargs)
         return kwargs
-
-    def post(self, request, *args, **kwargs):
-        """
-        Handles POST requests, instantiating a form instance with the passed
-        POST variables and then checked for validity.
-        """
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        if self.object:
-            form.bind_formsets(
-                self.request.POST, self.request.FILES, instance=self.object)
-        else:
-            form.bind_formsets(self.request.POST, self.request.FILES)
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
-    def get(self, request, *args, **kwargs):
-        """
-        Handles GET requests and instantiates a blank version of the form.
-        """
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        if self.object:
-            form.bind_formsets(instance=self.object)
-        else:
-            form.bind_formsets()
-        return self.render_to_response(self.get_context_data(form=form))
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(FormSetMixin, self).get_context_data(**kwargs)
-        form = context['form']
-        formsets = form.get_context()
-        for k, v in formsets.items():
-            context[k] = v
-        return context
-
-
-class MyCreateView(FormSetMixin, autocomplete_light.CreateView):
-    parent = None
-    model_name = None
 
     def get(self, request, *args, **kwargs):
         self.object = None
@@ -235,7 +195,7 @@ class MyCreateView(FormSetMixin, autocomplete_light.CreateView):
             return super(MyCreateView, self).get_success_url()
 
 
-class MyUpdateView(FormSetMixin, UpdateView):
+class MyUpdateView(UpdateView):
     model_name = None
     
     def get(self, request, *args, **kwargs):
@@ -265,15 +225,25 @@ class MyListView(ListView):
     def get_queryset(self, *args, **kwargs):
         return super(MyListView, self).get_queryset(*args, **kwargs).filter(approved=True)
 
-class ItemUpdateView(FormSetMixin, UpdateView):
+class ItemUpdateView(UpdateView):
     object = None
     parent = None
+    form_kwargs={}
+
+    def get_form_kwargs(self):
+        kwargs = super(ItemUpdateView, self).get_form_kwargs()
+        kwargs.update(self.form_kwargs)
+        return kwargs
+
     def get_context_data(self, **kwargs):
         context = super(ItemUpdateView, self).get_context_data(**kwargs)
         context['content_form'] = context['form']
         context['parent'] = self.parent
         del context['form']
         return context
+
+    def get_object(self):
+        return self.object
 
     def get_success_url(self):
         if self.success_url:

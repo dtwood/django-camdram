@@ -24,8 +24,8 @@
     </div>
     <div class="large-9 columns">
       <div id="performances" class="performances performance_set collection">
-	{{performance_formset.management_form}}
-	{% for form in performance_formset %}
+	{{content_form.context.performance_formset.management_form}}
+	{% for form in content_form.context.performance_formset %}
 	{% include "drama/performance_form_item.html" %}
 	{% endfor %}
       </div>

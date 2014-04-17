@@ -16,20 +16,18 @@ class CamdramSearchForm(SearchForm):
 
 
 class FormsetsForm(forms.ModelForm):
-    formsets = []
+    formsets = {}
     bound_formsets = []
     context = {}
 
-    def bind_formsets(self, *args, **kwargs):
+    def __init__(self, initial=None, *args, **kwargs):
+        super(FormsetsForm, self).__init__(initial=initial, *args, **kwargs)
         self.bound_formsets = []
         self.context = {}
         for name, formset in self.formsets.items():
             bound_f = formset(*args, **kwargs)
             self.bound_formsets.append(bound_f)
             self.context[name] = bound_f
-
-    def get_context(self):
-        return self.context
 
     def clean(self, *args, **kwargs):
         cleaned_data = super(FormsetsForm, self).clean()
@@ -187,14 +185,14 @@ class TechieAdRoleForm(autocomplete_light.ModelForm):
 
         
 TechieAdInline = inlineformset_factory(
-    TechieAd, TechieAdRole, TechieAdRoleForm, extra=5)
+    TechieAd, TechieAdRole, TechieAdRoleForm, extra=1)
 class DeadlineForm(forms.ModelForm):
     date = forms.DateField(label="Deadline date")
     time = forms.TimeField(label="Deadline time")
 
     def __init__(self, instance = None, initial=None, *args, **kwargs):
         if initial is None:
-            initial = {}
+            initial = None
         if instance is not None:
             temp = instance.deadline
             initial.update({'date': temp.date(),

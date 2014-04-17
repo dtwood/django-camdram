@@ -24,8 +24,8 @@
     </div>
     <div class="large-9 columns">
       <div id="audition_sessions" class="auditions auditioninstance_set collection">
-	{{audition_formset.management_form}}
-	{% for form in audition_formset %}
+	{{content_form.context.audition_formset.management_form}}
+	{% for form in content_form.context.audition_formset %}
 	{% include "drama/audition_form_item.html" %}
 	{% endfor %}
       </div>

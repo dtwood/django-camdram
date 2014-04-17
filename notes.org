@@ -1,17 +1,5 @@
-* Views:
-- home
-  - diary nav
-- contact
-- development
-- auditions_diary
-    
 * Application Ordering?
-* API Keys
 * API Deserialization
-* API Throttling
-* API filtering?
-* diary week labels
-* diary jump to
 * Diary skip blank weeks (in soc/venue)?
 * social integration
 * tour map
@@ -21,24 +9,12 @@
 * show ordering in person view
 * imagefield form appearance
 * pretify registration form templates
-* year field
-* pending admin removal
-* pending admin account creation
 * ical and/or rss
-* loging
 * markdown conversion
 * old camdram url compatability?
 * legacy api?
 * old camdram database?
-* email builder
-* issue tracker
-* approval queue
-* approval in search
-* infobase
 * admin requests
-* email on being granted admin
-* email on approval
-* cookie law
 * society (venue?) commities
 * links shows to plays (freebase)
 * autofixtures?
