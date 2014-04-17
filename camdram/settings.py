@@ -18,6 +18,7 @@ LOGIN_URL = '/auth/login'
 LOGIN_REDIRECT_URL = '/'
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
+    os.path.join(BASE_DIR, 'env/lib/python3.4/site-packages/debug_toolbar/templates'),
     )
 
 
@@ -34,8 +35,10 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ['.camdram.net']
 
+INTERNAL_IPS = ('127.0.0.1',)
 
 # Application definition
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 INSTALLED_APPS = (
 #    'django.contrib.admin',
@@ -51,10 +54,12 @@ INSTALLED_APPS = (
     'autocomplete_light',
     'pipeline',
     'rest_framework',
+    'debug_toolbar',
     'drama',
 )
 
 MIDDLEWARE_CLASSES = (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
