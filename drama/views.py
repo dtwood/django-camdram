@@ -214,17 +214,6 @@ class MyUpdateView(UpdateView):
         return context
 
 
-class MyListView(ListView):
-    model_name = None
-
-    def get_context_data(self, **kwargs):
-        context = super(MyListView, self).get_context_data(**kwargs)
-        context['current_pagetype'] = self.model_name
-        return context
-
-    def get_queryset(self, *args, **kwargs):
-        return super(MyListView, self).get_queryset(*args, **kwargs).filter(approved=True)
-
 class ItemUpdateView(UpdateView):
     object = None
     parent = None

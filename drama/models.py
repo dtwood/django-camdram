@@ -126,6 +126,7 @@ class Person(models.Model, DramaObjectMixin):
                 ' - ' + self.last_active.strftime('%b %y')
         return '(' + label + ', Shows: ' + str(self.num_shows) + ')'
 
+    @classmethod
     def get_cname(*args):
         return "people"
 
@@ -193,6 +194,7 @@ class Venue(models.Model, DramaObjectMixin):
     def dec_string(self):
         return ''
 
+    @classmethod
     def get_cname(*args):
         return "venues"
 
@@ -307,6 +309,7 @@ class Society(models.Model, DramaObjectMixin):
     def dec_string(self):
         return ''
 
+    @classmethod
     def get_cname(*args):
         return "societies"
 
@@ -443,6 +446,7 @@ class Show(models.Model, DramaObjectMixin):
     def dec_string(self):
         return '(' + self.opening_night.strftime('%b %Y') + ')'
 
+    @classmethod
     def get_cname(*args):
         return "shows"
 
@@ -558,6 +562,7 @@ class Performance(models.Model):
     time = models.TimeField()
     venue = models.ForeignKey(Venue)
 
+    @classmethod
     def get_cname(*args):
         return "performances"
 
@@ -590,6 +595,7 @@ class Role(models.Model, DramaObjectMixin):
             self.slug = slugify(self.name)
         super(Role, self).save(*args, **kwargs)
 
+    @classmethod
     def get_cname(*args):
         return "roles"
 
@@ -654,6 +660,7 @@ class TechieAdRole(models.Model):
             self.slug = slugify(self.name)
         super(TechieAdRole, self).save(*args, **kwargs)
 
+    @classmethod
     def get_cname(*args):
         return "techieadroles"
 
@@ -686,6 +693,7 @@ class AuditionInstance(models.Model):
         self.start_datetime.time()
     start_time = models.TimeField()
     location = models.CharField(max_length=200)
+    @classmethod
     def get_cname(*args):
         return "audition session"
 

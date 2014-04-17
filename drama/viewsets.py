@@ -5,7 +5,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets, routers, permissions
-from rest_framework.renderers import JSONRenderer, YAMLRenderer, BrowsableAPIRenderer, StaticHTMLRenderer, XMLRenderer
+from rest_framework.renderers import JSONRenderer, YAMLRenderer, BrowsableAPIRenderer, TemplateHTMLRenderer, StaticHTMLRenderer, XMLRenderer
 from rest_framework.decorators import link, action, permission_classes, api_view
 from rest_framework.response import Response
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, BasePermission
@@ -29,7 +29,7 @@ class CamdramPermissions(permissions.BasePermission):
 
 class ObjectViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
-    renderer_classes = (StaticHTMLRenderer, BrowsableAPIRenderer, JSONRenderer, YAMLRenderer, XMLRenderer)
+    renderer_classes = (TemplateHTMLRenderer, BrowsableAPIRenderer, JSONRenderer, YAMLRenderer, XMLRenderer)
     permission_classes = (CamdramPermissions,)
 
     def new(self, request, *args, **kwargs):
@@ -78,8 +78,8 @@ class ObjectViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         response = super(ObjectViewSet, self).list(request, *args, **kwargs)
         if request.accepted_renderer.format == 'html':
-            view = views.MyListView.as_view(model=self.model, model_name=self.model.get_cname())
-            return view(request, *args, **kwargs)
+            response.template_name = "drama/" + self.model.__name__.lower() + "_list.html"
+            response.data = {'object_list': self.object_list, 'current_pagetype': self.model.get_cname()}
         return response
 
     def retrieve(self, request, slug, *args, **kwargs):
