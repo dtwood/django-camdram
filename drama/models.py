@@ -11,17 +11,23 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, remove_perm, g
 from django.utils import timezone
 from django.shortcuts import redirect
 
-class ApprovedManager(models.Manager):
-    def get_queryset(self):
-        return super(ApprovedManager, self).get_queryset().filter(approved=True)
+class DramaObjectManager(models.Manager):
+    def approved(self):
+        return self.filter(approved=True)
+
+    def unapproved(self):
+        return self.filter(approved=False)
 
 class ShowApprovedManager(models.Manager):
-    def get_queryset(self):
-        return super(ShowApprovedManager, self).get_queryset().filter(show__approved=True)
+    def approved(self):
+        return self.filter(show__approved=True)
+
+    def unapproved(self):
+        return self.filter(show__approved=False)
+
     
 class DramaObjectMixin(object):
-    objects = models.Manager()
-    approved_objects = ApprovedManager()
+    objects = DramaObjectManager()
     
     @classmethod
     def class_name(cls):
@@ -110,21 +116,24 @@ class Person(models.Model, DramaObjectMixin):
             self.slug = temp_slug
         super(Person, self).save(*args, **kwargs)
 
+    def get_shows(self):
+        return Show.objects.approved().filter(roleinstance__person=self).distinct()
+    
     @property
     def num_shows(self):
-        return Show.objects.filter(roleinstance__person=self).filter(approved=True).distinct().count()
+        return self.get_shows().count()
 
     @property
     def first_active(self):
         try:
-            return Performance.objects.filter(show__roleinstance__person=self).filter(show__approved=True).order_by('start_date')[0].start_date
+            return self.get_shows().order_by('start_date')[0].start_date
         except IndexError:
             return None
 
     @property
     def last_active(self):
         try:
-            return Performance.objects.filter(show__roleinstance__person=self).filter(show__approved=True).order_by('-end_date')[0].end_date
+            return self.get_shows().order_by('-end_date')[0].end_date
         except IndexError:
             return None
 
@@ -143,7 +152,7 @@ class Person(models.Model, DramaObjectMixin):
         return "people"
 
     def get_roles(self):
-        return RoleInstance.approved_objects.filter(person=self).annotate(end_date=models.Max('show__performance__end_date'), start_date=models.Min('show__performance__start_date'))
+        return RoleInstance.objects.approved().filter(person=self).annotate(end_date=models.Max('show__performance__end_date'), start_date=models.Min('show__performance__start_date'))
 
     def get_past_roles(self):
         return self.get_roles().exclude(end_date__gte=timezone.now()).order_by('-end_date','start_date')
@@ -152,7 +161,7 @@ class Person(models.Model, DramaObjectMixin):
         return self.get_roles().filter(start_date__lte=timezone.now()).filter(end_date__gte=timezone.now()).order_by('end_date','start_date')
     
     def get_future_roles(self):
-        return self.get_roles().exclude(start_date__lte=timezone.now()).order_by('start_date_date','end_date')
+        return self.get_roles().exclude(start_date__lte=timezone.now()).order_by('start_date','end_date')
 
     def link_user(self, user):
         try:
@@ -397,8 +406,12 @@ class Society(models.Model, DramaObjectMixin):
         context['current_pagetype'] = 'societies'
         return context
 
+class ShowManager(DramaObjectManager):
+    def get_queryset(self):
+        return super(ShowManager, self).get_queryset().annotate(end_date=models.Max('performance__end_date'), start_date=models.Min('performance__start_date'))
 
 class Show(models.Model, DramaObjectMixin):
+    objects = ShowManager()
 
     def __str__(self):
         return self.name
@@ -566,6 +579,7 @@ class Show(models.Model, DramaObjectMixin):
 
 
 class Performance(models.Model):
+    objects = ShowApprovedManager()
 
     def __str__(self):
         return "Performance of {} from {} to {} at {}".format(self.show.name, self.start_date, self.end_date, self.venue.name)
@@ -620,8 +634,7 @@ class Role(models.Model, DramaObjectMixin):
         
 
 class RoleInstance(models.Model):
-    objects = models.Manager()
-    approved_objects = ShowApprovedManager()
+    objects = ShowApprovedManager()
 
     def __str__(self):
         return self.name + ' for ' + self.show.name
