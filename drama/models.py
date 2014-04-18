@@ -11,7 +11,18 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, remove_perm, g
 from django.utils import timezone
 from django.shortcuts import redirect
 
+class ApprovedManager(models.Manager):
+    def get_queryset(self):
+        return super(ApprovedManager, self).get_queryset().filter(approved=True)
+
+class ShowApprovedManager(models.Manager):
+    def get_queryset(self):
+        return super(ShowApprovedManager, self).get_queryset().filter(show__approved=True)
+    
 class DramaObjectMixin(object):
+    objects = models.Manager()
+    approved_objects = ApprovedManager()
+    
     @classmethod
     def class_name(cls):
         return cls.__name__.lower()
@@ -72,6 +83,7 @@ class DramaObjectMixin(object):
 
     def get_detail_context(self, request):
         context = {}
+        return context
 
 class Person(models.Model, DramaObjectMixin):
 
@@ -130,17 +142,18 @@ class Person(models.Model, DramaObjectMixin):
     def get_cname(*args):
         return "people"
 
-    def get_detail_context(self, request):
-        context = {}
-        person = self
-        roles = person.roleinstance_set.select_related('show__performace').filter(show__approved=True)
-        past_roles = roles.exclude(show__performance__end_date__gte=timezone.now()).distinct()
-        future_roles = roles.exclude(show__performance__start_date__lte=timezone.now()).distinct()
-        current_roles = roles.filter(show__performance__start_date__lte=timezone.now()).filter(show__performance__end_date__gte=timezone.now).distinct()
-        context = {'person': person, 'past_roles': past_roles,
-                'current_roles': current_roles, 'future_roles': future_roles}
-        return context
-        
+    def get_roles(self):
+        return RoleInstance.approved_objects.filter(person=self).annotate(end_date=models.Max('show__performance__end_date'), start_date=models.Min('show__performance__start_date'))
+
+    def get_past_roles(self):
+        return self.get_roles().exclude(end_date__gte=timezone.now()).order_by('-end_date','start_date')
+    
+    def get_current_roles(self):
+        return self.get_roles().filter(start_date__lte=timezone.now()).filter(end_date__gte=timezone.now()).order_by('end_date','start_date')
+    
+    def get_future_roles(self):
+        return self.get_roles().exclude(start_date__lte=timezone.now()).order_by('start_date_date','end_date')
+
     def link_user(self, user):
         try:
             user.person
@@ -607,6 +620,8 @@ class Role(models.Model, DramaObjectMixin):
         
 
 class RoleInstance(models.Model):
+    objects = models.Manager()
+    approved_objects = ShowApprovedManager()
 
     def __str__(self):
         return self.name + ' for ' + self.show.name

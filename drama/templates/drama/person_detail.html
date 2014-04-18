@@ -8,17 +8,17 @@
 
 {% block content %}
 <div class="row">
-  {% admin_panel person %}
+  {% admin_panel object %}
   <div class="large-12 columns panel">
     <div id="entity-header">
-      <h2>{{person.name}}</h2>
+      <h2>{{object.name}}</h2>
     </div>
-    <p>{{person.desc}}</p>
+    <p>{{object.desc}}</p>
   </div>
 </div>
-{% if current_roles %}
-<h4>{{person.name}} is currently involved with</h4>
-{% for role in current_roles %}
+{% if object.get_current_roles %}
+<h4>{{object.name}} is currently involved with</h4>
+{% for role in object.get_current_roles %}
 <div>
   <h5>{{role.show.get_link}} - {{ role.role.get_link }}</h5>
   <p>{% for performance in role.show.performance_set.all %}
@@ -28,10 +28,10 @@
 {% endfor %}
 {% endif %}
 
-{% if future_roles %}
-<h4>{{person.name}} is preparing for</h4>
+{% if object.get_future_roles %}
+<h4>{{object.name}} is preparing for</h4>
 <ul class="large-block-grid-2">
-  {% for role in future_roles %}
+  {% for role in object.get_future_roles %}
   <li>
   <h5>{{role.show.get_link}} - {{ role.role.get_link }}</h5>
     <p>{% for performance in role.show.performance_set.all %}
@@ -42,10 +42,10 @@
 </ul>
 {% endif %}
 
-{% if past_roles %}
-<h4>{{person.name}} has been involved with</h4>
+{% if object.get_past_roles %}
+<h4>{{object.name}} has been involved with</h4>
 <ul class="no-bullet">
-{% for role in past_roles %}
+{% for role in object.get_past_roles %}
 <li>
   <h5>{{role.show.get_link}} - {{ role.role.get_link }}</h5>
   <p>{% for performance in role.show.performance_set.all %}
