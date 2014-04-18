@@ -146,16 +146,6 @@ def my_redirect(request, model_name, slug, *args, **kwargs):
     return redirect(reverse(model_name) + '#' + slug)
 
 
-class MyDetailView(DetailView):
-    user = None
-
-    def get_context_data(self, **kwargs):
-        request = self.request
-        context = super(MyDetailView, self).get_context_data(**kwargs)
-        context.update(self.object.get_detail_context(request))
-        return context
-
-
 class MyCreateView(autocomplete_light.CreateView):
     parent = None
     model_name = None

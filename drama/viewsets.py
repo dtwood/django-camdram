@@ -85,8 +85,8 @@ class ObjectViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, slug, *args, **kwargs):
         response = super(ObjectViewSet, self).retrieve(request, slug=slug, *args, **kwargs)
         if request.accepted_renderer.format == 'html':
-            view = views.MyDetailView.as_view(model=self.model)
-            return view(request, slug=slug, *args, **kwargs)
+            response.template_name = "drama/" + self.model.__name__.lower() + "_detail.html"
+            response.data = {'object': self.object, 'current_pagetype': self.model.get_cname()}
         return response
 
 
