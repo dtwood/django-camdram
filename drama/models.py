@@ -88,10 +88,6 @@ class DramaObjectMixin(object):
         self.approved = False
         self.save()
 
-    def get_detail_context(self, request):
-        context = {}
-        return context
-
 class Person(models.Model, DramaObjectMixin):
 
     def __str__(self):
