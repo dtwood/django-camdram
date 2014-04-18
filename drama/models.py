@@ -598,11 +598,8 @@ class Role(models.Model, DramaObjectMixin):
     def get_cname(*args):
         return "roles"
 
-    def get_detail_context(self, request):
-        context = {}
-        context['current_pagetype'] = 'roles'
-        context['get_involved'] = TechieAd.objects.filter(techieadrole__role=self).filter(show__approved=True).distinct()
-        return context
+    def get_vacancies(self):
+        return TechieAd.objects.approved().filter(techieadrole__role=self).distinct()
         
 
 class RoleInstance(models.Model):
