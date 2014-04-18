@@ -1,28 +1,30 @@
 {% extends "drama/base.html" %}
-{% block title %}Show: {{show.name}}{% endblock %}
 {% load drama_admin %}
+{% load guardian_tags %}
+{% block title %}Show: {{object.name}}{% endblock %}
 
 {% block content %}
+{% get_obj_perms user for object as "user_perms" %}
 <div class="row">
-    {% admin_panel show %}
+    {% admin_panel object %}
   <div class="large-12 columns panel">
-    {% if show.book %}
+    {% if object.book %}
     <ul class="inline-list right">
-      <li><a href="{{show.book}}"><i class="fa fa-ticket"></i> Buy tickets
-	  {% if show.prices %}({{show.prices}}){% endif %}</a></li>
+      <li><a href="{{object.book}}"><i class="fa fa-ticket"></i> Buy tickets
+	  {% if object.prices %}({{object.prices}}){% endif %}</a></li>
     </ul>
     {% else %}
-    {% if show.prices %}
+    {% if object.prices %}
     <ul class="inline-list right">
-      <li>{{show.prices}}</li>
+      <li>{{object.prices}}</li>
     </ul>
     {% endif %}
     {% endif %}
-      <p class="show-society">{{show.society.get_link}} presents...</p>
-      <h2>{{show.name}}<br />{% if show.author %}<small>By {{show.author}}</small>{% endif %}</h2>
-    {% if show.image %}
+      <p class="show-society">{{object.society.get_link}} presents...</p>
+      <h2>{{object.name}}<br />{% if object.author %}<small>By {{object.author}}</small>{% endif %}</h2>
+    {% if object.image %}
     <div class="large-3 columns text-center">
-      <a href="{{show.image.url}}" class="fancybox"><img src="{{show.image.url}}" /></a>
+      <a href="{{object.image.url}}" class="fancybox"><img src="{{object.image.url}}" /></a>
     </div>
     <div class="large-9 columns">
   {% endif %}    
@@ -31,73 +33,73 @@
 	{% include "drama/performance_listing.html" %}
 	{% endfor %}
       </p>
-     <p>{{show.desc|markdown}}</p>
+     <p>{{object.desc|markdown}}</p>
     </div>
-    {% if show.image %}</div>{% endif %}
+    {% if object.image %}</div>{% endif %}
 </div>
-{% if techiead or auditions or applications %}
+{% if object.get_techiead or object.get_auditions or object.get_apps %}
 <div class ="row">
   <div class="vacancies-panel">
-    <h5> Get involved with <em>{{show.name}}</em>:</h5>
-    {% for application in applications %}
+    <h5> Get involved with <em>{{object.name}}</em>:</h5>
+    {% for application in object.get_apps %}
     <p>{{application.name}} - <a href="{% url 'item' model_name='applications' slug=application.slug %}">more details</a></p>
     {% endfor %}
-    {% if auditions %}
-    <p>Auditions are being held at the times below - <a href="{% url 'item' model_name='auditions' slug=show.slug %}">more details</a></p>
+    {% if object.get_auditions %}
+    <p>Auditions are being held at the times below - <a href="{% url 'item' model_name='auditions' slug=object.slug %}">more details</a></p>
     <ul>
-    {% for instance in auditions %}
+    {% for instance in object.get_auditions %}
     <li>{{instance.end_datetime|date:"D dS F"}}, {{instance.start_time|date:"g:iA"|lower}} - {{instance.end_datetime|date:"g:iA"|lower}}, {{instance.location}}</li>
     {% endfor %}
     </ul>
     {% endif %}
-    {% if techiead %}
-    <p>We are looking for: {% for role in techiead.techieadrole_set.all%}{{role.name}}{% include "drama/comma.html" %} {% endfor %}- <a href="{% url 'item' model_name='technical' slug=show.slug %}">more details</a></p>
+    {% if object.get_techiead %}
+    <p>We are looking for: {% for role in object.get_techiead.techieadrole_set.all%}{{role.name}}{% include "drama/comma.html" %} {% endfor %}- <a href="{% url 'item' model_name='technical' slug=object.slug %}">more details</a></p>
     {% endif %}
   </div>
 </div>
 {% endif %}
 <div class="row">
-  <div class="large-{% if band or can_edit%}4{% else %}6{% endif %} columns">
+  <div class="large-{% if object.get_band or "change_show" in user_perms%}4{% else %}6{% endif %} columns">
     <h3> Cast </h3>
     <div class="sortable-cast">
-      {% include "drama/company_list.html" with roles=cast %}
+      {% include "drama/company_list.html" with roles=object.get_cast_list %}
     </div>
-    {% if can_edit %}
+    {% if "change_show" in user_perms %}
     <form action="{% url 'show-add-cast' slug=object.slug %}" method="post">
       {% csrf_token %}
       <div class="row">
 	<div class="small-6 columns">
-	  {{cast_form.role}}
+	  {{object.get_cast_form.role}}
 	</div>
 	<div class="small-6 columns">
-	  {{cast_form.person}}
+	  {{object.get_cast_form.person}}
 	</div>
 	<button class="right" type="submit">Add Role</button>
       </div>
     </form>
     {% endif %}
   </div>
-  {% if band or can_edit %}
+  {% if object.get_band or "change_show" in user_perms %}
   <div class="large-4 columns">
     <h3> Band </h3>
     <div class="sortable-band">
-      {% include "drama/company_list.html" with roles=band %}
+      {% include "drama/company_list.html" with roles=object.get_band_list %}
     </div>
-    {% if can_edit %}
+    {% if "change_show" in user_perms %}
     <form action="{% url 'show-add-band' slug=object.slug %}" method="post">
       {% csrf_token %}
       <div class="row">
 	<div class="small-6 columns">
-	  {{band_form.role}}
+	  {{object.get_band_form.role}}
 	  <div class="namefield hide" id="band-name">
-	    {{band_form.name}}
+	    {{object.get_band_form.name}}
 	  </div>
 	  <ul class="inline-list">
 	    <li><a href="#" id="band-name" class="show-field">Add Custom Name</a></li>
 	  </ul>
 	</div>
 	<div class="small-6 columns">
-	  {{band_form.person}}
+	  {{object.get_band_form.person}}
 	</div>
 	<button class="right" type="submit">Add Role</button>
       </div>
@@ -105,26 +107,26 @@
     {% endif %}
   </div>
   {% endif %}
-  <div class="large-{% if band or can_edit %}4{% else %}6{% endif %} columns end">
+  <div class="large-{% if object.get_band or "change_show" in user_perms %}4{% else %}6{% endif %} columns end">
     <h3> Production Team </h3>
     <div class="sortable-prod">
-      {% include "drama/company_list.html" with roles=prod %}
+      {% include "drama/company_list.html" with roles=object.get_prod_list %}
     </div>
-    {% if can_edit %}
+    {% if "change_show" in user_perms %}
     <form action="{% url 'show-add-prod' slug=object.slug %}" method="post">
       {% csrf_token %}
       <div class="row">
 	<div class="small-6 columns">
-	  {{prod_form.role}}
+	  {{object.get_prod_form.role}}
 	  <div class="namefield hide" id="prod-name">
-	    {{prod_form.name}}
+	    {{object.get_prod_form.name}}
 	  </div>
 	  <ul class="inline-list">
 	    <li><a href="#" id="prod-name" class="show-field">Add Custom Name</a></li>
 	  </ul>
 	</div>
 	<div class="small-6 columns">
-	  {{prod_form.person}}
+	  {{object.get_prod_form.person}}
 	</div>
 	<button class="right" type="submit">Add Role</button>
       </div>
@@ -132,14 +134,14 @@
     {% endif %}
   </div>
 </div>
-{% if can_edit %}
+{% if "change_show" in user_perms %}
 <script>
     $("div[class|='sortable']").sortable({
         axis: "y",
         items: "> div",
         stop: function(event, ui) {
             $.ajax({
-                url: "{% url 'show-role-reorder' slug=show.slug %}",
+                url: "{% url 'show-role-reorder' slug=object.slug %}",
                 type: 'post',
                 data: $(this).sortable('serialize')
             });

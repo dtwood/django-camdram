@@ -1,4 +1,5 @@
 import math
+import drama
 from django.db import models, IntegrityError
 from django.template.defaultfilters import slugify
 from django.core.urlresolvers import reverse
@@ -497,57 +498,68 @@ class Show(models.Model, DramaObjectMixin):
         except IndexError:
             pass
 
-    def get_detail_context(self, request):
-        context = {}
-        show = self
-        context['can_edit'] = request.user.has_perm('drama.change_show', show)
-        from drama import forms
-        context['cast_form'] = forms.CastForm()
-        context['band_form'] = forms.BandForm()
-        context['prod_form'] = forms.ProdForm()
-        company = RoleInstance.objects.filter(show=show)
-        cast = company.filter(role__cat='cast')
+    def get_company(self):
+        return RoleInstance.objects.filter(show=self)
+    
+    def get_cast(self):
+        return self.get_company().filter(role__cat='cast')
+
+    def get_cast_list(self):
+        cast = self.get_cast()
         if cast.count() == 0:
-            context['cast'] = []
-        elif cast.count() == 1:
-            context['cast'] = [(None, cast[0])]
+            return []
+        elif cast.count == 1:
+            return [(None, cast[0])]
         else:
-            context['cast'] = [(None, cast[0])] + list(zip(cast[0:],cast[1:]))
-        band = company.filter(role__cat='band')
+            return [(None, cast[0])] + list(zip(cast[0:],cast[1:]))
+    
+    def get_band(self):
+        return self.get_company().filter(role__cat='band')
+
+    def get_band_list(self):
+        band = self.get_band()
         if band.count() == 0:
-            context['band'] = []
-        elif band.count() == 1:
-            context['band'] = [(None, band[0])]
+            return []
+        elif band.count == 1:
+            return [(None, band[0])]
         else:
-            context['band'] = [(None, band[0])] + list(zip(band[0:],band[1:]))
-        prod = company.filter(role__cat='prod')
+            return [(None, band[0])] + list(zip(band[0:],band[1:]))
+    
+    def get_prod(self):
+        return self.get_company().filter(role__cat='prod')
+
+    def get_prod_list(self):
+        prod = self.get_prod()
         if prod.count() == 0:
-            context['prod'] = []
-        elif prod.count() == 1:
-            context['prod'] = [(None, prod[0])]
+            return []
+        elif prod.count == 1:
+            return [(None, prod[0])]
         else:
-            context['prod'] = [(None, prod[0])] + list(zip(prod[0:],prod[1:]))
-        context['performances'] = show.performance_set.all()
-        context['auditions'] = AuditionInstance.objects.filter(audition__show=show).filter(
-            end_datetime__gte=timezone.now()).order_by('end_datetime', 'start_time')
-        try:
-            context['auditions'][0]
-        except IndexError:
-            context['auditions'] = None
-    
-        context['applications'] = ShowApplication.objects.filter(
-            show=show).filter(deadline__gte=timezone.now()).order_by('deadline')
-        try:
-            context['applications'][0]
-        except IndexError:
-            context['applications'] = None
-    
-        try:
-            context['techiead'] = TechieAd.objects.filter(show=show).get()
-        except TechieAd.DoesNotExist:
-            pass
-        return context
+            return [(None, prod[0])] + list(zip(prod[0:],prod[1:]))
+
+    def get_cast_form(self):
+        return drama.forms.CastForm()
         
+    def get_band_form(self):
+        return drama.forms.BandForm()
+
+    def get_prod_form(self):
+        return drama.forms.ProdForm()
+    
+    def get_performances(self):
+        return Performance.objects.filter(show=self)
+
+    def get_auditions(self):
+        return AuditionInstance.objects.filter(audition__show=self).filter(end_datetime__gte=timezone.now()).order_by('end_datetime', 'start_time').distinct()
+    
+    def get_apps(self):
+        return ShowApplication.objects.filter(show=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
+
+    def get_techiead(self):
+        try:
+            return TechieAd.objects.approved().filter(show=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()[0]
+        except IndexError:
+            return None
 
 
 class Performance(models.Model):
