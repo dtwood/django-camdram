@@ -1,9 +1,9 @@
 {% extends "drama/base.html" %}
 {% load drama_admin %}
-{% block title %}Person: {{person.name}}{% endblock %}
+{% block title %}Person: {{object.name}}{% endblock %}
 
 {% block extra_menu %}
-<li><a href="{% url 'person-link' slug=person.slug %}"><i class="fa fa-chain fa-fw"></i> This is me</a></li>
+<li><a href="{% url 'person-link' slug=object.slug %}"><i class="fa fa-chain fa-fw"></i> This is me</a></li>
 {% endblock %}
 
 {% block content %}
