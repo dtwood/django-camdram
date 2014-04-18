@@ -1,21 +1,21 @@
 {% extends "drama/base.html" %}
 {% load drama_admin %}
-{% block title %}Society: {{society.name}}{% endblock %}
+{% block title %}Society: {{object.name}}{% endblock %}
 
 {% block content %}
-{% admin_panel society %}
+{% admin_panel object %}
 <div class="row">
   <div class="large-12 columns panel">
-    <h2>{{society.name}}<small> - {{society.shortname}}</small></h2>
-    <p>{{society.desc|markdown}}</p>
+    <h2>{{object.name}}<small> - {{object.shortname}}</small></h2>
+    <p>{{object.desc|markdown}}</p>
   </div>
 </div>
 
-{% if auditions or showapps or societyapps or techieads %}
+{% if object.get_auditions or object.get_showapps or objec.get_societyapps or object.get_techieads %}
 <div class="row">
   <div class="large-12 columns">
-    {% with title="Get involved with "|add:society.name|add:" shows:" %}
-    {% include "drama/vacancies-panel.html" with title=title ourapps=societyapps%}
+    {% with title="Get involved with "|add:object.name|add:" shows:" %}
+    {% include "drama/vacancies-panel.html" with title=title ourapps=object.get_societyapps%}
     {% endwith %}
   </div>
 </div>
@@ -24,7 +24,9 @@
 <div class="row">
   <div class="large-12 columns">
     <h3>Shows</h3>
+    {% with events=object.get_performances %}
     {% diary events %}
+    {% endwith %}
   </div>
 </div>
 {% endblock %}

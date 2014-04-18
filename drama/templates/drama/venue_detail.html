@@ -1,6 +1,6 @@
 {% extends "drama/base.html" %}
 {% load drama_admin %}
-{% block title %}Venue: {{venue.name}}{% endblock %}
+{% block title %}Venue: {{object.name}}{% endblock %}
 
 {% block extra_headers %}
 {% if object.lat and object.lng %}
@@ -32,7 +32,7 @@
 {% endblock %}
 
 {% block content %}
-{% admin_panel venue %}
+{% admin_panel object %}
 <div class="row">
   <div class="large-12 columns panel">
 {% if object.lat and object.lng %}
@@ -43,17 +43,17 @@
 {% else %}
     <div class="large-12 columns">
 {% endif %}
-      <h2>{{venue.name}}{% if venue.address %}<br /><small>{{venue.address}}</small>{% endif %}</h2>
-      <p>{{venue.desc|markdown}}</p>
+      <h2>{{object.name}}{% if object.address %}<br /><small>{{object.address}}</small>{% endif %}</h2>
+      <p>{{object.desc|markdown}}</p>
     </div>
   </div>
 </div>
 
-{% if auditions or showapps or venueapps or techieads %}
+{% if object.get_auditions or object.get_showapps or object.get_venueapps or object.get_techieads %}
 <div class="row">
   <div class="large-12 columns">
-    {% with title="Get involved with shows at "|add:venue.name|add:":" %}
-    {% include "drama/vacancies-panel.html" with title=title ourapps=venueapps%}
+    {% with title="Get involved with shows at "|add:object.name|add:":" %}
+    {% include "drama/vacancies-panel.html" with title=title ourapps=object.get_venueapps%}
     {% endwith %}
   </div>
 </div>
@@ -62,7 +62,9 @@
 <div class="row">
   <div class="large-12 columns">
     <h3>Shows</h3>
+    {% with events=object.get_performances %}
     {% diary events %}
+    {% endwith %}
   </div>
 </div>
 {% endblock %}

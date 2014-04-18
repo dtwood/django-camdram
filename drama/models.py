@@ -259,40 +259,24 @@ class Venue(models.Model, DramaObjectMixin):
         except IndexError:
             pass
 
-    def get_detail_context(self, request):
-        venue = self
-        context = {}
-        context['events'] = Performance.objects.filter(venue=self).filter(show__approved=True).filter(end_date__gte=timezone.now())
-        context['auditions'] = AuditionInstance.objects.filter(audition__show__performance__venue=venue).filter(
-        end_datetime__gte=timezone.now()).filter(audition__show__approved=True).order_by('end_datetime', 'start_time').distinct()
-        try:
-            context['auditions'][0]
-        except IndexError:
-            context['auditions'] = None
+    def get_shows(self):
+        return Show.objects.approved().filter(performance__venue=self).distinct()
 
-        context['techieads'] = TechieAd.objects.filter(show__performance__venue=venue).filter(show__approved=True).filter(
-            deadline__gte=timezone.now()).order_by('deadline').distinct()
-        try:
-            context['techieads'][0]
-        except IndexError:
-            context['techieads'] = None
+    def get_performances(self):
+        return Performance.objects.approved().filter(venue=self)
 
-        context['showapps'] = ShowApplication.objects.filter(
-            show__performance__venue=venue).filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline').distinct()
-        try:
-            context['showapps'][0]
-        except IndexError:
-            context['showapps'] = None
+    def get_auditions(self):
+        return AuditionInstance.objects.approved().filter(audition__show__performance__venue=self).filter(end_datetime__gte=timezone.now()).order_by('end_datetime', 'start_time').distinct()
+    
+    def get_showapps(self):
+        return ShowApplication.objects.approved().filter(show__performance__venue=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
 
-        context['venueapps'] = VenueApplication.objects.filter(
-            venue=venue).filter(deadline__gte=timezone.now()).order_by('deadline')
-        try:
-            context['venueapps'][0]
-        except IndexError:
-            context['venueapps'] = None
+    def get_venueapps(self):
+        return VenueApplication.objects.filter(venue=self).filter(deadline__gte=timezone.now()).order_by('deadline')
 
-        context['current_pagetype'] = 'venues'
-        return context
+    def get_techieads(self):
+        return TechieAd.objects.approved().filter(show__performance__venue=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
+        
 
 class Society(models.Model, DramaObjectMixin):
 
@@ -374,37 +358,25 @@ class Society(models.Model, DramaObjectMixin):
             self.group.user_set.remove(user)
         except IndexError:
             pass
+
+    def get_shows(self):
+        return Show.objects.approved().filter(society=self).distinct()
+
+    def get_performances(self):
+        return Performance.objects.approved().filter(show__society=self)
+
+    def get_auditions(self):
+        return AuditionInstance.objects.approved().filter(audition__show__society=self).filter(end_datetime__gte=timezone.now()).order_by('end_datetime', 'start_time').distinct()
+    
+    def get_showapps(self):
+        return ShowApplication.objects.approved().filter(show__society=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
+
+    def get_societyapps(self):
+        return SocietyApplication.objects.filter(society=self).filter(deadline__gte=timezone.now()).order_by('deadline')
+
+    def get_techieads(self):
+        return TechieAd.objects.approved().filter(show__society=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
         
-    def get_detail_context(self, request):
-        society = self
-        context = {}    
-        context['events'] = Performance.objects.filter(show__approved=True).filter(show__society=self).filter(end_date__gte=timezone.now())
-        context['auditions'] = AuditionInstance.objects.filter(audition__show__society=society).filter(end_datetime__gte=timezone.now()).filter(audition__show__approved=True).order_by('end_datetime', 'start_time')
-        try:
-            context['auditions'][0]
-        except IndexError:
-            context['auditions'] = None
-    
-        context['techieads'] = TechieAd.objects.filter(show__society=society).filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline')
-        try:
-            context['techieads'][0]
-        except IndexError:
-            context['techieads'] = None
-    
-        context['showapps'] = ShowApplication.objects.filter(show__society=society).filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline')
-        try:
-            context['showapps'][0]
-        except IndexError:
-            context['showapps'] = None
-    
-        context['societyapps'] = SocietyApplication.objects.filter(society=society).filter(deadline__gte=timezone.now()).order_by('deadline')
-        try:
-            context['societyapps'][0]
-        except IndexError:
-            context['societyapps'] = None
-    
-        context['current_pagetype'] = 'societies'
-        return context
 
 class ShowManager(DramaObjectManager):
     def get_queryset(self):
@@ -659,6 +631,7 @@ class RoleInstance(models.Model):
 
 
 class TechieAd(models.Model):
+    objects = ShowApprovedManager()
 
     def __str__(self):
         return 'Tech ad for ' + self.show.name
@@ -694,6 +667,7 @@ class TechieAdRole(models.Model):
 
 
 class Audition(models.Model):
+    objects = ShowApprovedManager()
     show = models.OneToOneField(Show)
     desc = models.TextField('Description', blank=True)
     contact = models.CharField(max_length=200, blank=True)
@@ -708,7 +682,13 @@ class Audition(models.Model):
         return user.has_perm('drama.change_show',self.show)
 
 
+class AuditionInstanceManager(models.Manager):
+    def approved(self):
+        return self.filter(audition__show__approved=True)
+
+
 class AuditionInstance(models.Model):
+    objects = AuditionInstanceManager()
     audition = models.ForeignKey(Audition)
     end_datetime = models.DateTimeField()
 
@@ -745,6 +725,7 @@ class Application(models.Model):
 
 
 class ShowApplication(Application):
+    objects = ShowApprovedManager()
     show = models.ForeignKey(Show)
 
     @property
