@@ -3,7 +3,6 @@ from django.views.generic import DeleteView
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets, routers, permissions
 from rest_framework.renderers import JSONRenderer, YAMLRenderer, BrowsableAPIRenderer, TemplateHTMLRenderer, StaticHTMLRenderer, XMLRenderer
 from rest_framework.decorators import link, action, permission_classes, api_view
@@ -50,6 +49,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
                 form = self.form(instance=item)
                 data = {'content_form':form,
                         'object':item,
+                        'current_pagetype': self.model.get_cname(),
                         }
                 return Response(data=data, template_name=template_name)
             elif request.method == 'POST':
@@ -60,8 +60,9 @@ class ObjectViewSet(viewsets.ModelViewSet):
                 else:
                     data = {'content_form':form,
                             'object':item,
+                            'current_pagetype': self.model.get_cname(),
                             }
-                    return render(request, template_name, data)
+                    return Response(data=data, template_name=template_name)
             else:
                 raise MethodNotAllowed
         else:
@@ -312,13 +313,39 @@ class ShowViewSet(OrganizationViewSet):
 
     def related_edit(self, request, model, form, slug, *args, **kwargs):
         show = get_object_or_404(models.Show, slug=slug)
+        template_name = 'drama/' + model.__name__.lower() + '_form.html'
         if request.user.has_perm('drama.change_show', show):
             try:
                 item = model.objects.filter(show__slug=slug)[0]
-                view = views.ItemUpdateView.as_view(model=model, form_class=form, object=item, success_url=show.get_absolute_url(), form_kwargs={'parent':show, 'parent_name':'show'}, parent=show)
+                if request.method == 'GET':
+                    bound_form = form(instance=item, parent=show, parent_name='show')
+                    data = {'content_form': bound_form, 'parent': show}
+                    return Response(data=data, template_name=template_name)
+                elif request.method == 'POST':
+                    bound_form = form(request.POST, request.FILES, instance=item, parent=show, parent_name='show')
+                    if bound_form.is_valid():
+                        bound_form.save()
+                        return redirect(show.get_absolute_url())
+                    else:
+                        data = {'content_form': bound_form, 'parent': show}
+                        return Response(data=data, template_name=template_name)
+                else:
+                    raise MethodNotAllowed
             except IndexError:
-                view = views.MyCreateView.as_view(model=model, form_class=form, form_kwargs={'parent':show, 'parent_name':'show'}, success_url=show.get_absolute_url(), parent=show)
-            return view(request, *args, **kwargs)
+                if request.method == 'GET':
+                    bound_form = form(parent=show, parent_name='show')
+                    data = {'content_form': bound_form, 'parent': parent}
+                    return Response(data=data, template_name=template_name)
+                elif request.method == 'POST':
+                    bound_form = form(request.POST, request.FILES, parent=show, parent_name='show')
+                    if bound_form.is_valid():
+                        bound_form.save()
+                        return redirect(show.get_absolute_url())
+                    else:
+                        data = {'content_form': bound_form, 'parent': show}
+                        return Response(data=data, template_name=template_name)
+                else:
+                    raise MethodNotAllowed
         else:
             raise PermissionDenied
     

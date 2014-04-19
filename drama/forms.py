@@ -53,7 +53,7 @@ class ChildForm(FormsetsForm):
     parent = None
     parent_name = None
 
-    def __init__(self, parent=None, parent_name=None, *args, **kwargs):
+    def __init__(self, *args, parent=None, parent_name=None, **kwargs):
         self.parent = parent
         self.parent_name = parent_name
         if self._meta.exclude is not None:
@@ -188,9 +188,9 @@ class DeadlineForm(forms.ModelForm):
     date = forms.DateField(label="Deadline date")
     time = forms.TimeField(label="Deadline time")
 
-    def __init__(self, instance = None, initial=None, *args, **kwargs):
+    def __init__(self, *args, instance = None, initial=None, **kwargs):
         if initial is None:
-            initial = None
+            initial = {}
         if instance is not None:
             temp = instance.deadline
             initial.update({'date': temp.date(),

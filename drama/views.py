@@ -147,14 +147,7 @@ def my_redirect(request, model_name, slug, *args, **kwargs):
 
 
 class MyCreateView(autocomplete_light.CreateView):
-    parent = None
     model_name = None
-    form_kwargs={}
-
-    def get_form_kwargs(self):
-        kwargs = super(MyCreateView, self).get_form_kwargs()
-        kwargs.update(self.form_kwargs)
-        return kwargs
 
     def get(self, request, *args, **kwargs):
         self.object = None
@@ -167,7 +160,6 @@ class MyCreateView(autocomplete_light.CreateView):
     def get_context_data(self, **kwargs):
         context = super(MyCreateView, self).get_context_data(**kwargs)
         context['content_form'] = context['form']
-        context['parent'] = self.parent
         context['current_pagetype'] = self.model_name
         del context['form']
         return context
@@ -185,32 +177,6 @@ class MyCreateView(autocomplete_light.CreateView):
             return super(MyCreateView, self).get_success_url()
 
 
-class ItemUpdateView(UpdateView):
-    object = None
-    parent = None
-    form_kwargs={}
-
-    def get_form_kwargs(self):
-        kwargs = super(ItemUpdateView, self).get_form_kwargs()
-        kwargs.update(self.form_kwargs)
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super(ItemUpdateView, self).get_context_data(**kwargs)
-        context['content_form'] = context['form']
-        context['parent'] = self.parent
-        del context['form']
-        return context
-
-    def get_object(self):
-        return self.object
-
-    def get_success_url(self):
-        if self.success_url:
-            return self.success_url
-        else:
-            return super(MyCreateView, self).get_success_url()
-    
 class EmailRegistrationView(RegistrationView):
     form_class = EmailRegistrationForm
     def register(self, request, **cleaned_data):
