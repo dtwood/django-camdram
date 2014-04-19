@@ -29,7 +29,7 @@
     <div class="large-9 columns">
   {% endif %}    
       <p>
-	{% for performance in performances %}
+	{% for performance in object.get_performances %}
 	{% include "drama/performance_listing.html" %}
 	{% endfor %}
       </p>
