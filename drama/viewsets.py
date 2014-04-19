@@ -9,6 +9,7 @@ from rest_framework.renderers import JSONRenderer, YAMLRenderer, BrowsableAPIRen
 from rest_framework.decorators import link, action, permission_classes, api_view
 from rest_framework.response import Response
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, BasePermission
+from rest_framework.exceptions import MethodNotAllowed
 from drama import serializers, models, views, forms
 
 Route = namedtuple('Route', ['url', 'mapping', 'name', 'initkwargs'])
@@ -41,10 +42,28 @@ class ObjectViewSet(viewsets.ModelViewSet):
     
     @action(methods=['GET', 'POST'])
     def edit(self, request, slug, *args, **kwargs):
+        template_name = 'drama/' + self.model.__name__.lower() +'_form.html'
         item = get_object_or_404(self.model, slug=slug)
+        temp_item = get_object_or_404(self.model, pk=item.pk)
         if request.user.has_perm('drama.change_' + self.model.class_name(), item):
-            view = views.MyUpdateView.as_view(model=self.model, model_name=self.model.get_cname(), form_class = self.form)
-            return view(request, slug=slug, *args, **kwargs)
+            if request.method == 'GET':
+                form = self.form(instance=item)
+                data = {'content_form':form,
+                        'object':item,
+                        }
+                return Response(data=data, template_name=template_name)
+            elif request.method == 'POST':
+                form = self.form(request.POST, request.FILES, instance=temp_item)
+                if form.is_valid():
+                    form.save()
+                    return redirect(item.get_absolute_url())
+                else:
+                    data = {'content_form':form,
+                            'object':item,
+                            }
+                    return render(request, template_name, data)
+            else:
+                raise MethodNotAllowed
         else:
             raise PermissionDenied
 

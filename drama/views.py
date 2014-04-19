@@ -185,25 +185,6 @@ class MyCreateView(autocomplete_light.CreateView):
             return super(MyCreateView, self).get_success_url()
 
 
-class MyUpdateView(UpdateView):
-    model_name = None
-    
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return super(MyUpdateView, self).get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return super(MyUpdateView, self).post(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(MyUpdateView, self).get_context_data(**kwargs)
-        context['content_form'] = context['form']
-        context['current_pagetype'] = self.model_name
-        del context['form']
-        return context
-
-
 class ItemUpdateView(UpdateView):
     object = None
     parent = None

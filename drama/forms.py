@@ -17,21 +17,19 @@ class CamdramSearchForm(SearchForm):
 
 class FormsetsForm(forms.ModelForm):
     formsets = {}
-    bound_formsets = []
     context = {}
 
-    def __init__(self, initial=None, *args, **kwargs):
+    def __init__(self, *args, initial=None, **kwargs):
         super(FormsetsForm, self).__init__(initial=initial, *args, **kwargs)
         self.bound_formsets = []
         self.context = {}
         for name, formset in self.formsets.items():
             bound_f = formset(*args, **kwargs)
-            self.bound_formsets.append(bound_f)
             self.context[name] = bound_f
 
     def clean(self, *args, **kwargs):
         cleaned_data = super(FormsetsForm, self).clean()
-        for x in self.bound_formsets:
+        for _,x in self.context.items():
             if not x.is_valid():
                 raise forms.ValidationError(
                     "Error in editing %(model)s", params={'model': x.model.get_cname()})
@@ -39,7 +37,7 @@ class FormsetsForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         result = super(FormsetsForm, self).save(*args, **kwargs)
-        for formset in self.bound_formsets:
+        for _,formset in self.context.items():
             formset_class = formset.__class__
             new_formset = formset_class(data=formset.data, instance=result)
             new_formset.is_valid()
