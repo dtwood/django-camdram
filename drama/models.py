@@ -19,6 +19,7 @@ class DramaObjectManager(models.Manager):
     def unapproved(self):
         return self.filter(approved=False)
 
+
 class ShowApprovedManager(models.Manager):
     def approved(self):
         return self.filter(show__approved=True)
@@ -26,7 +27,17 @@ class ShowApprovedManager(models.Manager):
     def unapproved(self):
         return self.filter(show__approved=False)
 
+
+class ShowManager(DramaObjectManager):
+    def get_queryset(self):
+        return super(ShowManager, self).get_queryset().annotate(end_date=models.Max('performance__end_date'), start_date=models.Min('performance__start_date'))
+
     
+class AuditionInstanceManager(models.Manager):
+    def approved(self):
+        return self.filter(audition__show__approved=True)
+
+
 class DramaObjectMixin(object):
     objects = DramaObjectManager()
     
@@ -38,29 +49,29 @@ class DramaObjectMixin(object):
         return reverse(self.class_name() + '-' + action, kwargs={'slug': self.slug})
     
     def get_absolute_url(self):
-        return reverse(self.class_name() + '-detail', kwargs={'slug': self.slug})
+        return self.get_url('detail')
 
     def get_edit_url(self):
-        return reverse(self.class_name() + '-edit', kwargs={'slug':self.slug})
+        return self.get_url('edit')
 
     def get_remove_url(self):
-        return reverse(self.class_name() + '-remove', kwargs={'slug':self.slug})
+        return self.get_url('remove')
 
     @classmethod
     def get_list_url(cls):
-        return reverse(cls.class_name() + '-list')
+        return self.get_url('list')
 
     def get_approve_url(self):
-        return reverse(self.class_name() + '-approve', kwargs={'slug':self.slug})
+        return self.get_url('approve')
 
     def get_unapprove_url(self):
-        return reverse(self.class_name() + '-unapprove', kwargs={'slug':self.slug})
+        return self.get_url('unapprove')
 
     def get_applications_url(self):
-        return reverse(self.class_name() + '-applications', kwargs={'slug':self.slug})
+        return self.get_url('applications')
 
     def get_admins_url(self):
-        return reverse(self.class_name() + '-admins', kwargs={'slug':self.slug})
+        return self.get_url('admins')
 
     def get_admin_revoke_url(self):
         return self.get_url('revoke-admin')
@@ -375,10 +386,6 @@ class Society(models.Model, DramaObjectMixin):
         return TechieAd.objects.approved().filter(show__society=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
         
 
-class ShowManager(DramaObjectManager):
-    def get_queryset(self):
-        return super(ShowManager, self).get_queryset().annotate(end_date=models.Max('performance__end_date'), start_date=models.Min('performance__start_date'))
-
 class Show(models.Model, DramaObjectMixin):
     objects = ShowManager()
 
@@ -685,11 +692,6 @@ class Audition(models.Model):
         return self.show.get_url('remove-auditions')
     def can_edit(self, user):
         return user.has_perm('drama.change_show',self.show)
-
-
-class AuditionInstanceManager(models.Manager):
-    def approved(self):
-        return self.filter(audition__show__approved=True)
 
 
 class AuditionInstance(models.Model):
