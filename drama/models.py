@@ -59,7 +59,7 @@ class DramaObjectMixin(object):
 
     @classmethod
     def get_list_url(cls):
-        return self.get_url('list')
+        return reverse(cls.class_name() + '-list')
 
     def get_approve_url(self):
         return self.get_url('approve')
@@ -75,6 +75,9 @@ class DramaObjectMixin(object):
 
     def get_admin_revoke_url(self):
         return self.get_url('revoke-admin')
+
+    def get_pending_admin_revoke_url(self):
+        return self.get_url('revoke-pending-admin')
     
     def is_show(self):
         return False
@@ -267,6 +270,10 @@ class Venue(models.Model, DramaObjectMixin):
         except IndexError:
             pass
 
+    def remove_pending_admin(self, email):
+        for pg in PendingGroupMember.objects.filter(group=self.group, email=email):
+            pg.delete()
+
     def get_shows(self):
         return Show.objects.approved().filter(performance__venue=self).distinct()
 
@@ -366,6 +373,10 @@ class Society(models.Model, DramaObjectMixin):
             self.group.user_set.remove(user)
         except IndexError:
             pass
+        
+    def remove_pending_admin(self, email):
+        for pg in PendingGroupMember.objects.filter(group=self.group, email=email):
+            pg.delete()
 
     def get_shows(self):
         return Show.objects.approved().filter(society=self).distinct()
@@ -501,6 +512,10 @@ class Show(models.Model, DramaObjectMixin):
         except IndexError:
             pass
 
+    def remove_pending_admin(self, email):
+        for pa in PendingAdmin.objects.filter(show=self, email=email):
+            pa.delete()
+            
     def get_company(self):
         return RoleInstance.objects.filter(show=self)
     

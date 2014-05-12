@@ -39,8 +39,19 @@
 	<h4>Pending Admins</h4>
 	{% for user in pending_users %}
 	<div class="row">
-	  <div class="small-12 columns">
+	  <div class="small-11 columns">
 	    <p>{{user.email}}</p>
+	  </div>
+	  <div class="small-1 columns">
+	    <span data-tooltip class="has-tip" title="Revoke this admin.">
+	      <form action="{{parent.get_pending_admin_revoke_url}}" method="post">
+		{% csrf_token %}
+		<input type="hidden" value="{{user.email}}" name="email" />
+		<button class="tiny" type="submit">
+		<i class="fa fa-trash-o"></i>
+		</button>
+		</form>
+	    </span>
 	  </div>
 	</div>
 	{% endfor %}

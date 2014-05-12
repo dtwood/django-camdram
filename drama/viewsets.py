@@ -183,6 +183,17 @@ class OrganizationViewSet(ObjectViewSet):
             return redirect(item.get_admins_url())
         else:
             raise PermissionDenied
+
+    @action(methods=['POST'])
+    def revoke_pending_admin(self, request, slug, *args, **kwargs):
+        item = get_object_or_404(self.model, slug=slug)
+        if request.user.has_perm('change_' + item.class_name(), item):
+            email = request.DATA['email']
+            item.remove_pending_admin(email)
+            return redirect(item.get_admins_url())
+        else:
+            raise PermissionDenied
+        
         
 class RoleViewSet(ObjectViewSet):
     queryset = models.Role.objects.all()
@@ -389,7 +400,7 @@ class DramaRouter(routers.DefaultRouter):
             name='{basename}-list',
             initkwargs={'suffix': 'List'}
         ),
-        # From-based create route
+        # Form-based create route
         Route(
             url=r'^{prefix}/new{trailing_slash}$',
             mapping={
