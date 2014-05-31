@@ -14,7 +14,7 @@ import json
 import datetime
 import autocomplete_light
 import hashlib
-from registration.backends.simple.views import RegistrationView
+from registration.backends.default.views import RegistrationView
 from guardian.shortcuts import assign_perm, get_objects_for_user, remove_perm, get_users_with_perms
 from collections import namedtuple
 

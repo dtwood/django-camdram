@@ -6,8 +6,8 @@ from django.views.generic import TemplateView, ListView
 from drama.models import *
 from drama import views, viewsets
 from drama.forms import *
-from registration.backends.simple.views import RegistrationView as SimpleRegistrationView
 from rest_framework.routers import DefaultRouter
+from registration.backends.default.views import ActivationView
 
 router = viewsets.DramaRouter(trailing_slash=False)
 router.register(r'roles', viewsets.RoleViewSet)
@@ -51,7 +51,20 @@ vacancy_patterns = patterns('drama.views',
 
 
 simple_register_patterns = patterns('',
+                        url(r'^activate/complete/$',
+                           TemplateView.as_view(template_name='registration/activation_complete.html'),
+                           name='registration_activation_complete'),
+                       # Activation keys get matched by \w+ instead of the more specific
+                       # [a-fA-F0-9]{40} because a bad activation key should still get to the view;
+                       # that way it can return a sensible "invalid key" message instead of a
+                       # confusing 404.
+                       url(r'^activate/(?P<activation_key>\w+)/$',
+                           ActivationView.as_view(),
+                           name='registration_activate'),
 url(r'^register/$', views.EmailRegistrationView.as_view(), name='registration_register'),
+                       url(r'^register/complete/$',
+                           TemplateView.as_view(template_name='registration/registration_complete.html'),
+                           name='registration_complete'),
 url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'), name='registration_disallowed'),
 (r'', include('django.contrib.auth.urls')),
 )
