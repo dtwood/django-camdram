@@ -50,7 +50,6 @@ INSTALLED_APPS = (
     'registration',
     'guardian',
     'haystack',
-    'south',
     'autocomplete_light',
     'pipeline',
     'rest_framework',
@@ -118,6 +117,8 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                "drama.processors.navitems_processor",
                                "drama.processors.searchform",
                                )
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = '/srv/http/emails'
 
 HAYSTACK_CONNECTIONS = {
     'default': {
@@ -190,3 +191,5 @@ PIPELINE_JS = {
 PIPELINE_DISABLE_WRAPPER = True
 
 DRAMA_DIARY_ROW_HEIGHT = 30 #in minutes
+
+ACCOUNT_ACTIVATION_DAYS = 7
