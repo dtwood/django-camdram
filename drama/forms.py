@@ -95,6 +95,18 @@ class ShowForm(FormsetsForm, autocomplete_light.ModelForm):
 
     class Meta:
         model = Show
+        exclude = ['year']
+
+    def clean(self, *args, **kwargs):
+        cleaned_data = super(ShowForm, self).clean()
+        year = None
+        for form in cleaned_data['performance_formset']:
+            if 'start_date' in form.cleaned_data.keys():
+                new_year = form.cleaned_data['start_date'].year
+                if (not year) or (new_year < year):
+                    year = new_year
+        cleaned_data['year'] = year
+        return cleaned_data
 
 
 class SocietyForm(FormsetsForm):
