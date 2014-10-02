@@ -18,7 +18,6 @@ LOGIN_URL = '/auth/login'
 LOGIN_REDIRECT_URL = '/'
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
-    os.path.join(BASE_DIR, 'env/lib/python3.4/site-packages/debug_toolbar/templates'),
     )
 
 
@@ -38,7 +37,6 @@ ALLOWED_HOSTS = ['.camdram.net']
 INTERNAL_IPS = ('127.0.0.1',)
 
 # Application definition
-DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 INSTALLED_APPS = (
 #    'django.contrib.admin',
@@ -53,12 +51,10 @@ INSTALLED_APPS = (
     'autocomplete_light',
     'pipeline',
     'rest_framework',
-    'debug_toolbar',
     'drama',
 )
 
 MIDDLEWARE_CLASSES = (
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -77,14 +73,14 @@ WSGI_APPLICATION = 'camdram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', 
-        'NAME': 'camdram',
-        'USER': 'camdram',
-        'PASSWORD': 'hello, little girl',
-        'HOST': '',   # Or an IP Address that your DB is hosted on
-        'PORT': '',
-        #'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        #'ENGINE': 'django.db.backends.postgresql_psycopg2', 
+        #'NAME': 'camdram',
+        #'USER': 'camdram',
+        #'PASSWORD': 'hello, little girl',
+        #'HOST': '',   # Or an IP Address that your DB is hosted on
+        #'PORT': '',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -108,7 +104,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
-                               "django.core.context_processors.debug",
                                "django.core.context_processors.i18n",
                                "django.core.context_processors.media",
                                "django.core.context_processors.static",
@@ -122,9 +117,8 @@ EMAIL_FILE_PATH = '/srv/http/emails'
 
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://127.0.0.1:9200/',
-        'INDEX_NAME': 'camdram',
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
     },
 }
 

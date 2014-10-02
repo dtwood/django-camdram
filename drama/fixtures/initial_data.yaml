@@ -5,7 +5,7 @@
     cat: cast
     desc: This role intentionally left unapproved.
     slug: character
-    approved: n
+    approved: False
 
 - model: drama.Role
   pk: 2
@@ -14,7 +14,7 @@
     cat: band
     desc: This role intentionally left unapproved.
     slug: character
-    approved: n
+    approved: False
 
 - model: drama.Role
   pk: 3
@@ -23,5 +23,5 @@
     cat: prod
     desc: This role intentionally left unapproved.
     slug: character
-    approved: n
+    approved: False
 
