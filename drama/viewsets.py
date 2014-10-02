@@ -5,13 +5,11 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from rest_framework import viewsets, routers, permissions
 from rest_framework.renderers import JSONRenderer, YAMLRenderer, BrowsableAPIRenderer, TemplateHTMLRenderer, StaticHTMLRenderer, XMLRenderer
-from rest_framework.decorators import link, action, permission_classes, api_view
+from rest_framework.decorators import link, detail_route, permission_classes, api_view
 from rest_framework.response import Response
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, BasePermission
 from rest_framework.exceptions import MethodNotAllowed
 from drama import serializers, models, views, forms
-
-Route = namedtuple('Route', ['url', 'mapping', 'name', 'initkwargs'])
 
 class CamdramPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -39,7 +37,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
         else:
             raise PermissionDenied
     
-    @action(methods=['GET', 'POST'])
+    @detail_route(methods=['GET', 'POST'])
     def edit(self, request, slug, *args, **kwargs):
         template_name = 'drama/' + self.model.__name__.lower() +'_form.html'
         item = get_object_or_404(self.model, slug=slug)
@@ -68,7 +66,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
         else:
             raise PermissionDenied
 
-    @action(methods=['GET','POST'])
+    @detail_route(methods=['GET','POST'])
     def remove(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.change_' + self.model.class_name(), item):
@@ -77,7 +75,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
         else:
             raise PermissionDenied
 
-    @link()
+    @detail_route(methods=['GET'])
     def approve(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):
@@ -86,7 +84,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
         else:
             raise PermissionDenied
 
-    @link()
+    @detail_route(methods=['GET'])
     def unapprove(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):
@@ -111,7 +109,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
 
 
 class OrganizationViewSet(ObjectViewSet):
-    @action(methods=['GET', 'POST'])
+    @detail_route(methods=['GET', 'POST'])
     def applications(self, request, slug, *args, **kwargs):
         parent = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.change_' + parent.class_name(), parent):
@@ -138,7 +136,7 @@ class OrganizationViewSet(ObjectViewSet):
             raise PermissionDenied
 
 
-    @action(methods=['GET', 'POST'])
+    @detail_route(methods=['GET', 'POST'])
     def admins(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('change_' + item.class_name(), item):
@@ -174,7 +172,7 @@ class OrganizationViewSet(ObjectViewSet):
         else:
             raise PermissionDenied
 
-    @action(methods=['POST'])
+    @detail_route(methods=['POST'])
     def revoke_admin(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('change_' + item.class_name(), item):
@@ -184,7 +182,7 @@ class OrganizationViewSet(ObjectViewSet):
         else:
             raise PermissionDenied
 
-    @action(methods=['POST'])
+    @detail_route(methods=['POST'])
     def revoke_pending_admin(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('change_' + item.class_name(), item):
@@ -208,7 +206,7 @@ class PersonViewSet(ObjectViewSet):
     model = models.Person
     form = forms.PersonForm
 
-    @link()
+    @detail_route(methods=['GET'])
     def link(self, request, slug, *args, **kwargs):
         person = get_object_or_404(self.model, slug=slug)
         user = request.user
@@ -240,7 +238,7 @@ class ShowViewSet(OrganizationViewSet):
     form = forms.ShowForm
     applicationform = forms.ShowApplicationFormset
 
-    @action(methods=['POST'])
+    @detail_route(methods=['POST'])
     def add_cast(self, request, slug, *args, **kwargs):
         show = get_object_or_404(self.model, slug=slug)
         if request.method == "POST":
@@ -259,7 +257,7 @@ class ShowViewSet(OrganizationViewSet):
             return redirect(show.get_absolute_url())
 
 
-    @action(methods=['POST'])
+    @detail_route(methods=['POST'])
     def add_band(self, request, slug, *args, **kwargs):
         show = get_object_or_404(self.model, slug=slug)
         if request.method == "POST":
@@ -278,7 +276,7 @@ class ShowViewSet(OrganizationViewSet):
             return redirect(show.get_absolute_url())
 
 
-    @action(methods=['POST'])
+    @detail_route(methods=['POST'])
     def add_prod(self, request, slug, *args, **kwargs):
         show = get_object_or_404(self.model, slug=slug)
         if request.method == "POST":
@@ -296,7 +294,7 @@ class ShowViewSet(OrganizationViewSet):
         else:
             return redirect(show.get_absolute_url())
 
-    @action(methods=['POST'])
+    @detail_route(methods=['POST'])
     def role_reorder(self, request, slug, *args, **kwargs):
         show = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.change_show', show):
@@ -310,7 +308,7 @@ class ShowViewSet(OrganizationViewSet):
         else:
             raise PermissionDenied
 
-    @action(methods=['POST'])
+    @detail_route(methods=['POST'])
     def remove_role(self, request, slug, *args, **kwargs):
         show = get_object_or_404(models.Show, slug=slug)
         role = get_object_or_404(models.RoleInstance, id=request.POST['role-id'])
@@ -372,26 +370,26 @@ class ShowViewSet(OrganizationViewSet):
         else:
             raise PermissionDenied
 
-    @action(methods=['GET','POST'])
+    @detail_route(methods=['GET','POST'])
     def technical(self, request, slug):
         return self.related_edit(request, models.TechieAd, forms.TechieAdForm, slug) 
 
-    @action(methods=['GET','POST'])
+    @detail_route(methods=['GET','POST'])
     def remove_technical(self, request, slug):
         return self.related_remove(request, models.TechieAd, slug) 
 
-    @action(methods=['GET','POST'])
+    @detail_route(methods=['GET','POST'])
     def auditions(self, request, slug):
         return self.related_edit(request, models.Audition, forms.AuditionForm, slug) 
 
-    @action(methods=['GET','POST'])
+    @detail_route(methods=['GET','POST'])
     def remove_auditions(self, request, slug):
         return self.related_remove(request, models.Audition, slug) 
 
 class DramaRouter(routers.DefaultRouter):
     routes = [
         # List route.
-        Route(
+        routers.Route(
             url=r'^{prefix}{trailing_slash}$',
             mapping={
                 'get': 'list',
@@ -401,7 +399,7 @@ class DramaRouter(routers.DefaultRouter):
             initkwargs={'suffix': 'List'}
         ),
         # Form-based create route
-        Route(
+        routers.Route(
             url=r'^{prefix}/new{trailing_slash}$',
             mapping={
                 'get': 'new',
@@ -411,7 +409,7 @@ class DramaRouter(routers.DefaultRouter):
                 initkwargs={},
                 ),
         # Detail route.
-        Route(
+        routers.Route(
             url=r'^{prefix}/{lookup}{trailing_slash}$',
             mapping={
                 'get': 'retrieve',
@@ -423,12 +421,9 @@ class DramaRouter(routers.DefaultRouter):
             initkwargs={'suffix': 'Instance'}
         ),
         # Dynamically generated routes.
-        # Generated using @action or @link decorators on methods of the viewset.
-        Route(
+        # Generated using @detail_route or @link decorators on methods of the viewset.
+        routers.DynamicDetailRoute(
             url=r'^{prefix}/{lookup}/{methodname}{trailing_slash}$',
-            mapping={
-                '{httpmethod}': '{methodname}',
-            },
             name='{basename}-{methodnamehyphen}',
             initkwargs={}
         ),
