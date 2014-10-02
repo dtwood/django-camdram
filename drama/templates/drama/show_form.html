@@ -34,7 +34,7 @@
       </ul>
     </div>
     <div id="empty_form" style="display:none">
-      {% include "drama/performance_form_item.html" with form=performance_formset.empty_form %}
+      {% include "drama/performance_form_item.html" with form=content_form.context.performance_formset.empty_form %}
     </div>
   </div>
   {% include "drama/form_field.html" with field=content_form.society %}

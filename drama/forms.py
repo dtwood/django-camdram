@@ -29,10 +29,11 @@ class FormsetsForm(forms.ModelForm):
 
     def clean(self, *args, **kwargs):
         cleaned_data = super(FormsetsForm, self).clean()
-        for _,x in self.context.items():
+        for k,x in self.context.items():
             if not x.is_valid():
                 raise forms.ValidationError(
                     "Error in editing %(model)s", params={'model': x.model.get_cname()})
+            cleaned_data[k] = x
         return cleaned_data
 
     def save(self, *args, **kwargs):
