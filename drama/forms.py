@@ -57,15 +57,7 @@ class ChildForm(FormsetsForm):
     def __init__(self, *args, parent=None, parent_name=None, **kwargs):
         self.parent = parent
         self.parent_name = parent_name
-        if self._meta.exclude is not None:
-            if self.parent_name is not None and self.parent_name not in self._meta.exclude:
-                self._meta.exclude = (self.parent_name,) + self._meta.exclude
-        else:
-            if self.parent_name is not None:
-                self._meta.exclude = (self.parent_name,)
         super(ChildForm, self).__init__(*args, **kwargs)
-        if self.parent_name is not None:
-            del self.fields[self.parent_name]
 
     def save(self, *args, **kwargs):
         super(ChildForm,self).save(*args, **kwargs)
@@ -74,9 +66,8 @@ class ChildForm(FormsetsForm):
     def clean(self):
         cleaned_data = super(ChildForm, self).clean()
         if self.parent is not None:
-            self._meta.exclude = tuple(x for x in self._meta.exclude if x != self.parent_name)
-        if self.parent is not None:
             cleaned_data[self.parent_name] = self.parent
+            self._meta.fields += [self.parent_name]
         return cleaned_data
 
 
@@ -84,6 +75,7 @@ class PerformanceForm(autocomplete_light.ModelForm):
 
     class Meta:
         model = Performance
+        fields = ['start_date','end_date','time','venue']
 
 PerformanceInline = inlineformset_factory(
     Show, Performance, PerformanceForm, extra=1)
@@ -116,6 +108,7 @@ class SocietyForm(FormsetsForm):
 
     class Meta:
         model = Society
+        fields = ['name','shortname','desc','image']
 
 
 class PersonForm(FormsetsForm):
@@ -125,6 +118,7 @@ class PersonForm(FormsetsForm):
 
     class Meta:
         model = Person
+        fields = ['name','desc']
 
 
 class VenueForm(FormsetsForm):
@@ -134,6 +128,7 @@ class VenueForm(FormsetsForm):
 
     class Meta:
         model = Venue
+        fields = ['name','desc','address','lat','lng']
 
         
 class RoleForm(FormsetsForm):
@@ -143,6 +138,7 @@ class RoleForm(FormsetsForm):
 
     class Meta:
         model = Role
+        fields = ['name','desc','cat']
 
 
 class AuditionInstanceForm(forms.ModelForm):
@@ -174,6 +170,7 @@ class AuditionInstanceForm(forms.ModelForm):
     
     class Meta:
         model = AuditionInstance
+        fields = ['end_datetime','start_time','location']
 
         
 AuditionInline = inlineformset_factory(
@@ -187,16 +184,20 @@ class AuditionForm(ChildForm):
     
     class Meta:
         model = Audition
+        fields = ['desc','contact']
 
         
 class TechieAdRoleForm(autocomplete_light.ModelForm):
 
     class Meta:
         model = TechieAdRole
+        fields = ['name','desc','role']
 
         
 TechieAdInline = inlineformset_factory(
     TechieAd, TechieAdRole, TechieAdRoleForm, extra=1)
+
+
 class DeadlineForm(forms.ModelForm):
     date = forms.DateField(label="Deadline date")
     time = forms.TimeField(label="Deadline time")
@@ -232,7 +233,7 @@ class TechieAdForm(DeadlineForm, ChildForm):
 
     class Meta:
         model = TechieAd
-
+        fields = ['desc','contact','deadline']
 
 class ApplicationForm(DeadlineForm, FormsetsForm, autocomplete_light.ModelForm):
     error_css_class = 'error'
@@ -241,6 +242,7 @@ class ApplicationForm(DeadlineForm, FormsetsForm, autocomplete_light.ModelForm):
     
     class Meta:
         model = Application
+        fields = ['name','desc','contact','deadline']
 
 
 ShowApplicationFormset = inlineformset_factory(Show, ShowApplication, ApplicationForm)

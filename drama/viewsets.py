@@ -343,7 +343,7 @@ class ShowViewSet(OrganizationViewSet):
             except IndexError:
                 if request.method == 'GET':
                     bound_form = form(parent=show, parent_name='show')
-                    data = {'content_form': bound_form, 'parent': parent}
+                    data = {'content_form': bound_form, 'parent': show}
                     return Response(data=data, template_name=template_name)
                 elif request.method == 'POST':
                     bound_form = form(request.POST, request.FILES, parent=show, parent_name='show')
