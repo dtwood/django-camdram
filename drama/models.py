@@ -720,16 +720,16 @@ class AuditionInstance(models.Model):
     objects = AuditionInstanceManager()
     audition = models.ForeignKey(Audition)
     end_datetime = models.DateTimeField()
+    start_time = models.TimeField()
+    location = models.CharField(max_length=200)
 
     @property
     def date(self):
-        self.start_datetime.date()
+        self.end_datetime.date()
 
     @property
     def end_time(self):
-        self.start_datetime.time()
-    start_time = models.TimeField()
-    location = models.CharField(max_length=200)
+        self.end_datetime.time()
     @classmethod
     def get_cname(*args):
         return "audition session"
