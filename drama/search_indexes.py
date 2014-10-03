@@ -11,6 +11,9 @@ class ShowIndex(indexes.SearchIndex, indexes.Indexable):
     def get_model(self):
         return Show
 
+    def index_queryset(self, using=None):
+        return self.get_model().objects.approved()
+
 
 class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
@@ -19,6 +22,8 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     def get_model(self):
         return Person
 
+    def index_queryset(self, using=None):
+        return self.get_model().objects.approved()
 
 class VenueIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
@@ -27,6 +32,9 @@ class VenueIndex(indexes.SearchIndex, indexes.Indexable):
     def get_model(self):
         return Venue
 
+    def index_queryset(self, using=None):
+        return self.get_model().objects.approved()
+
 
 class SocietyIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
@@ -34,3 +42,6 @@ class SocietyIndex(indexes.SearchIndex, indexes.Indexable):
 
     def get_model(self):
         return Society
+
+    def index_queryset(self, using=None):
+        return self.get_model().objects.approved()
