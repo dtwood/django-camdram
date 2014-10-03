@@ -165,10 +165,15 @@ class MyCreateView(autocomplete_light.CreateView):
         return context
 
     def form_valid(self, form):
-        result = super(MyCreateView, self).form_valid(form)
         if self.model_name in ('shows',):
+            self.success_url = '/'
+            super(MyCreateView, self).form_valid(form)
             assign_perm('drama.change_' + self.object.__class__.__name__.lower(), self.request.user, self.object)
-        return result
+            self.object.reslug()
+            self.success_url = False
+            return redirect(self.get_success_url())
+        else:
+            return super(MyCreateView, self).form_valid(form)
 
     def get_success_url(self):
         if self.success_url:

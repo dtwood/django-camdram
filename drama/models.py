@@ -1,4 +1,5 @@
 import math
+import itertools
 import drama
 from django.db import models, IntegrityError
 from django.template.defaultfilters import slugify
@@ -408,7 +409,6 @@ class Show(models.Model, DramaObjectMixin):
     prices = models.CharField(max_length=30, blank=True)
     author = models.CharField(max_length=200, blank=True)
     society = models.ForeignKey(Society)
-    year = models.IntegerField()
     image = models.ImageField(upload_to='images/', blank=True)
     slug = models.SlugField(max_length=200, blank=True, unique=True)
     approved = models.BooleanField(editable=False, default=False)
@@ -420,14 +420,21 @@ class Show(models.Model, DramaObjectMixin):
             ('admin_show', 'Change show admins'),
             )
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(str(self.year) + '-' + self.name)
-        try:
-            super(Show, self).save(*args, **kwargs)
-        except IntegrityError:
-            self.slug = slugify(self.slug + '-' + self.id)
-            super(Show, self).save(*args, **kwargs)
+    def reslug(self):
+        if self.performance_set.count() > 0:
+            base_slug = slugify(str(self.opening_night.year) + '-' + self.name)
+        else:
+            base_slug = slugify(self.name)
+        slug = base_slug
+        if Show.objects.filter(slug=base_slug).exclude(id=self.id).count() > 0:
+            for i in itertools.count(2):
+                slug = slugify(base_slug + '-' + str(i))
+                if Show.objects.filter(slug=slug).exclude(id=self.id).count() == 0:
+                    break
+        self.slug = slug
+        self.save()
+
+    reslug.alters_data=True
 
     @property
     def cast(self):
@@ -446,14 +453,14 @@ class Show(models.Model, DramaObjectMixin):
         try:
             return self.performance_set.order_by('start_date')[0].start_date
         except IndexError:
-            return date(self.year, 1, 1)
+            return date(1973,7,24)
 
     @property
     def closing_night(self):
         try:
             return self.performance_set.order_by('-end_date')[0].end_date
         except IndexError:
-            return date(self.year, 1, 1)
+            return date(1973,7,24)
 
     @property
     def dec_string(self):
