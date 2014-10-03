@@ -149,14 +149,6 @@ def my_redirect(request, model_name, slug, *args, **kwargs):
 class MyCreateView(autocomplete_light.CreateView):
     model_name = None
 
-    def get(self, request, *args, **kwargs):
-        self.object = None
-        return super(MyCreateView, self).get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.object = None
-        return super(MyCreateView, self).post(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super(MyCreateView, self).get_context_data(**kwargs)
         context['content_form'] = context['form']
@@ -174,12 +166,6 @@ class MyCreateView(autocomplete_light.CreateView):
             return redirect(self.get_success_url())
         else:
             return super(MyCreateView, self).form_valid(form)
-
-    def get_success_url(self):
-        if self.success_url:
-            return self.success_url
-        else:
-            return super(MyCreateView, self).get_success_url()
 
 
 class EmailRegistrationView(RegistrationView):
