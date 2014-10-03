@@ -1,8 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from issues.models import *
 from issues import forms
 from django.core.exceptions import PermissionDenied
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
+from django.core.urlresolvers import reverse
 
 # Create your views here.
 
@@ -29,3 +30,22 @@ def detail(request, key=None):
         return render(request, 'issues/detail.html', {'issue': issue, 'messages': messages, 'form': form})
     else:
         raise PermissionDenied
+
+@require_POST
+def claim(request, key=None):
+    if request.user.has_perm('view_issues'):
+        issue = get_object_or_404(Issue, pk=key)
+        issue.claim(request.user)
+        return redirect(issue.get_absolute_url())
+    else:
+        raise PermissionDenied
+
+@require_POST
+def close(request, key=None):
+    if request.user.has_perm('view_issues'):
+        issue = get_object_or_404(Issue, pk=key)
+        issue.close()
+        return redirect(reverse('issues:list'))
+    else:
+        raise PermissionDenied
+

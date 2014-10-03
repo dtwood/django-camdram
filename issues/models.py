@@ -10,7 +10,7 @@ class Issue(models.Model):
     name = models.CharField(max_length=200,blank=True)
     desc = models.TextField(blank=True)
     assigned_user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
     email = models.EmailField()
     opened = models.DateTimeField()
 
@@ -29,6 +29,16 @@ class Issue(models.Model):
             self.active = True
             self.save()
     add_message.alters_data=True
+
+    def close(self):
+        self.active = False
+        self.save()
+    close.alters_data = True
+
+    def claim(self, user):
+        self.assigned_user = user
+        self.save()
+    claim.alters_data = True
     
     class Meta:
         ordering = ['-opened']
@@ -38,6 +48,12 @@ class Issue(models.Model):
 
     def get_absolute_url(self):
         return reverse('issues:detail', kwargs={'key': self.id})
+
+    def get_claim_url(self):
+        return reverse('issues:claim', kwargs={'key': self.id})
+
+    def get_close_url(self):
+        return reverse('issues:close', kwargs={'key': self.id})
 
     def get_link(self):
         return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), escape(self.name)))

@@ -7,6 +7,22 @@
 <div class="row">
   <h3>{{issue.name}}</h3>
   <h4>From: {{issue.email}} at {{issue.opened}}</h4>
+  <div class="row">
+    <div class="large-6 columns">
+      <form action="{{issue.get_claim_url}}" method="post">
+	{% csrf_token %}
+	<button type="submit">Claim Issue</button>
+      </form>
+    </div>
+    <div class="large-6 columns">
+      <div class="right">
+	<form action="{{issue.get_close_url}}" method="post">
+	  {% csrf_token %}
+	  <button type="submit">Close Issue</button>
+	</form>
+      </div>
+    </div>
+  </div>
   <hr />
   <p>{{issue.desc}}</p>
 
