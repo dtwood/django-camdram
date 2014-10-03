@@ -98,10 +98,12 @@ class DramaObjectMixin(object):
     def approve(self):
         self.approved = True
         self.save()
+    approve.alters_data = True
 
     def unapprove(self):
         self.approved = False
         self.save()
+    unapprove.alters_data = True
 
 class Person(models.Model, DramaObjectMixin):
 
@@ -189,9 +191,53 @@ class Person(models.Model, DramaObjectMixin):
         user.first_name = self.name
         user.save()
         return redirect(self.get_absolute_url())
+    link_user.alters_data=True
 
 
-class Venue(models.Model, DramaObjectMixin):
+class DramaOrganizationMixin(DramaObjectMixin):
+    def get_admins(self):
+        """
+        Return the current admins.
+        """
+        return self.group.user_set.all()
+
+    def get_pending_admins(self):
+        """
+        return the pending admins
+        """
+        return self.group.pendinggroupmember_set.all()
+    
+    def add_admin(self, email):
+        """
+        Add the user with this email address to the organization admins.
+        If the user does not exist, add the request to the pending admins list.
+        """
+        try:
+            user = auth.get_user_model().objects.filter(email=email)[0]
+            self.group.user_set.add(user)
+        except IndexError:
+            item = PendingGroupMember(email=email, group=self.group)
+            item.save()
+    add_admin.alters_data = True
+    
+    def remove_admin(self, username):
+        """
+        Remove the user with that username from the organization admins.
+        """
+        try:
+            user = auth.get_user_model().objects.filter(username=username)[0]
+            self.group.user_set.remove(user)
+        except IndexError:
+            pass
+    remove_admin.alters_data = True
+
+    def remove_pending_admin(self, email):
+        for pg in PendingGroupMember.objects.filter(group=self.group, email=email):
+            pg.delete()
+    remove_pending_admin.alters_data = True
+
+
+class Venue(models.Model, DramaOrganizationMixin):
 
     def __str__(self):
         return self.name
@@ -238,43 +284,6 @@ class Venue(models.Model, DramaObjectMixin):
     def has_applications(self):
         return True
 
-    def get_admins(self):
-        """
-        Return the current admins.
-        """
-        return self.group.user_set.all()
-
-    def get_pending_admins(self):
-        """
-        return the pending admins
-        """
-        return self.group.pendinggroupmember_set.all()
-    
-    def add_admin(self, email):
-        """
-        Add the user with this email address to the venue admins.
-        If the user does not exist, add the request to the pending admins list.
-        """
-        try:
-            user = auth.get_user_model().objects.filter(email=email)[0]
-            self.group.user_set.add(user)
-        except IndexError:
-            item = PendingGroupMember(email=email, group=self.group)
-            item.save()
-    def remove_admin(self, username):
-        """
-        Remove the user with that username from the venue admins.
-        """
-        try:
-            user = auth.get_user_model().objects.filter(username=username)[0]
-            self.group.user_set.remove(user)
-        except IndexError:
-            pass
-
-    def remove_pending_admin(self, email):
-        for pg in PendingGroupMember.objects.filter(group=self.group, email=email):
-            pg.delete()
-
     def get_shows(self):
         return Show.objects.approved().filter(performance__venue=self).distinct()
 
@@ -294,7 +303,7 @@ class Venue(models.Model, DramaObjectMixin):
         return TechieAd.objects.approved().filter(show__performance__venue=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
         
 
-class Society(models.Model, DramaObjectMixin):
+class Society(models.Model, DramaOrganizationMixin):
 
     def __str__(self):
         return self.name
@@ -340,44 +349,6 @@ class Society(models.Model, DramaObjectMixin):
     
     def has_applications(self):
         return True
-
-    def get_admins(self):
-        """
-        Return the current admins.
-        """
-        return self.group.user_set.all()
-
-    def get_pending_admins(self):
-        """
-        return the pending admins
-        """
-        return self.group.pendinggroupmember_set.all()
-    
-    def add_admin(self, email):
-        """
-        Add the user with this email address to the society admins.
-        If the user does not exist, add the request to the pending admins list.
-        """
-        try:
-            user = auth.get_user_model().objects.filter(email=email)[0]
-            self.group.user_set.add(user)
-        except IndexError:
-            item = PendingGroupMember(email=email, group=self.group)
-            item.save()
-
-    def remove_admin(self, username):
-        """
-        Remove the user with that username from the society admins.
-        """
-        try:
-            user = auth.get_user_model().objects.filter(username=username)[0]
-            self.group.user_set.remove(user)
-        except IndexError:
-            pass
-        
-    def remove_pending_admin(self, email):
-        for pg in PendingGroupMember.objects.filter(group=self.group, email=email):
-            pg.delete()
 
     def get_shows(self):
         return Show.objects.approved().filter(society=self).distinct()
@@ -509,6 +480,8 @@ class Show(models.Model, DramaObjectMixin):
             item = PendingAdmin(email=email, show=self)
             item.save()
 
+    add_admin.alters_data = True
+
     def remove_admin(self, username):
         """
         Remove the user with that username from the show admins.
@@ -519,9 +492,13 @@ class Show(models.Model, DramaObjectMixin):
         except IndexError:
             pass
 
+    remove_admin.alters_data = True
+
     def remove_pending_admin(self, email):
         for pa in PendingAdmin.objects.filter(show=self, email=email):
             pa.delete()
+
+    remove_pending_admin.alters_data = True
             
     def get_company(self):
         return RoleInstance.objects.filter(show=self)
