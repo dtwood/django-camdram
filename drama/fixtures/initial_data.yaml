@@ -10,18 +10,18 @@
 - model: drama.Role
   pk: 2
   fields:
-    name: Generic Band
+    name: Musician
     cat: band
     desc: This role intentionally left unapproved.
-    slug: character
+    slug: musician
     approved: False
 
 - model: drama.Role
   pk: 3
   fields:
-    name: Generic Production Team
+    name: Technician
     cat: prod
     desc: This role intentionally left unapproved.
-    slug: character
+    slug: techie
     approved: False
 
