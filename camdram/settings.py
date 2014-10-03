@@ -52,6 +52,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'drama',
     'django.contrib.admin',
+    'issues',
 )
 
 MIDDLEWARE_CLASSES = (

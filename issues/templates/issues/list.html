@@ -1,0 +1,64 @@
+{% extends "drama/base.html" %}
+{% block title %}Issues{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="large-12 columns">
+    <h3>Issues</h3>
+  </div>
+</div>
+
+<div class="row">
+  <div class="large-12 columns">
+    <h4>Issues assigned to you</h4>
+    <ul class="large-block-grid-1" id="issues_list">
+      {% for issue in my_issues %}
+      <li id="{{issue.pk}}">
+	<div class="row">
+	  <div class="large-12 columns">
+	    <h5>{{issue.get_link}}</h5>
+	    <p>{{issue.desc|truncatechars:400}}</p>
+	  </div>
+	</div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="large-12 columns">
+    <h4>Issues assigned to others</h4>
+    <ul class="large-block-grid-1" id="issues_list">
+      {% for issue in other_issues %}
+      <li id="{{issue.pk}}">
+	<div class="row">
+	  <div class="large-12 columns">
+	    <h5>{{issue.get_link}}</h5>
+	    <p>{{issue.desc|truncatechars:400}}</p>
+	  </div>
+	</div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="large-12 columns">
+    <h4>Unassigned issues</h4>
+    <ul class="large-block-grid-1" id="issues_list">
+      {% for issue in unassigned_issues %}
+      <li id="{{issue.pk}}">
+	<div class="row">
+	  <div class="large-12 columns">
+	    <h5>{{issue.get_link}}</h5>
+	    <p>{{issue.desc|truncatechars:400}}</p>
+	  </div>
+	</div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
