@@ -94,6 +94,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
             raise PermissionDenied
 
     def list(self, request, *args, **kwargs):
+        self.queryset = self.queryset.approved()
         response = super(ObjectViewSet, self).list(request, *args, **kwargs)
         if request.accepted_renderer.format == 'html':
             response.template_name = "drama/" + self.model.__name__.lower() + "_list.html"
@@ -102,10 +103,13 @@ class ObjectViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, slug, *args, **kwargs):
         response = super(ObjectViewSet, self).retrieve(request, slug=slug, *args, **kwargs)
-        if request.accepted_renderer.format == 'html':
-            response.template_name = "drama/" + self.model.__name__.lower() + "_detail.html"
-            response.data = {'object': self.object, 'current_pagetype': self.model.get_cname()}
-        return response
+        if self.object.is_approved() or request.user.has_perm('drama.edit_' + self.object.class_name(), self.object) or request.user.has_perm('drama.approve_' + self.object.class_name(), self.object):
+            if request.accepted_renderer.format == 'html':
+                response.template_name = "drama/" + self.model.__name__.lower() + "_detail.html"
+                response.data = {'object': self.object, 'current_pagetype': self.model.get_cname()}
+            return response
+        else:
+            raise PermissionDenied
 
 
 class OrganizationViewSet(ObjectViewSet):

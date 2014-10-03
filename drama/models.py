@@ -13,30 +13,39 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, remove_perm, g
 from django.utils import timezone
 from django.shortcuts import redirect
 
-class DramaObjectManager(models.Manager):
+class DramaObjectQuerySet(models.query.QuerySet):
     def approved(self):
         return self.filter(approved=True)
 
     def unapproved(self):
         return self.filter(approved=False)
+    
+
+DramaObjectManager = models.Manager.from_queryset(DramaObjectQuerySet)
 
 
-class ShowApprovedManager(models.Manager):
+class ShowApprovedQuerySet(models.query.QuerySet):
     def approved(self):
         return self.filter(show__approved=True)
 
     def unapproved(self):
         return self.filter(show__approved=False)
 
+ShowApprovedManager = models.Manager.from_queryset(ShowApprovedQuerySet)
 
 class ShowManager(DramaObjectManager):
     def get_queryset(self):
         return super(ShowManager, self).get_queryset().annotate(end_date=models.Max('performance__end_date'), start_date=models.Min('performance__start_date'))
 
     
-class AuditionInstanceManager(models.Manager):
+class AuditionInstanceQuerySet(models.query.QuerySet):
     def approved(self):
         return self.filter(audition__show__approved=True)
+    
+    def unapproved(self):
+        return self.filter(audition__show__approved=False)
+
+AuditionInstanceManager = models.Manager.from_queryset(AuditionInstanceQuerySet)
 
 
 class DramaObjectMixin(object):
@@ -95,6 +104,9 @@ class DramaObjectMixin(object):
         else:
             return self.name
 
+    def is_approved(self):
+        return self.approved
+
     def approve(self):
         self.approved = True
         self.save()
@@ -106,6 +118,7 @@ class DramaObjectMixin(object):
     unapprove.alters_data = True
 
 class Person(models.Model, DramaObjectMixin):
+    objects = DramaObjectManager()
 
     def __str__(self):
         return self.name
@@ -238,6 +251,7 @@ class DramaOrganizationMixin(DramaObjectMixin):
 
 
 class Venue(models.Model, DramaOrganizationMixin):
+    objects = DramaObjectManager()
 
     def __str__(self):
         return self.name
@@ -304,6 +318,7 @@ class Venue(models.Model, DramaOrganizationMixin):
         
 
 class Society(models.Model, DramaOrganizationMixin):
+    objects = DramaObjectManager()
 
     def __str__(self):
         return self.name
@@ -578,6 +593,7 @@ class Performance(models.Model):
 
 
 class Role(models.Model, DramaObjectMixin):
+    objects = DramaObjectManager()
 
     def __str__(self):
         return self.name
