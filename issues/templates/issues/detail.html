@@ -13,11 +13,19 @@
   {% for message in messages %}
   <div class="panel">
     <h5>From: {{message.sender}} at {{message.recieved}}</h5>
-
-
-
     <p>{{message.body}}</p>
   </div>
   {% endfor %}
+  <form action="" method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="large-12 columns">
+	{{form.body}}
+      </div>
+    </div>
+    <div class="text-right">
+      <button type="submit">Reply</button>
+    </div>
+  </form>
 </div>
 {% endblock %}

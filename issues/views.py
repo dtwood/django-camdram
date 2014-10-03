@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from issues.models import *
+from issues import forms
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_http_methods
 
@@ -18,13 +19,13 @@ def list(request):
 @require_http_methods(["GET", "POST"])
 def detail(request, key=None):
     if request.user.has_perm('view_issues'):
-        if request.method == "GET":
-            issue = get_object_or_404(Issue, pk=key)
-            messages = issue.message_set.all()
-            return render(request, 'issues/detail.html', {'issue': issue, 'messages': messages})
-        elif request.method == "POST":
-            pass
-        else:
-            pass
+        issue = get_object_or_404(Issue, pk=key)
+        if request.method == "POST":
+            form = forms.ResponseForm(request.POST)
+            if form.is_valid():
+                issue.send_response(str(request.user),form.cleaned_data['body'])
+        form = forms.ResponseForm()
+        messages = issue.message_set.all()
+        return render(request, 'issues/detail.html', {'issue': issue, 'messages': messages, 'form': form})
     else:
         raise PermissionDenied

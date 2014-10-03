@@ -3,6 +3,8 @@ from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from django.utils.html import escape
+from django.core.mail import send_mail
+from django.utils import timezone
 
 class Issue(models.Model):
     name = models.CharField(max_length=200,blank=True)
@@ -13,8 +15,13 @@ class Issue(models.Model):
     opened = models.DateTimeField()
 
     def send_response(self, sender, body):
-        pass #TODO
-
+        from_addr = 'issue-' + str(self.id) +'@' + settings.EMAIL_FROM_DOMAIN
+        subject = '[' + settings.EMAIL_FROM_DOMAIN + ']Re: Support Request ' + str(self.id) +' (' + self.name + ')'
+        send_mail(subject, body, from_addr, [self.email])
+        message = Message(issue=self, sender=sender, body=body, recieved=timezone.now())
+        message.save()
+    send_response.alters_data=True
+    
     class Meta:
         ordering = ['-opened']
         permissions = (
