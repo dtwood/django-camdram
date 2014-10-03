@@ -165,9 +165,10 @@ Autocomplete.prototype.displayResults = function(items, query) {
 	    
             // Add in the icon
             switch (result.type) {
-            case 'show' : var icon_class = "fa fa-ticket"; break;
-            case 'venue' : var icon_class = "fa fa-home"; break;
-            case 'society' : var icon_class = "fa fa-briefcase"; break;
+            case 'shows' : var icon_class = "fa fa-ticket"; break;
+            case 'venues' : var icon_class = "fa fa-home"; break;
+            case 'societies' : var icon_class = "fa fa-group"; break;
+	    case 'roles' : var icon_class = "fa fa-wrench"; break;
             default: var icon_class = 'fa fa-user';
             }
             $("<i/>").addClass(icon_class).appendTo(link);

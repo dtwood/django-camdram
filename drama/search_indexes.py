@@ -1,6 +1,6 @@
 import datetime
 from haystack import indexes
-from drama.models import Show, Person, Venue, Society
+from drama.models import Show, Person, Venue, Society, Role
 
 
 class ShowIndex(indexes.SearchIndex, indexes.Indexable):
@@ -42,6 +42,16 @@ class SocietyIndex(indexes.SearchIndex, indexes.Indexable):
 
     def get_model(self):
         return Society
+
+    def index_queryset(self, using=None):
+        return self.get_model().objects.approved()
+
+class RoleIndex(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.CharField(document=True, use_template=True)
+    auto = indexes.EdgeNgramField(model_attr='name')
+
+    def get_model(self):
+        return Role
 
     def index_queryset(self, using=None):
         return self.get_model().objects.approved()

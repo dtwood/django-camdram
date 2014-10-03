@@ -624,6 +624,10 @@ class Role(models.Model, DramaObjectMixin):
 
     def get_vacancies(self):
         return TechieAd.objects.approved().filter(techieadrole__role=self).distinct()
+
+    @property
+    def dec_string(self):
+        return ''
         
 
 class RoleInstance(models.Model):
