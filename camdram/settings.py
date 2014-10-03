@@ -21,6 +21,7 @@ TEMPLATE_DIRS = (
     )
 
 EMAIL_FROM_DOMAIN = 'camdram.net'
+NEW_ISSUE_ADDRESSES = ['websuport']
 
 
 # Quick-start development settings - unsuitable for production

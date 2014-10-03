@@ -21,6 +21,14 @@ class Issue(models.Model):
         message = Message(issue=self, sender=sender, body=body, recieved=timezone.now())
         message.save()
     send_response.alters_data=True
+
+    def add_message(self, sender, body):
+        message = Message(issue=self, sender=sender, body=body, recieved=timezone.now())
+        message.save()
+        if not self.active:
+            self.active = True
+            self.save()
+    add_message.alters_data=True
     
     class Meta:
         ordering = ['-opened']
