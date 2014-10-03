@@ -71,6 +71,7 @@ class DefaultMenuNode(template.Node):
             'add_venue':user.has_perm('drama.add_venue'),
             'add_role':user.has_perm('drama.add_role'),
             'add_society':user.has_perm('drama.add_society'),
+            'view_issues':user.has_perm('issues.view_issues'),
             }
         return self.template.render(template.Context(subcontext))
         

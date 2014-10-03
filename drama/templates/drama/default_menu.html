@@ -11,3 +11,6 @@
 {% if add_role %}
 <li><a href="{% url 'role-new' %}"><i class="fa fa-plus-circle fa-fw"></i> Add a role</a></li>
 {% endif %}
+{% if view_issues %}
+<li><a href="{% url 'issues:list' %}"><i class="fa fa-warning fa-fw"></i> Issues</a></li>
+{% endif %}
