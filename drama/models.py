@@ -450,12 +450,6 @@ class Show(models.Model, DramaObjectMixin):
     def has_applications(self):
         return True
 
-    def get_link(self):
-        """
-        Always return link, so show admin works.
-        """
-        return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), escape(self.name)))
-
     def get_admins(self):
         """
         Return the current admins.
@@ -754,7 +748,7 @@ class SocietyApplication(Application):
     def can_edit(self, user):
         return user.has_perm('drama.change_society',self.society)
     def get_edit_url(self):
-        return self.venue.get_url('applications')
+        return self.society.get_url('applications')
     def get_remove_url(self):
         return False
 
