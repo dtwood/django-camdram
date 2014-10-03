@@ -29,6 +29,7 @@ class Issue(models.Model):
 
 class Message(models.Model):
     issue = models.ForeignKey(Issue)
-    sender = models.TextField()
+    sender = models.CharField(max_length=260)
+    body = models.TextField()
     recieved = models.DateTimeField()
 

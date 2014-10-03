@@ -1,0 +1,23 @@
+{% extends 'drama/base.html' %}
+
+{% block title %} Issue {{issue.pk}}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <h3>{{issue.name}}</h3>
+  <h4>From: {{issue.email}} at {{issue.opened}}</h4>
+  <hr />
+  <p>{{issue.desc}}</p>
+
+  {% for message in messages %}
+  <div class="panel">
+    <h5>From: {{message.sender}} at {{message.recieved}}</h5>
+
+
+
+    <p>{{message.body}}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from issues.models import *
 from django.core.exceptions import PermissionDenied
+from django.views.decorators.http import require_http_methods
 
 # Create your views here.
 
@@ -14,5 +15,16 @@ def list(request):
     else:
         raise PermissionDenied
 
+@require_http_methods(["GET", "POST"])
 def detail(request, key=None):
-    pass
+    if request.user.has_perm('view_issues'):
+        if request.method == "GET":
+            issue = get_object_or_404(Issue, pk=key)
+            messages = issue.message_set.all()
+            return render(request, 'issues/detail.html', {'issue': issue, 'messages': messages})
+        elif request.method == "POST":
+            pass
+        else:
+            pass
+    else:
+        raise PermissionDenied
