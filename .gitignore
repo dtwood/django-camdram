@@ -9,3 +9,4 @@ env
 migrations
 db.sqlite3
 whoosh_index
+emails
