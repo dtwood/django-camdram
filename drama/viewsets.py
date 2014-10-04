@@ -75,7 +75,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
         else:
             raise PermissionDenied
 
-    @detail_route(methods=['GET'])
+    @detail_route(methods=['GET','POST'])
     def approve(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):

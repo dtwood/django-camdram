@@ -17,6 +17,7 @@ import hashlib
 from registration.backends.default.views import RegistrationView
 from guardian.shortcuts import assign_perm, get_objects_for_user, remove_perm, get_users_with_perms
 from collections import namedtuple
+from django.views.decorators.http import require_http_methods, require_POST
 
 WeekContainer = namedtuple('WeekContainer', 'label start_date end_date')
 
@@ -178,3 +179,30 @@ class EmailRegistrationView(RegistrationView):
 def show_admin(request):
     shows = get_objects_for_user(request.user, 'drama.change_show')
     return render(request, 'drama/show_admin.html', {'shows':shows})
+
+@login_required
+def approval_queue(request):
+    queue = [x for x in ApprovalQueueItem.objects.all() if request.user.has_perm('drama.approve_' + x.content_object.class_name(), x.content_object)]
+    return render(request, 'drama/approval_queue.html', {'queue':queue})
+    
+@login_required
+@require_POST
+def approval_ignore(request, key=None):
+    item = get_object_or_404(ApprovalQueueItem,pk=key)
+    if request.user.has_perm('drama.approve_' + item.content_object.class_name(), item.content_object):
+        item.delete()
+        return redirect(reverse('approvals'))
+    else:
+        raise PermissionDenied
+
+@login_required
+@require_POST
+def approval_approve(request, key=None):
+    item = get_object_or_404(ApprovalQueueItem,pk=key)
+    if request.user.has_perm('drama.approve_' + item.content_object.class_name(), item.content_object):
+        item.content_object.approve()
+        item.delete()
+        return redirect(reverse('approvals'))
+    else:
+        raise PermissionDenied
+    

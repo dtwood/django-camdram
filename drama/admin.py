@@ -27,7 +27,7 @@ class AuditionInline(admin.TabularInline):
 class ShowAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {
-         'fields': ['name', 'author', 'desc', 'society', 'year', 'image']}),
+         'fields': ['name', 'author', 'desc', 'society', 'image']}),
         ('Booking info', {
          'fields': ['book', 'prices'], 'classes': ['collapse']}),
         ('Advanced Settings', {'fields': ['slug'], 'classes': ['collapse']})
@@ -54,4 +54,4 @@ admin.site.register(SocietyApplication)
 admin.site.register(VenueApplication)
 admin.site.register(ShowApplication)
 admin.site.register(TermDate)
-
+admin.site.register(ApprovalQueueItem)

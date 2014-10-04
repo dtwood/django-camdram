@@ -12,6 +12,22 @@ from django.utils.html import escape
 from guardian.shortcuts import assign_perm, get_objects_for_user, remove_perm, get_users_with_perms
 from django.utils import timezone
 from django.shortcuts import redirect
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
+
+
+class ApprovalQueueItem(models.Model):
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    def get_ignore_url(self):
+        return reverse('approval-ignore', kwargs={'key':self.id})
+
+    def get_approve_url(self):
+        return reverse('approval-approve', kwargs={'key':self.id})
+
 
 class DramaObjectQuerySet(models.query.QuerySet):
     def approved(self):
@@ -50,6 +66,7 @@ AuditionInstanceManager = models.Manager.from_queryset(AuditionInstanceQuerySet)
 
 class DramaObjectMixin(object):
     objects = DramaObjectManager()
+    queueitem = GenericRelation(ApprovalQueueItem)
     
     @classmethod
     def class_name(cls):
@@ -95,14 +112,17 @@ class DramaObjectMixin(object):
     def has_applications(self):
         return False
 
-    def get_link(self):
+    def get_link(self, override_approval=False):
         """
         Get link text for the item, with appropriate <a> tag if the item is approved.
         """
-        if self.approved:
+        if self.approved or override_approval:
             return mark_safe('<a href="{0}">{1}</a>'.format(self.get_absolute_url(), escape(self.name)))
         else:
             return self.name
+
+    def get_link_always(self):
+        return self.get_link(override_approval=True)
 
     def is_approved(self):
         return self.approved
@@ -832,3 +852,5 @@ class TermDate(models.Model):
             return (term.get_term_display() + ' ' + str(term.year), 'Week ' + str(week))
         else:
             return (None, None)
+
+

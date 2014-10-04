@@ -88,7 +88,11 @@ urlpatterns = patterns('drama.views',
                        url(r'^privacy/$',
                            TemplateView.as_view(template_name="drama/privacy.html"), name='privacy'),
                        url(r'^vacancies/', include(vacancy_patterns)),
-                       url(r'autocomplete/',
+                       url(r'^autocomplete/',
                            include('autocomplete_light.urls')),
-                       url(r'show-admin/$', 'show_admin', name='show-admin'), 
+                       url(r'^show-admin/$', 'show_admin', name='show-admin'), 
+                       url(r'^approvals/$', 'approval_queue', name='approvals'),
+                       url(r'^approvals/(?P<key>[0-9]*)/ignore$', 'approval_ignore', name='approval-ignore'),
+                       url(r'approvals/(?P<key>[0-9]*)/approve$', 'approval_approve', name='approval-approve'),
                        )
+
