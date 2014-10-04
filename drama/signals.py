@@ -15,3 +15,6 @@ def pending_admins(sender, **kwargs):
         pg.group.user_set.add(user)
         pg.delete()
         
+@receiver(signals.user_activated)
+def default_permissions(sender, user, **kwargs):
+    user.user_permissions.add('drama.add_show',',drama.add_venue','drama.add_society','drama.add_person','drama.add_role')
