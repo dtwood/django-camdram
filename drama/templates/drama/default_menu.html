@@ -1,3 +1,9 @@
+{% if approval_queue %}
+<li><a href="{% url 'approvals' %}"><i class="fa fa-check-circle fa-fw"></i> Approval Queue</a></li>
+{% endif %}
+{% if view_issues %}
+<li><a href="{% url 'issues:list' %}"><i class="fa fa-warning fa-fw"></i> Issues</a></li>
+{% endif %}
 <li><a href="{% url 'show-admin'%}"><i class="fa fa-ticket fa-fw"></i> Show Admin</a></li>
 {% if add_show %}
 <li><a href="{% url 'show-new' %}"><i class="fa fa-plus-circle fa-fw"></i> Add a show</a></li>
@@ -10,7 +16,4 @@
 {% endif %}
 {% if add_role %}
 <li><a href="{% url 'role-new' %}"><i class="fa fa-plus-circle fa-fw"></i> Add a role</a></li>
-{% endif %}
-{% if view_issues %}
-<li><a href="{% url 'issues:list' %}"><i class="fa fa-warning fa-fw"></i> Issues</a></li>
 {% endif %}

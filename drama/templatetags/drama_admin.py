@@ -7,7 +7,7 @@ from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 from django.template.loader import get_template
-from guardian.shortcuts import get_users_with_perms, get_groups_with_perms, get_perms_for_model
+from guardian.shortcuts import get_users_with_perms, get_groups_with_perms, get_perms_for_model, get_objects_for_user
 from django.contrib.auth.models import Permission
 from drama.models import Venue
 from drama import util
@@ -66,12 +66,18 @@ class DefaultMenuNode(template.Node):
 
     def render(self, context):
         user = context['user']
+        approvable = False
+        for ctype in ['show','venue','role','person','society']:
+            if get_objects_for_user(user,'drama.approve_' + ctype, with_superuser=True, use_groups=True).count() > 0:
+                approvable=True
+                break;
         subcontext = {
             'add_show':user.has_perm('drama.add_show'),
             'add_venue':user.has_perm('drama.add_venue'),
             'add_role':user.has_perm('drama.add_role'),
             'add_society':user.has_perm('drama.add_society'),
             'view_issues':user.has_perm('issues.view_issues'),
+            'approval_queue':approvable,
             }
         return self.template.render(template.Context(subcontext))
         
