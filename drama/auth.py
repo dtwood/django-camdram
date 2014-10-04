@@ -49,9 +49,9 @@ class RulePermissionsBackend(backends.ModelBackend):
 
         if obj_type in ('show',):
             if obj.society.group in user_obj.groups.all():
-                return True
+                return obj.society.approved()
             for performance in obj.performance_set.all():
                 if performance.venue.group in user_obj.groups.all():
-                    return True
+                    return obj.venue.approved()
 
         return False
