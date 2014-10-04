@@ -130,7 +130,7 @@ def autocomplete(request):
                    'string': result.object.dec_string,
                    'link': result.object.get_absolute_url(),
                    'type': result.object.get_cname(),
-                    } for result in sqs]
+                    } for result in sqs if result]
     data = json.dumps(suggestions)
     return HttpResponse(data, content_type='application/json')
 
