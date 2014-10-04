@@ -207,7 +207,6 @@ def approval_approve(request, key=None):
     item = get_object_or_404(ApprovalQueueItem,pk=key)
     if request.user.has_perm('drama.approve_' + item.content_object.class_name(), item.content_object):
         item.content_object.approve()
-        item.delete()
         return redirect(reverse('approvals'))
     else:
         raise PermissionDenied

@@ -130,6 +130,9 @@ class DramaObjectMixin(object):
     def approve(self):
         self.approved = True
         self.save()
+        ctype = ContentType.objects.get_for_model(self)
+        for item in ApprovalQueueItem.objects.filter(content_type=ctype, object_id=self.id):
+            item.delete()
     approve.alters_data = True
 
     def unapprove(self):
