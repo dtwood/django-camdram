@@ -601,6 +601,15 @@ class Show(models.Model, DramaObjectMixin):
         except IndexError:
             return None
 
+class PerformanceInstance:
+    def __init__(self, show, venue, start_datetime, end_datetime):
+        self.show = show
+        self.venue = venue
+        self.start_datetime = start_datetime
+        self.end_datetime = end_datetime
+    def get_absolute_url(self):
+        return self.show.get_absolute_url()
+
 
 class Performance(models.Model):
     objects = ShowApprovedManager()
@@ -613,12 +622,30 @@ class Performance(models.Model):
     time = models.TimeField()
     venue = models.ForeignKey(Venue)
 
+    def get_performances(self):
+        instances = []
+        for i in range(0,self.performance_count()):
+            date = self.start_date + timedelta(days=i)
+            start_datetime = datetime.combine(date, self.time)
+            end_datetime = start_datetime + timedelta(hours=2)
+            instances.append(PerformanceInstance(show=self.show, venue=self.venue, start_datetime=start_datetime, end_datetime=end_datetime))
+        return instances
+            
+
     @classmethod
     def get_cname(*args):
         return "performances"
 
-    def performance_count(self, start_date, end_date):
-        return (min(end_date, self.end_date) - max(start_date, self.start_date)).days + 1
+    def performance_count(self, start_date=None, end_date=None):
+        if end_date:
+            end_date = min(end_date, self.end_date)
+        else:
+            end_date = self.end_date
+        if start_date:
+            start_date = max(start_date, self.start_date)
+        else:
+            start_date = self.start_date
+        return (end_date - start_date).days + 1
 
 
 class Role(models.Model, DramaObjectMixin):

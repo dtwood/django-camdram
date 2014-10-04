@@ -1,8 +1,11 @@
 from django.contrib.syndication.views import Feed
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.utils import timezone
+from django_ical.views import ICalFeed
 from drama.models import *
 import itertools
+import datetime
 
 class AuditionFeed(Feed):
     title = 'Camdram.net auditions feed'
@@ -75,3 +78,39 @@ class RoleFeed(Feed):
 
     def item_description(self, obj):
         return obj.desc
+
+class FullCal(ICalFeed):
+    title = "Camdram.net iCal Feed"
+
+    def items(self):
+        return [item for x in Performance.objects.approved().filter(end_date__gte=timezone.now()) for item in x.get_performances()]
+
+    def item_title(self,obj):
+        return obj.show.name
+
+    def item_start_datetime(self, obj):
+        return obj.start_datetime
+
+    def item_end_datetime(self, obj):
+        return obj.end_datetime
+
+    def item_location(self, obj):
+        return obj.venue.name
+
+    def item_geolocation(self, obj):
+        return (obj.venue.lat, obj.venue.lng)
+
+    
+class SubCal(FullCal):
+    def __init__(self, *args, model=None, **kwargs):
+        self.model = model
+        return super(SubCal, self).__init__(*args, **kwargs)
+
+    def title(self, obj):
+        return "Camdram.net iCal feed for {0}".format(str(obj))
+
+    def get_object(self, request, *args, slug=None, **kwargs):
+        return get_object_or_404(self.model, slug=slug)
+
+    def items(self, obj):
+        return [item for x in obj.get_performances().filter(end_date__gte=timezone.now()) for item in x.get_performances()]

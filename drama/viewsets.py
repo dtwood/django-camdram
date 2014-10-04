@@ -195,6 +195,10 @@ class OrganizationViewSet(ObjectViewSet):
             return redirect(item.get_admins_url())
         else:
             raise PermissionDenied
+
+    @detail_route(methods=['GET'])
+    def ical(self, request, slug, *args, **kwargs):
+        return feeds.SubCal(model=self.model)(request, slug=slug)
         
         
 class RoleViewSet(ObjectViewSet):
