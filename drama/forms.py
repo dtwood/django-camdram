@@ -87,7 +87,7 @@ class ShowForm(FormsetsForm, autocomplete_light.ModelForm):
 
     class Meta:
         model = Show
-        fields = ['name','desc','book','prices','author','society','image']
+        fields = ['name','desc','book','prices','author','societies','image']
 
     def clean(self, *args, **kwargs):
         cleaned_data = super(ShowForm, self).clean()

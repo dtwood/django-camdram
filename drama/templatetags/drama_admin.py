@@ -35,7 +35,8 @@ class AdminPanelNode(template.Node):
                     subcontext['pending_users'] = item.pendingadmin_set.all()
                     groups = list(get_groups_with_perms(item))
                     if type == 'show':
-                        groups = groups + [item.society.group]
+                        for society in item.societies.all():
+                            groups = groups + [society.group]
                         for venue in Venue.objects.filter(performance__show=item).distinct():
                             groups = groups + [venue.group]
                     subcontext['groups'] = groups

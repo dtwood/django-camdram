@@ -31,7 +31,7 @@ class AuditionInline(admin.TabularInline):
 class ShowAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {
-         'fields': ['name', 'author', 'desc', 'society', 'image', 'approved']}),
+         'fields': ['name', 'author', 'desc', 'societies', 'image', 'approved']}),
         ('Booking info', {
          'fields': ['book', 'prices'], 'classes': ['collapse']}),
         ('Advanced Settings', {'fields': ['slug'], 'classes': ['collapse']})

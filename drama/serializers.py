@@ -57,7 +57,6 @@ class PerformanceSerializer(serializers.HyperlinkedModelSerializer):
         
 class ShowSerializer(serializers.HyperlinkedModelSerializer):
     performances = PerformanceSerializer(source='performance_set', many=True)
-    society_name = serializers.RelatedField(source='society')
     cast = CompanySerializer(source = 'cast')
     band = CompanySerializer(source = 'band')
     prod = CompanySerializer(source = 'prod')
@@ -65,4 +64,4 @@ class ShowSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Show
         lookup_field = 'slug'
-        fields = ('id', 'url', 'name', 'author', 'society', 'society_name', 'desc', 'performances', 'cast', 'band', 'prod', 'slug')
+        fields = ('id', 'url', 'name', 'author', 'societies', 'desc', 'performances', 'cast', 'band', 'prod', 'slug')

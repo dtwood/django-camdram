@@ -1,6 +1,8 @@
 {{ object.name }}
 {{ object.desc }}
-{{ object.society.name }}
+{% for society in object.societies.all %}
+{{ society.name }}
+{% endfor %}
 {% for performance in object.performance_set.all %}
 {{ performance.venue.name }}
 {% endfor %}

@@ -19,6 +19,7 @@ class RoleAutocomplete(autocomplete_light.AutocompleteModelBase):
     search_fields = ['name']
     
 autocomplete_light.register(Society, SocietyAutocomplete, add_another_url_name='society-new', field_name='society')
+autocomplete_light.register(Society, SocietyAutocomplete, add_another_url_name='society-new', field_name='societies')
 
 autocomplete_light.register(Venue, VenueAutocomplete, add_another_url_name='venue-new', field_name='venue')
 

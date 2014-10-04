@@ -20,8 +20,10 @@
     </ul>
     {% endif %}
     {% endif %}
-      <p class="show-society">{{object.society.get_link}} presents...</p>
-      <h2>{{object.name}}<br />{% if object.author %}<small>By {{object.author}}</small>{% endif %}</h2>
+    {% if object.societies %}
+    <p class="show-society">{% for society in object.societies.all %}{% if not forloop.first %}, {% endif %}{{society.get_link}}{% endfor %} presents...</p>
+    {% endif %}
+    <h2>{{object.name}}<br />{% if object.author %}<small>By {{object.author}}</small>{% endif %}</h2>
     {% if object.image %}
     <div class="large-3 columns text-center">
       <a href="{{object.image.url}}" class="fancybox"><img src="{{object.image.url}}" /></a>

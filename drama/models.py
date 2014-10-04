@@ -395,22 +395,22 @@ class Society(models.Model, DramaOrganizationMixin):
         return True
 
     def get_shows(self):
-        return Show.objects.approved().filter(society=self).distinct()
+        return self.show_set.approved()
 
     def get_performances(self):
-        return Performance.objects.approved().filter(show__society=self)
+        return Performance.objects.approved().filter(show__societies=self)
 
     def get_auditions(self):
-        return AuditionInstance.objects.approved().filter(audition__show__society=self).filter(end_datetime__gte=timezone.now()).order_by('end_datetime', 'start_time').distinct()
+        return AuditionInstance.objects.approved().filter(audition__show__societies=self).filter(end_datetime__gte=timezone.now()).order_by('end_datetime', 'start_time').distinct()
     
     def get_showapps(self):
-        return ShowApplication.objects.approved().filter(show__society=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
+        return ShowApplication.objects.approved().filter(show__societies=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
 
     def get_societyapps(self):
         return SocietyApplication.objects.filter(society=self).filter(deadline__gte=timezone.now()).order_by('deadline')
 
     def get_techieads(self):
-        return TechieAd.objects.approved().filter(show__society=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
+        return TechieAd.objects.approved().filter(show__societies=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
         
 
 class Show(models.Model, DramaObjectMixin):
@@ -423,7 +423,7 @@ class Show(models.Model, DramaObjectMixin):
     book = models.URLField('Booking Link', blank=True)
     prices = models.CharField(max_length=30, blank=True)
     author = models.CharField(max_length=200, blank=True)
-    society = models.ForeignKey(Society)
+    societies = models.ManyToManyField(Society)
     image = models.ImageField(upload_to='images/', blank=True)
     slug = models.SlugField(max_length=200, blank=True, unique=True)
     approved = models.BooleanField(default=False)
