@@ -56,6 +56,7 @@ INSTALLED_APPS = (
     'drama',
     'django.contrib.admin',
     'issues',
+    'autofixture',
 )
 
 MIDDLEWARE_CLASSES = (
