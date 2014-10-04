@@ -49,7 +49,7 @@ class RulePermissionsBackend(backends.ModelBackend):
 
         if obj_type in ('show',):
             for soc in obj.societies.all():
-                if soc.group in user_obj.groups.all()i and soc.approved():
+                if soc.group in user_obj.groups.all() and soc.approved():
                     return True
             for performance in obj.performance_set.all():
                 if performance.venue.group in user_obj.groups.all():

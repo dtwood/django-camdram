@@ -17,4 +17,5 @@ def pending_admins(sender, **kwargs):
         
 @receiver(signals.user_activated)
 def default_permissions(sender, user, **kwargs):
-    user.user_permissions.add('drama.add_show',',drama.add_venue','drama.add_society','drama.add_person','drama.add_role')
+    for perm in ['drama.add_show','drama.add_venue','drama.add_society','drama.add_person','drama.add_role']:
+        assign_perm(perm, user)
