@@ -4,7 +4,7 @@ from django.contrib import auth
 from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView, ListView
 from drama.models import *
-from drama import views, viewsets
+from drama import views, viewsets, feeds
 from drama.forms import *
 from rest_framework.routers import DefaultRouter
 from registration.backends.default.views import ActivationView
@@ -31,14 +31,13 @@ related_redirector_patterns = patterns('drama.views',
                                )
 
 vacancy_patterns = patterns('drama.views',
-                            url(r'^technical/$', 'techieads',
-                                name='technical'),
-                            url(r'^auditions/$', 'auditions',
-                                name='auditions'),
-                            url(r'^auditions/diary/$', 'auditions_diary',
-                                name='auditions_diary'),
-                            url(r'^applications/$', 'applications',
-                                name='applications'),
+                            url(r'^technical/$', 'techieads', name='technical'),
+                            url(r'^technical/feed/$', feeds.TechieAdFeed(), name='techiead_feed'),
+                            url(r'^auditions/$', 'auditions', name='auditions'),
+                            url(r'^auditions/diary/$', 'auditions_diary', name='auditions_diary'),
+                            url(r'^auditions/feed/$', feeds.AuditionFeed(), name='auditions_feed'),
+                            url(r'^applications/$', 'applications', name='applications'),
+                            url(r'^applications/feed/$', feeds.ApplicationFeed(), name='applications_feed'),
                             url(r'^(?P<model_name>technical)/(?P<slug>[^/]*)/',
                                 include(related_redirector_patterns), {'model': TechieAd, 'form': TechieAdForm, }),
                             url(r'^(?P<model_name>auditions)/(?P<slug>[^/]*)/',

@@ -762,11 +762,16 @@ class Application(models.Model):
         except IntegrityError:
             self.slug = slugify(self.id + '-' + self.slug)
             super(Application, self).save(*args, **kwargs)
+    def get_absolute_url(self):
+        return self.parent().get_absolute_url()
 
 
 class ShowApplication(Application):
     objects = ShowApprovedManager()
     show = models.ForeignKey(Show)
+
+    def parent(self):
+        return self.show
 
     @property
     def object_name(self):
@@ -782,6 +787,9 @@ class ShowApplication(Application):
 class SocietyApplication(Application):
     society = models.ForeignKey(Society)
 
+    def parent(self):
+        return self.society
+
     @property
     def object_name(self):
         return self.society.name
@@ -795,6 +803,9 @@ class SocietyApplication(Application):
 
 class VenueApplication(Application):
     venue = models.ForeignKey(Venue)
+
+    def parent(self):
+        return self.venue
 
     @property
     def object_name(self):
