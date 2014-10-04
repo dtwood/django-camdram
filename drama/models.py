@@ -140,6 +140,9 @@ class DramaObjectMixin(object):
         self.save()
     unapprove.alters_data = True
 
+    def grant_admin(self, user):
+        assign_perm('drama.change_' + self.class_name(), user, self)
+
 class Person(models.Model, DramaObjectMixin):
     objects = DramaObjectManager()
 
@@ -280,6 +283,9 @@ class DramaOrganizationMixin(DramaObjectMixin):
         for pg in PendingGroupMember.objects.filter(group=self.group, email=email):
             pg.delete()
     remove_pending_admin.alters_data = True
+
+    def grant_admin(self, user):
+        self.group.user_set.add(user)
 
 
 class Venue(models.Model, DramaOrganizationMixin):

@@ -172,6 +172,7 @@ class MyCreateView(autocomplete_light.CreateView):
         else:
             item = ApprovalQueueItem(created_by=self.request.user, content_object=self.object)
             item.save()
+        self.object.grant_admin(self.request.user)
         return result
 
 
