@@ -42,9 +42,6 @@ class Issue(models.Model):
     
     class Meta:
         ordering = ['-opened']
-        permissions = (
-            ('view_issues', 'Can view issues'),
-            )
 
     def get_absolute_url(self):
         return reverse('issues:detail', kwargs={'key': self.id})
