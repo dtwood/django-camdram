@@ -1,0 +1,37 @@
+{% extends 'drama/base.html' %}
+
+{% block title %}Pending Approvals{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="large-12 columns" data-equalizer="">
+    <h3>Pending Approvals</h3>
+    <table>
+      <thead>
+	<tr>
+	  <th>Object</th>
+	  <th>Created By</th>
+	  <th colspan="3">Action</th>
+	</tr>
+      </thead>
+      <tbody>
+	{% for item in queue %}
+	<tr>
+	  <th>{{item.content_object.get_link_always}}</th>
+	  <th>{{item.created_by.email}}</th>
+	  <th>
+	    <a href="" onclick="$.post('{{item.get_approve_url}}', {'csrfmiddlewaretoken': '{{csrf_token}}'}); $(this).parent().parent().hide(); return false;"> <i class="fa fa-check-circle"></i> Approve</a>
+	  </th>
+	  <th>
+	      <a href="{{item.content_object.get_remove_url}}"><i class="fa fa-eraser"></i> Delete</a>
+	  </th>
+	  <th>
+	    <a href="" onclick="$.post('{{item.get_ignore_url}}', {'csrfmiddlewaretoken': '{{csrf_token}}'}); $(this).parent().parent().hide(); return false;"> <i class="fa fa-cloud"></i> Ignore</a>
+	  </th>
+	</tr>
+	{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
