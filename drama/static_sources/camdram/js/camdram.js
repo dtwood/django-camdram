@@ -52,3 +52,7 @@ function fixHtml($elementsToFix) {
 $(function () {
     fixHtml($(this));
 })
+
+$(function () {
+    $('.date').datepicker();
+})

@@ -76,6 +76,10 @@ class PerformanceForm(autocomplete_light.ModelForm):
     class Meta:
         model = Performance
         fields = ['start_date','end_date','time','venue']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'class':'date'}),
+            'end_date': forms.DateInput(attrs={'class':'date'}),
+            }
 
 PerformanceInline = inlineformset_factory(
     Show, Performance, PerformanceForm, extra=1)
@@ -171,6 +175,9 @@ class AuditionInstanceForm(forms.ModelForm):
     class Meta:
         model = AuditionInstance
         fields = ['end_datetime','start_time','location']
+        widgets = {
+            'date': forms.DateInput(attrs={'class':'date'}),
+            }
 
         
 AuditionInline = inlineformset_factory(
@@ -234,6 +241,9 @@ class TechieAdForm(DeadlineForm, ChildForm):
     class Meta:
         model = TechieAd
         fields = ['desc','contact','deadline']
+        widgets = {
+            'date': forms.DateInput(attrs={'class':'date'}),
+            }
 
 class ApplicationForm(DeadlineForm, FormsetsForm, autocomplete_light.ModelForm):
     error_css_class = 'error'
@@ -243,6 +253,9 @@ class ApplicationForm(DeadlineForm, FormsetsForm, autocomplete_light.ModelForm):
     class Meta:
         model = Application
         fields = ['name','desc','contact','deadline']
+        widgets = {
+            'date': forms.DateInput(attrs={'class':'date'}),
+            }
 
 
 ShowApplicationFormset = inlineformset_factory(Show, ShowApplication, ApplicationForm)
