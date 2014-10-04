@@ -1,0 +1,22 @@
+  <p>
+    {% if obj.show.performance_set.all %}
+    Performances:
+    {% for performance in obj.show.performance_set.all %}
+	{% include "drama/performance_listing.html" %}
+    {% endfor %}
+    {% else %}
+    Performance Dates and venues to be confirmed.
+    {% endif %}
+  </p>
+  {% if obj.desc %}
+  <p>{{obj.desc}}</p>
+  {% endif %}
+  Auditions:
+  <ul>
+    {% for instance in obj.auditioninstance_set.all %}
+    <li>{{instance.end_datetime|date:"D dS F"}}, {{instance.start_time|date:"g:iA"|lower}} - {{instance.end_datetime|date:"g:iA"|lower}}, {{instance.location}}</li>
+    {% endfor %}
+  </ul>
+  <p>
+    {% if obj.contact %}<strong>Contact:</strong> {{obj.contact}}{% endif %}
+  </p>

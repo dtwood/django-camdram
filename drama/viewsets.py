@@ -9,7 +9,7 @@ from rest_framework.decorators import link, detail_route, permission_classes, ap
 from rest_framework.response import Response
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, BasePermission
 from rest_framework.exceptions import MethodNotAllowed
-from drama import serializers, models, views, forms
+from drama import serializers, models, views, forms, feeds
 
 class CamdramPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -202,6 +202,10 @@ class RoleViewSet(ObjectViewSet):
     serializer_class = serializers.RoleSerializer
     model = models.Role
     form = forms.RoleForm
+
+    @detail_route(methods=['GET'])
+    def feed(self, request, *args, slug=None, **kwargs):
+        return feeds.RoleFeed()(request, slug=slug)
 
 
 class PersonViewSet(ObjectViewSet):

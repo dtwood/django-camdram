@@ -1,0 +1,10 @@
+  <h5>{{obj.object_name}}</h5>
+  {% if obj.desc %}
+  <p>{{obj.desc}}</p>
+  {% endif %}
+  <p>
+    {% if obj.contact %}
+    <strong>Contact:</strong> {{obj.contact}}<br />
+    {% endif %}
+    <strong>Deadline for applications:</strong> {{obj.deadline|date:"l jS F G:i"}}
+  </p>

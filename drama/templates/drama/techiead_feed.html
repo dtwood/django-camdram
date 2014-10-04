@@ -1,0 +1,25 @@
+  <p>
+    {% if obj.show.performance_set.all %}
+    Performances:
+    {% for performance in obj.show.performance_set.all %}
+	{% include "drama/performance_listing.html" %}
+    {% endfor %}
+    {% else %}
+    Performance dates and venues to be confirmed.
+    {% endif %}
+  </p>
+  <p>
+    <strong>Looking for:</strong>
+    <ul>
+      {% for role in obj.techieadrole_set.all %}
+      <li>{% if role.desc %}<a href="{% url 'ad_role' role.obj.show.slug role.slug %}">{% endif %}{{role.name}}{% if role.desc %}</a>{% endif %}{% if role.role.link %} <small>[<a href ="{{role.role.get_absolute_url}}">Whats this?</a>]</small>{% endif %}</li>
+      {% endfor %}
+    </ul>
+  </p>
+  {% if obj.desc %}
+  <p>{{obj.desc}}</p>
+  {% endif %}
+  <p>
+    <strong>Contact:</strong> {{obj.contact}}<br />
+    <strong>Deadline for applications:</strong> {{obj.deadline|date:"l jS F G:i"}}
+  </p>

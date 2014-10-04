@@ -22,7 +22,7 @@
     <strong>Looking for:</strong>
     <ul>
       {% for role in ad.techieadrole_set.all %}
-      <li>{% if role.desc %}<a href="{% url 'ad_role' role.ad.show.slug role.slug %}">{% endif %}{{role.name}}{% if role.desc %}</a>{% endif %}{% if role.role.link %} <small>[<a href ="{{role.role.get_absolute_url}}">Whats this?</a>]</small>{% endif %}</li>
+      <li>{% if role.desc %}<a href="{% url 'ad_role' role.ad.show.slug role.slug %}">{% endif %}{{role.name}}{% if role.desc %}</a>{% endif %}{% if role.role.approved %} <small>[<a href ="{{role.role.get_absolute_url}}">Whats this?</a>]</small>{% endif %}</li>
       {% endfor %}
     </ul>
   </p>
