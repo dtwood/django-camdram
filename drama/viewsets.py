@@ -31,7 +31,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
     permission_classes = (CamdramPermissions,)
 
     def new(self, request, *args, **kwargs):
-        if request.user.has_perm('drama.create_' + self.model.class_name()):
+        if request.user.has_perm('drama.add_' + self.model.class_name()):
             view = views.MyCreateView.as_view(model=self.model, model_name=self.model.get_cname(), form_class = self.form)
             return view(request, *args, **kwargs)
         else:
@@ -42,7 +42,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
         template_name = 'drama/' + self.model.__name__.lower() +'_form.html'
         item = get_object_or_404(self.model, slug=slug)
         temp_item = get_object_or_404(self.model, pk=item.pk)
-        if request.user.has_perm('drama.change_' + self.model.class_name(), item):
+        if request.user.has_perm('drama.change_' + item.class_name(), item):
             if request.method == 'GET':
                 form = self.form(instance=item)
                 data = {'content_form':form,
@@ -103,7 +103,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, slug, *args, **kwargs):
         response = super(ObjectViewSet, self).retrieve(request, slug=slug, *args, **kwargs)
-        if self.object.is_approved() or request.user.has_perm('drama.edit_' + self.object.class_name(), self.object) or request.user.has_perm('drama.approve_' + self.object.class_name(), self.object):
+        if self.object.is_approved() or request.user.has_perm('drama.change_' + self.object.class_name(), self.object) or request.user.has_perm('drama.approve_' + self.object.class_name(), self.object):
             if request.accepted_renderer.format == 'html':
                 response.template_name = "drama/" + self.model.__name__.lower() + "_detail.html"
                 response.data = {'object': self.object, 'current_pagetype': self.model.get_cname()}

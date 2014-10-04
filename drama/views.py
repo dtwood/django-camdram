@@ -164,9 +164,15 @@ class MyCreateView(autocomplete_light.CreateView):
             assign_perm('drama.change_' + self.object.__class__.__name__.lower(), self.request.user, self.object)
             self.object.reslug()
             self.success_url = False
-            return redirect(self.get_success_url())
+            result = redirect(self.get_success_url())
         else:
-            return super(MyCreateView, self).form_valid(form)
+            result = super(MyCreateView, self).form_valid(form)
+        if self.request.user.has_perm('drama.approve_' + self.object.class_name(), self.object):
+            self.object.approve()
+        else:
+            item = ApprovalQueueItem(created_by=self.request.user, content_object=self.object)
+            item.save()
+        return result
 
 
 class EmailRegistrationView(RegistrationView):
