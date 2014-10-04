@@ -146,7 +146,7 @@ class Person(models.Model, DramaObjectMixin):
     desc = models.TextField('Bio', blank=True)
     slug = models.SlugField(max_length=200, blank=True, editable=False)
     approved = models.BooleanField(editable=False, default=False)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, editable=False, blank=True, null=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, blank=True, null=True)
 
     class Meta:
         ordering = ['name']
@@ -186,13 +186,16 @@ class Person(models.Model, DramaObjectMixin):
 
     @property
     def dec_string(self):
-        if date.today() - self.last_active < timedelta(days=365):
-            label = 'Active'
+        if self.last_active:
+            if date.today() - self.last_active < timedelta(days=365):
+                label = 'Active'
+            else:
+                label = 'Was Active: ' + \
+                    self.first_active.strftime('%b %y') + \
+                    ' - ' + self.last_active.strftime('%b %y')
+            return '(' + label + ', Shows: ' + str(self.num_shows) + ')'
         else:
-            label = 'Was Active: ' + \
-                self.first_active.strftime('%b %y') + \
-                ' - ' + self.last_active.strftime('%b %y')
-        return '(' + label + ', Shows: ' + str(self.num_shows) + ')'
+            return ''
 
     @classmethod
     def get_cname(*args):
@@ -225,6 +228,12 @@ class Person(models.Model, DramaObjectMixin):
         user.save()
         return redirect(self.get_absolute_url())
     link_user.alters_data=True
+
+    @property
+    def user_email(self):
+        if self.user:
+            return self.user.email
+    
 
 
 class DramaOrganizationMixin(DramaObjectMixin):
@@ -282,7 +291,7 @@ class Venue(models.Model, DramaOrganizationMixin):
     lng = models.FloatField('Longditude', blank=True)
     slug = models.SlugField(max_length=200, blank=True, editable=False)
     approved = models.BooleanField(editable=False, default=False)
-    group = models.OneToOneField(auth.models.Group, null=True, blank=True, editable=False)
+    group = models.OneToOneField(auth.models.Group, null=True, blank=True)
 
     class Meta:
         ordering = ['name']
@@ -417,7 +426,7 @@ class Show(models.Model, DramaObjectMixin):
     society = models.ForeignKey(Society)
     image = models.ImageField(upload_to='images/', blank=True)
     slug = models.SlugField(max_length=200, blank=True, unique=True)
-    approved = models.BooleanField(editable=False, default=False)
+    approved = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['name']
@@ -847,6 +856,9 @@ class TermDate(models.Model):
     year = models.IntegerField(choices=YEAR_CHOICES)
     term = models.CharField(max_length=2, choices=TERM_CHOICES)
     start = models.DateField()
+
+    def __str__(self):
+        return self.get_term_display() + ' ' + str(self.year)
 
     @classmethod
     def get_term(cls, date):
