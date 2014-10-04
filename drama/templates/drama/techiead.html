@@ -3,6 +3,9 @@
 {% block title %}Technical and Design Roles{% endblock %}
 
 {% block adverts %}
+<ul class="inline-list right">
+  <li><a href="{% url 'techiead_feed' %}">RSS Feed</a></li>
+</ul>
 <h3>Technical and Design Roles</h3>
 {% for ad in ads %}
 <hr>

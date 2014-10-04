@@ -13,6 +13,9 @@
 {% if object.get_vacancies %}
 <div class="row vacancies-panel">
   <div class="large-12 columns">
+    <ul class="inline-list right">
+      <li><a href="{% url 'role-feed' slug=object.slug %}">RSS Feed</a></li>
+    </ul>
     <h5>Get involved: these shows need a {{object.name}}</h5>
     <ul>
       {% for vacancy in object.get_vacancies %}

@@ -3,6 +3,9 @@
 {% block title %}Applications{% endblock %}
 
 {% block adverts %}
+<ul class="inline-list right">
+  <li><a href="{% url 'applications_feed' %}">RSS Feed</a></li>
+</ul>
 <h3>Producer/director roles and show applications</h3>
 {% for ad in socads %}
 <hr>
