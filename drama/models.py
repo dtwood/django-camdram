@@ -14,6 +14,7 @@ from django.utils import timezone
 from django.shortcuts import redirect
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from simple_history.models import HistoricalRecords
 
 
 class ApprovalQueueItem(models.Model):
@@ -144,6 +145,7 @@ class DramaObjectMixin(object):
         assign_perm('drama.change_' + self.class_name(), user, self)
 
 class Person(models.Model, DramaObjectMixin):
+    history = HistoricalRecords()
     objects = DramaObjectManager()
 
     def __str__(self):
@@ -289,6 +291,7 @@ class DramaOrganizationMixin(DramaObjectMixin):
 
 
 class Venue(models.Model, DramaOrganizationMixin):
+    history = HistoricalRecords()
     objects = DramaObjectManager()
 
     def __str__(self):
@@ -356,6 +359,7 @@ class Venue(models.Model, DramaOrganizationMixin):
         
 
 class Society(models.Model, DramaOrganizationMixin):
+    history = HistoricalRecords()
     objects = DramaObjectManager()
 
     def __str__(self):
@@ -423,6 +427,7 @@ class Society(models.Model, DramaOrganizationMixin):
         
 
 class Show(models.Model, DramaObjectMixin):
+    history = HistoricalRecords()
     objects = ShowManager()
 
     def __str__(self):
@@ -621,6 +626,7 @@ class PerformanceInstance:
 
 
 class Performance(models.Model):
+    history = HistoricalRecords()
     objects = ShowApprovedManager()
 
     def __str__(self):
@@ -659,6 +665,7 @@ class Performance(models.Model):
 
 class Role(models.Model, DramaObjectMixin):
     objects = DramaObjectManager()
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -696,6 +703,7 @@ class Role(models.Model, DramaObjectMixin):
         
 
 class RoleInstance(models.Model):
+    history = HistoricalRecords()
     objects = ShowApprovedManager()
 
     def __str__(self):
@@ -721,6 +729,7 @@ class RoleInstance(models.Model):
 
 
 class TechieAd(models.Model):
+    history = HistoricalRecords()
     objects = ShowApprovedManager()
 
     def __str__(self):
@@ -740,6 +749,7 @@ class TechieAd(models.Model):
 
 
 class TechieAdRole(models.Model):
+    history = HistoricalRecords()
     name = models.CharField(max_length=200)
     ad = models.ForeignKey(TechieAd)
     desc = models.TextField('Description', blank=True)
@@ -757,6 +767,7 @@ class TechieAdRole(models.Model):
 
 
 class Audition(models.Model):
+    history = HistoricalRecords()
     objects = ShowApprovedManager()
     show = models.OneToOneField(Show)
     desc = models.TextField('Description', blank=True)
@@ -773,6 +784,7 @@ class Audition(models.Model):
 
 
 class AuditionInstance(models.Model):
+    history = HistoricalRecords()
     objects = AuditionInstanceManager()
     audition = models.ForeignKey(Audition)
     end_datetime = models.DateTimeField()
@@ -812,6 +824,7 @@ class Application(models.Model):
 
 
 class ShowApplication(Application):
+    history = HistoricalRecords()
     objects = ShowApprovedManager()
     show = models.ForeignKey(Show)
 
@@ -830,6 +843,7 @@ class ShowApplication(Application):
 
 
 class SocietyApplication(Application):
+    history = HistoricalRecords()
     society = models.ForeignKey(Society)
 
     def parent(self):
@@ -847,6 +861,7 @@ class SocietyApplication(Application):
 
 
 class VenueApplication(Application):
+    history = HistoricalRecords()
     venue = models.ForeignKey(Venue)
 
     def parent(self):
@@ -871,6 +886,7 @@ class PendingGroupMember(models.Model):
     group = models.ForeignKey(auth.models.Group)
 
 class TermDate(models.Model):
+    history = HistoricalRecords()
     YEAR_CHOICES = []
     for i in range(2000, (timezone.now().year + 2)):
         YEAR_CHOICES.append((i,i))
