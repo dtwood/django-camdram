@@ -534,6 +534,7 @@ class PerformanceInstance:
         return self.show.get_absolute_url()
 
 
+@reversion.register()
 class Performance(models.Model):
     objects = ShowApprovedManager()
 
