@@ -3,7 +3,7 @@
   <ul class="inline-list">
     <li><a href="{{item.get_edit_url}}"><i class="fa fa-pencil"> </i> Edit this {{type}}</a></li>
     <li><a href="{{item.get_remove_url}}"><i class="fa fa-eraser"> </i> Delete this {{type}}</a></li>
-    {% if item.is_show %}
+    {% if item.class_name == 'show' %}
     <li><a href="{% url 'show-auditions' slug=item.slug %}"><i class="fa fa-pencil"> </i> Add/edit auditions</a></li>
     <li><a href="{% url 'show-remove-auditions' slug=item.slug %}"><i class="fa fa-eraser"> </i> Delete auditions</a></li>
     <li><a href="{% url 'show-technical' slug=item.slug %}"><i class="fa fa-pencil"> </i> Add/edit technical team advert</a></li>

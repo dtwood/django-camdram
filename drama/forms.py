@@ -32,7 +32,7 @@ class FormsetsForm(forms.ModelForm):
         for k,x in self.context.items():
             if not x.is_valid():
                 raise forms.ValidationError(
-                    "Error in editing %(model)s", params={'model': x.model.get_cname()})
+                    "Error in editing %(model)s", params={'model': x.class_name()})
             cleaned_data[k] = x
         return cleaned_data
 

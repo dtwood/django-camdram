@@ -70,13 +70,24 @@ class DramaObjectModel(models.Model):
     objects = DramaObjectManager()
     queueitem = GenericRelation(ApprovalQueueItem)
     group = models.OneToOneField(auth.models.Group)
+    name = models.CharField(max_length=200)
+    desc = models.TextField('Description', blank=True)
+    slug = models.SlugField(max_length=200, unique=True)
+    approved = models.BooleanField(editable=False, default=False)
+    has_applications = False
 
     class Meta:
         abstract = True
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            base_slug = slugify(self.name)
+            if self.__class__.objects.filter(slug=base_slug).count() > 0:
+                for i in itertools.count(2):
+                    slug = slugify(base_slug + '-' + str(i))
+                    if Show.objects.filter(slug=slug).count() == 0:
+                        break
+            self.slug = slug
         try:
             self.group
         except ObjectDoesNotExist:
@@ -89,7 +100,7 @@ class DramaObjectModel(models.Model):
 
     def delete(self):
         self.group.delete()
-        super(DramabjectModel, self).delete()
+        super(DramaObjectModel, self).delete()
 
     
     @classmethod
@@ -130,12 +141,6 @@ class DramaObjectModel(models.Model):
     def get_pending_admin_revoke_url(self):
         return self.get_url('revoke-pending-admin')
     
-    def is_show(self):
-        return False
-
-    def has_applications(self):
-        return False
-
     def get_link(self, override_approval=False):
         """
         Get link text for the item, with appropriate <a> tag if the item is approved.
@@ -147,9 +152,6 @@ class DramaObjectModel(models.Model):
 
     def get_link_always(self):
         return self.get_link(override_approval=True)
-
-    def is_approved(self):
-        return self.approved
 
     def approve(self):
         self.approved = True
@@ -209,17 +211,14 @@ class DramaObjectModel(models.Model):
         self.group.user_set.add(user)
     grant_admin.alters_data=True
 
+    def revoke_admin(self, user):
+        self.group.user_set.remove(user)
+    revoke_admin.alters_data = True
+
 
 class Person(DramaObjectModel):
     history = HistoricalRecords()
     objects = DramaObjectManager()
-
-    def __str__(self):
-        return self.name
-    name = models.CharField(max_length=200)
-    desc = models.TextField('Bio', blank=True)
-    slug = models.SlugField(max_length=200, blank=True, editable=False)
-    approved = models.BooleanField(editable=False, default=False)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, blank=True, null=True)
 
     class Meta:
@@ -227,6 +226,9 @@ class Person(DramaObjectModel):
         permissions = (
             ('approve_person', 'Approve Person'),
             )
+
+    def __str__(self):
+        return self.name
 
     def get_shows(self):
         return Show.objects.approved().filter(roleinstance__person=self).distinct()
@@ -261,10 +263,6 @@ class Person(DramaObjectModel):
             return '(' + label + ', Shows: ' + str(self.num_shows) + ')'
         else:
             return ''
-
-    @classmethod
-    def get_cname(*args):
-        return "people"
 
     def get_roles(self):
         return RoleInstance.objects.approved().filter(person=self).annotate(end_date=models.Max('show__performance__end_date'), start_date=models.Min('show__performance__start_date'))
@@ -308,13 +306,10 @@ class Venue(DramaObjectModel):
 
     def __str__(self):
         return self.name
-    name = models.CharField(max_length=200)
-    desc = models.TextField('Description', blank=True)
+    has_applications = True
     address = models.CharField(max_length=200, blank=True)
     lat = models.FloatField('Latitude', blank=True)
     lng = models.FloatField('Longditude', blank=True)
-    slug = models.SlugField(max_length=200, blank=True, editable=False)
-    approved = models.BooleanField(editable=False, default=False)
 
     class Meta:
         ordering = ['name']
@@ -327,15 +322,8 @@ class Venue(DramaObjectModel):
     def dec_string(self):
         return ''
 
-    @classmethod
-    def get_cname(*args):
-        return "venues"
-
     def get_applications(self):
         return VenueApplication.objects.filter(venue=self)
-
-    def has_applications(self):
-        return True
 
     def get_shows(self):
         return Show.objects.approved().filter(performance__venue=self).distinct()
@@ -359,16 +347,10 @@ class Venue(DramaObjectModel):
 class Society(DramaObjectModel):
     history = HistoricalRecords()
     objects = DramaObjectManager()
-
-    def __str__(self):
-        return self.name
-    name = models.CharField(max_length=200)
     shortname = models.CharField(max_length=100, verbose_name="Abbreviaiton")
-    desc = models.TextField('Description', blank=True)
     image = models.ImageField(
         upload_to='images/', blank=True, verbose_name="Logo")
-    slug = models.SlugField(max_length=200, blank=True, editable=False)
-    approved = models.BooleanField(editable=False, default=False)
+    has_applications = True
 
     class Meta:
         ordering = ['name']
@@ -377,20 +359,16 @@ class Society(DramaObjectModel):
             ('admin_society', 'Change society admins'),
             )
 
+    def __str__(self):
+        return self.name
+
     @property
     def dec_string(self):
         return ''
 
-    @classmethod
-    def get_cname(*args):
-        return "societies"
-
     def get_applications(self):
         return SocietyApplication.objects.filter(society=self)
     
-    def has_applications(self):
-        return True
-
     def get_shows(self):
         return self.show_set.approved()
 
@@ -413,18 +391,12 @@ class Society(DramaObjectModel):
 class Show(DramaObjectModel):
     history = HistoricalRecords()
     objects = ShowManager()
-
-    def __str__(self):
-        return self.name
-    name = models.CharField(max_length=200)
-    desc = models.TextField('Description', blank=True)
     book = models.URLField('Booking Link', blank=True)
     prices = models.CharField(max_length=30, blank=True)
     author = models.CharField(max_length=200, blank=True)
     societies = models.ManyToManyField(Society)
     image = models.ImageField(upload_to='images/', blank=True)
-    slug = models.SlugField(max_length=200, blank=True, unique=True)
-    approved = models.BooleanField(default=False)
+    has_applications = True
 
     class Meta:
         ordering = ['name']
@@ -432,6 +404,9 @@ class Show(DramaObjectModel):
             ('approve_show', 'Approve Show'),
             ('admin_show', 'Change show admins'),
             )
+
+    def __str__(self):
+        return self.name
 
     def reslug(self):
         if self.performance_set.count() > 0:
@@ -481,18 +456,8 @@ class Show(DramaObjectModel):
     def dec_string(self):
         return '(' + self.opening_night.strftime('%b %Y') + ')'
 
-    @classmethod
-    def get_cname(*args):
-        return "shows"
-
     def get_applications(self):
         return ShowApplication.objects.filter(show=self)
-
-    def is_show(self):
-        return True
-
-    def has_applications(self):
-        return True
 
     def get_company(self):
         return RoleInstance.objects.filter(show=self)
@@ -589,10 +554,6 @@ class Performance(models.Model):
         return instances
             
 
-    @classmethod
-    def get_cname(*args):
-        return "performances"
-
     def performance_count(self, start_date=None, end_date=None):
         if end_date:
             end_date = min(end_date, self.end_date)
@@ -608,17 +569,10 @@ class Performance(models.Model):
 class Role(DramaObjectModel):
     objects = DramaObjectManager()
     history = HistoricalRecords()
-
-    def __str__(self):
-        return self.name
-    name = models.CharField(max_length=200)
-    desc = models.TextField('Description', blank=True)
     categories = [
         ('cast', 'Cast'), ('band', 'Band'), ('prod', 'Production Team')]
     cat = models.CharField(
         max_length=4, choices=categories, verbose_name='Role Category')
-    slug = models.SlugField(max_length=200, blank=True, editable=False)
-    approved = models.BooleanField(editable=False, default=False)
 
     class Meta:
         ordering = ['name']
@@ -627,9 +581,8 @@ class Role(DramaObjectModel):
             ('admin_role', 'Change role admins'),
             )
 
-    @classmethod
-    def get_cname(*args):
-        return "roles"
+    def __str__(self):
+        return self.name
 
     def get_vacancies(self):
         return TechieAd.objects.approved().filter(techieadrole__role=self).distinct()
@@ -698,10 +651,6 @@ class TechieAdRole(models.Model):
             self.slug = slugify(self.name)
         super(TechieAdRole, self).save(*args, **kwargs)
 
-    @classmethod
-    def get_cname(*args):
-        return "techieadroles"
-
 
 class Audition(models.Model):
     history = HistoricalRecords()
@@ -735,9 +684,6 @@ class AuditionInstance(models.Model):
     @property
     def end_time(self):
         self.end_datetime.time()
-    @classmethod
-    def get_cname(*args):
-        return "audition session"
 
 
 class Application(models.Model):

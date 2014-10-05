@@ -32,7 +32,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
 
     def new(self, request, *args, **kwargs):
         if request.user.has_perm('drama.add_' + self.model.class_name()):
-            view = views.MyCreateView.as_view(model=self.model, model_name=self.model.get_cname(), form_class = self.form)
+            view = views.MyCreateView.as_view(model=self.model, model_name=self.model.class_name(), form_class = self.form)
             return view(request, *args, **kwargs)
         else:
             raise PermissionDenied
@@ -47,7 +47,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
                 form = self.form(instance=item)
                 data = {'content_form':form,
                         'object':item,
-                        'current_pagetype': self.model.get_cname(),
+                        'current_pagetype': item.class_name(),
                         }
                 return Response(data=data, template_name=template_name)
             elif request.method == 'POST':
@@ -58,7 +58,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
                 else:
                     data = {'content_form':form,
                             'object':item,
-                            'current_pagetype': self.model.get_cname(),
+                            'current_pagetype': item.class_name(),
                             }
                     return Response(data=data, template_name=template_name)
             else:
@@ -98,15 +98,15 @@ class ObjectViewSet(viewsets.ModelViewSet):
         response = super(ObjectViewSet, self).list(request, *args, **kwargs)
         if request.accepted_renderer.format == 'html':
             response.template_name = "drama/" + self.model.__name__.lower() + "_list.html"
-            response.data = {'object_list': self.object_list, 'current_pagetype': self.model.get_cname()}
+            response.data = {'object_list': self.object_list, 'current_pagetype': self.model.class_name()}
         return response
 
     def retrieve(self, request, slug, *args, **kwargs):
         response = super(ObjectViewSet, self).retrieve(request, slug=slug, *args, **kwargs)
-        if self.object.is_approved() or request.user.has_perm('drama.change_' + self.object.class_name(), self.object) or request.user.has_perm('drama.approve_' + self.object.class_name(), self.object):
+        if self.object.approved or request.user.has_perm('drama.change_' + self.object.class_name(), self.object) or request.user.has_perm('drama.approve_' + self.object.class_name(), self.object):
             if request.accepted_renderer.format == 'html':
                 response.template_name = "drama/" + self.model.__name__.lower() + "_detail.html"
-                response.data = {'object': self.object, 'current_pagetype': self.model.get_cname()}
+                response.data = {'object': self.object, 'current_pagetype': self.object.class_name()}
             return response
         else:
             raise PermissionDenied
@@ -150,7 +150,7 @@ class OrganizationViewSet(ObjectViewSet):
                     'pending_users': item.get_pending_admins(),
                     'new_admin_form': forms.AdminForm(),
                     'parent': item,
-                    'model_name': item.get_cname,
+                    'model_name': item.class_name(),
                 }
                 return render(request, 'drama/change_admins.html', context)
             elif request.method == "POST":
@@ -164,7 +164,7 @@ class OrganizationViewSet(ObjectViewSet):
                         'pending_users': item.get_pending_admins(),
                         'new_admin_form': form,
                         'parent': item,
-                        'model_name': item.get_cname(),
+                        'model_name': item.class_name(),
                     }
                     return render(request, 'drama/change_admins.html', context)
             elif request.method == "DELETE":
