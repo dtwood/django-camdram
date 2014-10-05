@@ -1,6 +1,8 @@
 from django.contrib import admin
 from drama.models import *
 from simple_history.admin import SimpleHistoryAdmin
+from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin
 
 class PerformanceInline(admin.TabularInline):
     model = Performance
@@ -108,3 +110,8 @@ class TermDateAdmin(SimpleHistoryAdmin):
 @admin.register(ApprovalQueueItem)
 class ApprovalQueueAdmin(admin.ModelAdmin):
     list_display = ['content_object']
+
+admin.site.unregister(User)
+@admin.register(User)
+class CustomUserAdmin(SimpleHistoryAdmin, UserAdmin):
+    pass
