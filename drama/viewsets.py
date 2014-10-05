@@ -117,7 +117,8 @@ class ObjectViewSet(viewsets.ModelViewSet):
         if self.object.approved or request.user.has_perm('drama.change_' + self.object.class_name(), self.object) or request.user.has_perm('drama.approve_' + self.object.class_name(), self.object):
             if request.accepted_renderer.format == 'html':
                 response.template_name = "drama/" + self.model.__name__.lower() + "_detail.html"
-                response.data = {'object': self.object, 'current_pagetype': self.object.class_name()}
+                can_edit = request.user.has_perm('drama.change_' + self.object.class_name(), self.object)
+                response.data = {'object': self.object, 'current_pagetype': self.object.class_name(), 'can_edit':  can_edit}
             return response
         else:
             raise PermissionDenied

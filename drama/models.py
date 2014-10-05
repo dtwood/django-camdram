@@ -511,6 +511,13 @@ class Show(DramaObjectModel):
         except IndexError:
             return None
 
+    def get_remove_role_url(self):
+        return self.get_url('remove-role')
+
+    def get_role_reorder_url(self):
+        return self.get_url('role-reorder')
+    
+
 class PerformanceInstance:
     def __init__(self, show, venue, start_datetime, end_datetime):
         self.show = show
