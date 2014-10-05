@@ -33,7 +33,7 @@ class AuditionInline(admin.TabularInline):
 class ShowAdmin(SimpleHistoryAdmin):
     fieldsets = [
         (None, {
-         'fields': ['name', 'author', 'desc', 'societies', 'image', 'approved']}),
+         'fields': ['name', 'author', 'desc', 'societies', 'image']}),
         ('Booking info', {
          'fields': ['book', 'prices'], 'classes': ['collapse']}),
         ('Advanced Settings', {'fields': ['slug'], 'classes': ['collapse']})

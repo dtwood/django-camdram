@@ -87,6 +87,8 @@ class DramaObjectModel(models.Model):
                     slug = slugify(base_slug + '-' + str(i))
                     if Show.objects.filter(slug=slug).count() == 0:
                         break
+            else:
+                slug = base_slug
             self.slug = slug
         try:
             self.group

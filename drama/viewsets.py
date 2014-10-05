@@ -111,35 +111,6 @@ class ObjectViewSet(viewsets.ModelViewSet):
         else:
             raise PermissionDenied
 
-
-class OrganizationViewSet(ObjectViewSet):
-    @detail_route(methods=['GET', 'POST'])
-    def applications(self, request, slug, *args, **kwargs):
-        parent = get_object_or_404(self.model, slug=slug)
-        if request.user.has_perm('drama.change_' + parent.class_name(), parent):
-            if request.method == 'GET':
-                context = {}
-                context['content_form'] = self.applicationform(instance=parent)
-                context['parent'] = parent
-                context['prefix'] = parent.class_name()
-                return render(request, 'drama/application_formset.html', context)
-            elif request.method == 'POST':
-                bound_form = self.applicationform(request.POST, instance=parent)
-                if bound_form.is_valid():
-                    bound_form.save()
-                    return redirect(parent.get_absolute_url())
-                else:
-                    context = {}
-                    context['content_form'] = bound_form
-                    context['parent'] = parent
-                    context['prefix'] = parent.class_name()
-                    return render(request, 'drama/application_formset.html', context)
-            else:
-                raise Http404
-        else:
-            raise PermissionDenied
-
-
     @detail_route(methods=['GET', 'POST'])
     def admins(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
@@ -193,6 +164,35 @@ class OrganizationViewSet(ObjectViewSet):
             email = request.DATA['email']
             item.remove_pending_admin(email)
             return redirect(item.get_admins_url())
+        else:
+            raise PermissionDenied
+
+
+
+class OrganizationViewSet(ObjectViewSet):
+    @detail_route(methods=['GET', 'POST'])
+    def applications(self, request, slug, *args, **kwargs):
+        parent = get_object_or_404(self.model, slug=slug)
+        if request.user.has_perm('drama.change_' + parent.class_name(), parent):
+            if request.method == 'GET':
+                context = {}
+                context['content_form'] = self.applicationform(instance=parent)
+                context['parent'] = parent
+                context['prefix'] = parent.class_name()
+                return render(request, 'drama/application_formset.html', context)
+            elif request.method == 'POST':
+                bound_form = self.applicationform(request.POST, instance=parent)
+                if bound_form.is_valid():
+                    bound_form.save()
+                    return redirect(parent.get_absolute_url())
+                else:
+                    context = {}
+                    context['content_form'] = bound_form
+                    context['parent'] = parent
+                    context['prefix'] = parent.class_name()
+                    return render(request, 'drama/application_formset.html', context)
+            else:
+                raise Http404
         else:
             raise PermissionDenied
 
