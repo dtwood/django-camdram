@@ -6,7 +6,7 @@ class RoleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Role
         lookup_field = 'slug'
-        fields = ('id', 'url', 'name', 'desc', 'cat', 'slug',)
+        fields = ('id', 'url', 'name', 'desc', 'cat')
 
 
 class RoleInstanceSerializer(serializers.HyperlinkedModelSerializer):
@@ -23,20 +23,20 @@ class PersonSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Person
         lookup_field = 'slug'
-        fields = ('id', 'url', 'name', 'desc', 'roles', 'slug')
+        fields = ('id', 'url', 'name', 'desc', 'roles')
 
 class SocietySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Society
         lookup_field = 'slug'
-        fields = ('id', 'url', 'name', 'shortname', 'desc', 'slug')
+        fields = ('id', 'url', 'name', 'shortname', 'desc', 'image')
 
         
 class VenueSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Venue
         lookup_field = 'slug'
-        fields = ('id', 'url', 'name', 'desc', 'slug')
+        fields = ('id', 'url', 'name', 'desc')
 
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
     cat = serializers.CharField(max_length=4, source='role.cat')
@@ -64,4 +64,4 @@ class ShowSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Show
         lookup_field = 'slug'
-        fields = ('id', 'url', 'name', 'author', 'societies', 'desc', 'performances', 'cast', 'band', 'prod', 'slug')
+        fields = ('id', 'url', 'name', 'author', 'societies', 'desc', 'performances', 'cast', 'band', 'prod', 'image')
