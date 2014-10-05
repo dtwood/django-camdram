@@ -146,7 +146,7 @@ class RoleForm(FormsetsForm):
 
 
 class AuditionInstanceForm(forms.ModelForm):
-    date = forms.DateField()
+    date = forms.DateField(widget=forms.DateInput(attrs={'class':'date'}))
     end_time = forms.TimeField()
 
     def __init__(self, instance = None, initial=None, *args, **kwargs):
@@ -175,9 +175,7 @@ class AuditionInstanceForm(forms.ModelForm):
     class Meta:
         model = AuditionInstance
         fields = ['end_datetime','start_time','location']
-        widgets = {
-            'date': forms.DateInput(attrs={'class':'date'}),
-            }
+        
 
         
 AuditionInline = inlineformset_factory(
@@ -206,7 +204,7 @@ TechieAdInline = inlineformset_factory(
 
 
 class DeadlineForm(forms.ModelForm):
-    date = forms.DateField(label="Deadline date")
+    date = forms.DateField(label="Deadline date", widget=forms.DateInput(attrs={'class':'date'}))
     time = forms.TimeField(label="Deadline time")
 
     def __init__(self, *args, instance = None, initial=None, **kwargs):
@@ -241,9 +239,6 @@ class TechieAdForm(DeadlineForm, ChildForm):
     class Meta:
         model = TechieAd
         fields = ['desc','contact','deadline']
-        widgets = {
-            'date': forms.DateInput(attrs={'class':'date'}),
-            }
 
 class ApplicationForm(DeadlineForm, FormsetsForm, autocomplete_light.ModelForm):
     error_css_class = 'error'
@@ -253,9 +248,6 @@ class ApplicationForm(DeadlineForm, FormsetsForm, autocomplete_light.ModelForm):
     class Meta:
         model = Application
         fields = ['name','desc','contact','deadline']
-        widgets = {
-            'date': forms.DateInput(attrs={'class':'date'}),
-            }
 
 
 ShowApplicationFormset = inlineformset_factory(Show, ShowApplication, ApplicationForm)
