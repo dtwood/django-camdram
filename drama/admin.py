@@ -113,6 +113,8 @@ class ApprovalQueueAdmin(admin.ModelAdmin):
 
 @admin.register(LogItem)
 class LogAdmin(admin.ModelAdmin):
+    fields = ('object_link', 'cat', 'desc', 'user_email', 'datetime')
+    readonly_fields = ('object_link', 'cat', 'desc', 'user_email', 'datetime')
     list_display = ['object_link', 'cat', 'desc', 'user_email','datetime']
     list_filter = ['cat','user__email']
     list_display_links = ['cat']
