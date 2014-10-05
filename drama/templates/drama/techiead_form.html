@@ -32,7 +32,7 @@
       </ul>
     </div>
     <div id="empty_form" style="display:none">
-      {% include "drama/techiead_form_item.html" with form=techiead_formset.empty_form %}
+      {% include "drama/techiead_form_item.html" with form=content_form.context.techiead_formset.empty_form %}
     </div>
   </div>
   {% include "drama/form_field.html" with field=content_form.date %}
