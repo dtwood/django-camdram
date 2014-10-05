@@ -6,6 +6,7 @@
     desc: This role intentionally left unapproved.
     slug: character
     approved: False
+    group: 1
 
 - model: drama.Role
   pk: 2
@@ -15,6 +16,7 @@
     desc: This role intentionally left unapproved.
     slug: musician
     approved: False
+    group: 2
 
 - model: drama.Role
   pk: 3
@@ -24,4 +26,22 @@
     desc: This role intentionally left unapproved.
     slug: techie
     approved: False
+    group: 3
 
+- model: auth.group
+  pk: 1
+  fields:
+    name: character
+    permissions: []
+
+- model: auth.group
+  pk: 2
+  fields:
+    name: musician
+    permissions: []
+
+- model: auth.group
+  pk: 3
+  fields:
+    name: techie
+    permissions: []
