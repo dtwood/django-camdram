@@ -315,7 +315,6 @@ class Venue(DramaObjectModel):
         ordering = ['name']
         permissions = (
             ('approve_venue', 'Approve Venue'),
-            ('admin_venue', 'Change venue admins'),
             )
 
     @property
@@ -356,7 +355,6 @@ class Society(DramaObjectModel):
         ordering = ['name']
         permissions = (
             ('approve_society', 'Approve Society'),
-            ('admin_society', 'Change society admins'),
             )
 
     def __str__(self):
@@ -402,7 +400,6 @@ class Show(DramaObjectModel):
         ordering = ['name']
         permissions = (
             ('approve_show', 'Approve Show'),
-            ('admin_show', 'Change show admins'),
             )
 
     def __str__(self):
@@ -578,7 +575,6 @@ class Role(DramaObjectModel):
         ordering = ['name']
         permissions = (
             ('approve_role', 'Approve Role'),
-            ('admin_role', 'Change role admins'),
             )
 
     def __str__(self):
