@@ -13,6 +13,9 @@ from drama import serializers, models, views, forms, feeds
 from drama.models import LogItem
 from django.utils import timezone
 from django.contrib import auth
+from django.db.models import signals
+from django.db import transaction
+import reversion
 
 class CamdramPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -42,6 +45,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
             raise PermissionDenied
     
     @detail_route(methods=['GET', 'POST'])
+    @transaction.atomic()
     def edit(self, request, slug, *args, **kwargs):
         template_name = 'drama/' + self.model.__name__.lower() +'_form.html'
         item = get_object_or_404(self.model, slug=slug)
@@ -83,6 +87,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
             raise PermissionDenied
 
     @detail_route(methods=['GET','POST'])
+    @transaction.atomic()
     def approve(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):
@@ -94,6 +99,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
             raise PermissionDenied
 
     @detail_route(methods=['GET'])
+    @transaction.atomic()
     def unapprove(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):
@@ -124,6 +130,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
             raise PermissionDenied
 
     @detail_route(methods=['GET', 'POST'])
+    @transaction.atomic()
     def admins(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('change_' + item.class_name(), item):
@@ -142,6 +149,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
                     item.add_admin(form.cleaned_data['email'])
                     log_item = LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Added {0}'.format(form.cleaned_data['email']))
                     log_item.save()
+                    signals.post_save.send(sender=item.__class__, instance=item, created=False, raw=False, using=None, update_fields=None)
                     return redirect(item.get_absolute_url())
                 else:
                     context = {
@@ -159,6 +167,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
                     item.revoke_admin(user)
                     log_item = LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Removed {0}'.format(user.email))
                     log_item.save()
+                    signals.post_save.send(sender=item.__class__, instance=item, created=False, raw=False, using=None, update_fields=None)
                 except IndexError:
                     pass
                 return redirect(item.get_admins_url())
@@ -168,6 +177,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
             raise PermissionDenied
 
     @detail_route(methods=['POST'])
+    @transaction.atomic()
     def revoke_admin(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('change_' + item.class_name(), item):
@@ -177,6 +187,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
                 item.revoke_admin(user)
                 log_item = LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Removed {0}'.format(user.email))
                 log_item.save()
+                signals.post_save.send(sender=item.__class__, instance=item, created=False, raw=False, using=None, update_fields=None)
             except IndexError:
                 pass
             return redirect(item.get_admins_url())
@@ -184,6 +195,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
             raise PermissionDenied
 
     @detail_route(methods=['POST'])
+    @transaction.atomic()
     def revoke_pending_admin(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('change_' + item.class_name(), item):
@@ -191,6 +203,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
             item.remove_pending_admin(email)
             log_item = LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Removed {0}'.format(email))
             log_item.save()
+            signals.post_save.send(sender=item.__class__, instance=item, created=False, raw=False, using=None, update_fields=None)
             return redirect(item.get_admins_url())
         else:
             raise PermissionDenied
@@ -199,6 +212,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
 
 class OrganizationViewSet(ObjectViewSet):
     @detail_route(methods=['GET', 'POST'])
+    @transaction.atomic()
     def applications(self, request, slug, *args, **kwargs):
         parent = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.change_' + parent.class_name(), parent):
@@ -214,6 +228,7 @@ class OrganizationViewSet(ObjectViewSet):
                     bound_form.save()
                     log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=parent, desc='Changed Applications')
                     log_item.save()
+                    signals.post_save.send(sender=parent.__class__, instance=parent, created=False, raw=False, using=None, update_fields=None)
                     return redirect(parent.get_absolute_url())
                 else:
                     context = {}
@@ -249,6 +264,7 @@ class PersonViewSet(ObjectViewSet):
     form = forms.PersonForm
 
     @detail_route(methods=['GET'])
+    @transaction.atomic()
     def link(self, request, slug, *args, **kwargs):
         person = get_object_or_404(self.model, slug=slug)
         user = request.user
@@ -257,6 +273,7 @@ class PersonViewSet(ObjectViewSet):
         else:
             log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=person, desc='Linked Person')
             log_item.save()
+            signals.post_save.send(sender=person.__class__, instance=person, created=False, raw=False, using=None, update_fields=None)
             return person.link_user(user)
 
 class SocietyViewSet(OrganizationViewSet):
@@ -283,6 +300,7 @@ class ShowViewSet(OrganizationViewSet):
     applicationform = forms.ShowApplicationFormset
 
     @detail_route(methods=['POST'])
+    @transaction.atomic()
     def add_cast(self, request, slug, *args, **kwargs):
         show = get_object_or_404(self.model, slug=slug)
         if request.method == "POST":
@@ -296,6 +314,7 @@ class ShowViewSet(OrganizationViewSet):
                     r.save()
                     log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added cast member: {0}'.format(person.name))
                     log_item.save()
+                    signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
                 return redirect(show.get_absolute_url())
             else:
                 raise PermissionDenied
@@ -304,6 +323,7 @@ class ShowViewSet(OrganizationViewSet):
 
 
     @detail_route(methods=['POST'])
+    @transaction.atomic()
     def add_band(self, request, slug, *args, **kwargs):
         show = get_object_or_404(self.model, slug=slug)
         if request.method == "POST":
@@ -317,6 +337,7 @@ class ShowViewSet(OrganizationViewSet):
                     r.save()
                     log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added band member: {0}'.format(person.name))
                     log_item.save()
+                    signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
                 return redirect(show.get_absolute_url())
             else:
                 raise PermissionDenied
@@ -325,6 +346,7 @@ class ShowViewSet(OrganizationViewSet):
 
 
     @detail_route(methods=['POST'])
+    @transaction.atomic()
     def add_prod(self, request, slug, *args, **kwargs):
         show = get_object_or_404(self.model, slug=slug)
         if request.method == "POST":
@@ -338,6 +360,7 @@ class ShowViewSet(OrganizationViewSet):
                     r.save()
                     log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added production team member: {0}'.format(person.name))
                     log_item.save()
+                    signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
                 return redirect(show.get_absolute_url())
             else:
                 raise PermissionDenied
@@ -345,6 +368,7 @@ class ShowViewSet(OrganizationViewSet):
             return redirect(show.get_absolute_url())
 
     @detail_route(methods=['POST'])
+    @transaction.atomic()
     def role_reorder(self, request, slug, *args, **kwargs):
         show = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.change_show', show):
@@ -356,11 +380,13 @@ class ShowViewSet(OrganizationViewSet):
                 item.save()
             log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Reordered Roles')
             log_item.save()
+            signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
             return HttpResponse('')
         else:
             raise PermissionDenied
 
     @detail_route(methods=['POST'])
+    @transaction.atomic()
     def remove_role(self, request, slug, *args, **kwargs):
         show = get_object_or_404(models.Show, slug=slug)
         role = get_object_or_404(models.RoleInstance, id=request.POST['role-id'])
@@ -370,10 +396,12 @@ class ShowViewSet(OrganizationViewSet):
             log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Removed company member: {0}'.format(role.person.name))
             log_item.save()
             role.delete()
+            signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
             return redirect(show.get_absolute_url())
         else:
             raise PermissionDenied
 
+    @transaction.atomic()
     def related_edit(self, request, model, form, slug, *args, **kwargs):
         show = get_object_or_404(models.Show, slug=slug)
         template_name = 'drama/' + model.__name__.lower() + '_form.html'
@@ -390,6 +418,7 @@ class ShowViewSet(OrganizationViewSet):
                         bound_form.save()
                         log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Changed {0}'.format(item.__class__.__name__))
                         log_item.save()
+                        signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
                         return redirect(show.get_absolute_url())
                     else:
                         data = {'content_form': bound_form, 'parent': show}
@@ -407,6 +436,7 @@ class ShowViewSet(OrganizationViewSet):
                         bound_form.save()
                         log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added {0}'.format(model.__name__))
                         log_item.save()
+                        signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
                         return redirect(show.get_absolute_url())
                     else:
                         data = {'content_form': bound_form, 'parent': show}
@@ -421,7 +451,11 @@ class ShowViewSet(OrganizationViewSet):
         if request.user.has_perm('drama.change_show', show):
             try:
                 item = model.objects.filter(show__slug=slug)[0]
-                view = views.MyDeleteView.as_view(model=model, success_url="/", log_object=show, log_message='Removed {0}'.format(item.__class__.__name__))
+                def on_success():
+                    signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
+                    log_item = LogItem(cat='DELETE', datetime=timezone.now(), user=request.user, content_object=show, desc='Removed {0}'.format(item.__class__.__name__))
+                    log_item.save()
+                view = views.MyDeleteView.as_view(model=model, success_url=show.get_absolute_url(), on_success=on_success)
                 return view(request, pk=item.pk, *args, **kwargs)
             except IndexError:
                 raise Http404

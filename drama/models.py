@@ -15,7 +15,7 @@ from django.shortcuts import redirect
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
-
+import reversion
 
 class ApprovalQueueItem(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -384,7 +384,7 @@ class Society(DramaObjectModel):
     def get_techieads(self):
         return TechieAd.objects.approved().filter(show__societies=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
         
-
+@reversion.register(follow=('performance_set','roleinstance_set','showapplication_set','audition','techiead'))
 class Show(DramaObjectModel):
     objects = ShowManager()
     book = models.URLField('Booking Link', blank=True)
@@ -591,6 +591,7 @@ class Role(DramaObjectModel):
         return ''
         
 
+@reversion.register()
 class RoleInstance(models.Model):
     objects = ShowApprovedManager()
 
@@ -616,6 +617,7 @@ class RoleInstance(models.Model):
         
 
 
+@reversion.register(follow=('techieadrole_set',))
 class TechieAd(models.Model):
     objects = ShowApprovedManager()
 
@@ -635,6 +637,7 @@ class TechieAd(models.Model):
         return user.has_perm('drama.change_show',self.show)
 
 
+@reversion.register()
 class TechieAdRole(models.Model):
     name = models.CharField(max_length=200)
     ad = models.ForeignKey(TechieAd)
@@ -648,6 +651,7 @@ class TechieAdRole(models.Model):
         super(TechieAdRole, self).save(*args, **kwargs)
 
 
+@reversion.register(follow=('auditioninstance_set',))
 class Audition(models.Model):
     objects = ShowApprovedManager()
     show = models.OneToOneField(Show)
@@ -664,6 +668,7 @@ class Audition(models.Model):
         return user.has_perm('drama.change_show',self.show)
 
 
+@reversion.register()
 class AuditionInstance(models.Model):
     objects = AuditionInstanceManager()
     audition = models.ForeignKey(Audition)
@@ -692,6 +697,7 @@ class Application(models.Model):
         return self.parent().get_absolute_url()
 
 
+@reversion.register()
 class ShowApplication(Application):
     objects = ShowApprovedManager()
     show = models.ForeignKey(Show)

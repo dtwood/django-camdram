@@ -58,6 +58,7 @@ INSTALLED_APPS = (
     'issues',
     'autofixture',
     'django_extensions',
+    'reversion',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -67,6 +68,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'reversion.middleware.RevisionMiddleware',
 )
 
 ROOT_URLCONF = 'camdram.urls'

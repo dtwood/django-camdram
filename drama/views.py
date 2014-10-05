@@ -18,6 +18,8 @@ from registration.backends.default.views import RegistrationView
 from guardian.shortcuts import assign_perm, get_objects_for_user, remove_perm, get_users_with_perms
 from collections import namedtuple
 from django.views.decorators.http import require_http_methods, require_POST
+import reversion
+from django.db import transaction
 
 WeekContainer = namedtuple('WeekContainer', 'label start_date end_date')
 
@@ -157,6 +159,7 @@ class MyCreateView(autocomplete_light.CreateView):
         del context['form']
         return context
 
+    @transaction.atomic()
     def form_valid(self, form):
         if self.model_name in ('shows',):
             self.success_url = '/'
@@ -179,21 +182,16 @@ class MyCreateView(autocomplete_light.CreateView):
         return result
 
 class MyDeleteView(DeleteView):
-    log_object = None
-    log_message = None
+    on_success=None
     
-    def __init__(self, *args, log_object=None, log_message=None, **kwargs):
-        self.log_object = log_object
-        self.log_message = log_message
+    def __init__(self, *args, on_success=None, **kwargs):
+        self.on_success=on_success
         return super(MyDeleteView, self).__init__(*args, **kwargs)
     
+    @transaction.atomic()
     def delete(self, request, *args, **kwargs):
-        if not self.log_object:
-            self.log_object = self.get_object()
-        if not self.log_message:
-            self.log_message = ''
-        log_item = LogItem(cat='DELETE', datetime=timezone.now(), user=request.user, content_object=self.log_object, desc=self.log_message)
-        log_item.save()
+        fun = self.on_success
+        fun()
         return super(MyDeleteView, self).delete(self, request, *args, **kwargs)
 
 
@@ -215,6 +213,7 @@ def approval_queue(request):
     
 @login_required
 @require_POST
+@transaction.atomic()
 def approval_ignore(request, key=None):
     item = get_object_or_404(ApprovalQueueItem,pk=key)
     if request.user.has_perm('drama.approve_' + item.content_object.class_name(), item.content_object):
@@ -227,6 +226,7 @@ def approval_ignore(request, key=None):
 
 @login_required
 @require_POST
+@transaction.atomic()
 def approval_approve(request, key=None):
     item = get_object_or_404(ApprovalQueueItem,pk=key)
     if request.user.has_perm('drama.approve_' + item.content_object.class_name(), item.content_object):
