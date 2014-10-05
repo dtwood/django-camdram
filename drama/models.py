@@ -14,6 +14,7 @@ from django.utils import timezone
 from django.shortcuts import redirect
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from simple_history.models import HistoricalRecords
 
 
@@ -65,9 +66,31 @@ class AuditionInstanceQuerySet(models.query.QuerySet):
 AuditionInstanceManager = models.Manager.from_queryset(AuditionInstanceQuerySet)
 
 
-class DramaObjectMixin(object):
+class DramaObjectModel(models.Model):
     objects = DramaObjectManager()
     queueitem = GenericRelation(ApprovalQueueItem)
+    group = models.OneToOneField(auth.models.Group)
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        try:
+            self.group
+        except ObjectDoesNotExist:
+            new_group = auth.models.Group(name=self.slug)
+            new_group.save()
+            self.group = new_group
+        result = super(DramaObjectModel, self).save(*args, **kwargs)
+        assign_perm('drama.change_' + self.class_name(), self.group, self)
+        return result
+
+    def delete(self):
+        self.group.delete()
+        super(DramabjectModel, self).delete()
+
     
     @classmethod
     def class_name(cls):
@@ -141,10 +164,53 @@ class DramaObjectMixin(object):
         self.save()
     unapprove.alters_data = True
 
-    def grant_admin(self, user):
-        assign_perm('drama.change_' + self.class_name(), user, self)
+    def get_admins(self):
+        """
+        Return the current admins.
+        """
+        return self.group.user_set.all()
 
-class Person(models.Model, DramaObjectMixin):
+    def get_pending_admins(self):
+        """
+        return the pending admins
+        """
+        return self.group.pendinggroupmember_set.all()
+    
+    def add_admin(self, email):
+        """
+        Add the user with this email address to the organization admins.
+        If the user does not exist, add the request to the pending admins list.
+        """
+        try:
+            user = auth.get_user_model().objects.filter(email=email)[0]
+            self.group.user_set.add(user)
+        except IndexError:
+            item = PendingGroupMember(email=email, group=self.group)
+            item.save()
+    add_admin.alters_data = True
+    
+    def remove_admin(self, username):
+        """
+        Remove the user with that username from the organization admins.
+        """
+        try:
+            user = auth.get_user_model().objects.filter(username=username)[0]
+            self.group.user_set.remove(user)
+        except IndexError:
+            pass
+    remove_admin.alters_data = True
+
+    def remove_pending_admin(self, email):
+        for pg in PendingGroupMember.objects.filter(group=self.group, email=email):
+            pg.delete()
+    remove_pending_admin.alters_data = True
+
+    def grant_admin(self, user):
+        self.group.user_set.add(user)
+    grant_admin.alters_data=True
+
+
+class Person(DramaObjectModel):
     history = HistoricalRecords()
     objects = DramaObjectManager()
 
@@ -161,15 +227,6 @@ class Person(models.Model, DramaObjectMixin):
         permissions = (
             ('approve_person', 'Approve Person'),
             )
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            temp_slug = slugify(self.name)
-            if Person.objects.filter(slug=temp_slug):
-                super(Person, self).save(*args, **kwargs)
-                temp_slug = str(self.id) + '-' + temp_slug
-            self.slug = temp_slug
-        super(Person, self).save(*args, **kwargs)
 
     def get_shows(self):
         return Show.objects.approved().filter(roleinstance__person=self).distinct()
@@ -244,53 +301,8 @@ class Person(models.Model, DramaObjectMixin):
     
 
 
-class DramaOrganizationMixin(DramaObjectMixin):
-    def get_admins(self):
-        """
-        Return the current admins.
-        """
-        return self.group.user_set.all()
 
-    def get_pending_admins(self):
-        """
-        return the pending admins
-        """
-        return self.group.pendinggroupmember_set.all()
-    
-    def add_admin(self, email):
-        """
-        Add the user with this email address to the organization admins.
-        If the user does not exist, add the request to the pending admins list.
-        """
-        try:
-            user = auth.get_user_model().objects.filter(email=email)[0]
-            self.group.user_set.add(user)
-        except IndexError:
-            item = PendingGroupMember(email=email, group=self.group)
-            item.save()
-    add_admin.alters_data = True
-    
-    def remove_admin(self, username):
-        """
-        Remove the user with that username from the organization admins.
-        """
-        try:
-            user = auth.get_user_model().objects.filter(username=username)[0]
-            self.group.user_set.remove(user)
-        except IndexError:
-            pass
-    remove_admin.alters_data = True
-
-    def remove_pending_admin(self, email):
-        for pg in PendingGroupMember.objects.filter(group=self.group, email=email):
-            pg.delete()
-    remove_pending_admin.alters_data = True
-
-    def grant_admin(self, user):
-        self.group.user_set.add(user)
-
-
-class Venue(models.Model, DramaOrganizationMixin):
+class Venue(DramaObjectModel):
     history = HistoricalRecords()
     objects = DramaObjectManager()
 
@@ -303,7 +315,6 @@ class Venue(models.Model, DramaOrganizationMixin):
     lng = models.FloatField('Longditude', blank=True)
     slug = models.SlugField(max_length=200, blank=True, editable=False)
     approved = models.BooleanField(editable=False, default=False)
-    group = models.OneToOneField(auth.models.Group, null=True, blank=True)
 
     class Meta:
         ordering = ['name']
@@ -311,19 +322,6 @@ class Venue(models.Model, DramaOrganizationMixin):
             ('approve_venue', 'Approve Venue'),
             ('admin_venue', 'Change venue admins'),
             )
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        if not self.group:
-            new_group = auth.models.Group(name=self.name)
-            new_group.save()
-            self.group = new_group
-        super(Venue, self).save(*args, **kwargs)
-
-    def delete(self):
-        self.group.delete()
-        super(Venue, self).delete()
 
     @property
     def dec_string(self):
@@ -358,7 +356,7 @@ class Venue(models.Model, DramaOrganizationMixin):
         return TechieAd.objects.approved().filter(show__performance__venue=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
         
 
-class Society(models.Model, DramaOrganizationMixin):
+class Society(DramaObjectModel):
     history = HistoricalRecords()
     objects = DramaObjectManager()
 
@@ -371,7 +369,6 @@ class Society(models.Model, DramaOrganizationMixin):
         upload_to='images/', blank=True, verbose_name="Logo")
     slug = models.SlugField(max_length=200, blank=True, editable=False)
     approved = models.BooleanField(editable=False, default=False)
-    group = models.OneToOneField(auth.models.Group, null=True, blank=True, editable=False)
 
     class Meta:
         ordering = ['name']
@@ -379,19 +376,6 @@ class Society(models.Model, DramaOrganizationMixin):
             ('approve_society', 'Approve Society'),
             ('admin_society', 'Change society admins'),
             )
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        if not self.group:
-            new_group = auth.models.Group(name=self.name)
-            new_group.save()
-            self.group = new_group
-        super(Society, self).save(*args, **kwargs)
-
-    def delete(self):
-        self.group.delete()
-        super(Society, self).delete()
 
     @property
     def dec_string(self):
@@ -426,7 +410,7 @@ class Society(models.Model, DramaOrganizationMixin):
         return TechieAd.objects.approved().filter(show__societies=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
         
 
-class Show(models.Model, DramaObjectMixin):
+class Show(DramaObjectModel):
     history = HistoricalRecords()
     objects = ShowManager()
 
@@ -461,6 +445,8 @@ class Show(models.Model, DramaObjectMixin):
                 if Show.objects.filter(slug=slug).exclude(id=self.id).count() == 0:
                     break
         self.slug = slug
+        self.group.name=self.slug
+        self.group.save()
         self.save()
 
     reslug.alters_data=True
@@ -508,50 +494,6 @@ class Show(models.Model, DramaObjectMixin):
     def has_applications(self):
         return True
 
-    def get_admins(self):
-        """
-        Return the current admins.
-        """
-        return get_users_with_perms(self, with_group_users=False)
-
-    def get_pending_admins(self):
-        """
-        return the pending admins
-        """
-        return self.pendingadmin_set.all()
-    
-    def add_admin(self, email):
-        """
-        Add the user with this email address to the shows admins.
-        If the user does not exist, add the request to the pending admins list.
-        """
-        try:
-            user = auth.get_user_model().objects.filter(email=email)[0]
-            assign_perm('drama.change_show', user, self)
-        except IndexError:
-            item = PendingAdmin(email=email, show=self)
-            item.save()
-
-    add_admin.alters_data = True
-
-    def remove_admin(self, username):
-        """
-        Remove the user with that username from the show admins.
-        """
-        try:
-            user = auth.get_user_model().objects.filter(username=username)[0]
-            remove_perm('change_show', user, self)
-        except IndexError:
-            pass
-
-    remove_admin.alters_data = True
-
-    def remove_pending_admin(self, email):
-        for pa in PendingAdmin.objects.filter(show=self, email=email):
-            pa.delete()
-
-    remove_pending_admin.alters_data = True
-            
     def get_company(self):
         return RoleInstance.objects.filter(show=self)
     
@@ -663,7 +605,7 @@ class Performance(models.Model):
         return (end_date - start_date).days + 1
 
 
-class Role(models.Model, DramaObjectMixin):
+class Role(DramaObjectModel):
     objects = DramaObjectManager()
     history = HistoricalRecords()
 
@@ -684,11 +626,6 @@ class Role(models.Model, DramaObjectMixin):
             ('approve_role', 'Approve Role'),
             ('admin_role', 'Change role admins'),
             )
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.name)
-        super(Role, self).save(*args, **kwargs)
 
     @classmethod
     def get_cname(*args):
@@ -811,14 +748,6 @@ class Application(models.Model):
     slug = models.SlugField(
         max_length=200, blank=True, editable=False, unique=True)
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.object_name + '-' + self.name)
-        try:
-            super(Application, self).save(*args, **kwargs)
-        except IntegrityError:
-            self.slug = slugify(self.id + '-' + self.slug)
-            super(Application, self).save(*args, **kwargs)
     def get_absolute_url(self):
         return self.parent().get_absolute_url()
 

@@ -29,23 +29,16 @@ class AdminPanelNode(template.Node):
             subcontext['item'] = item
             admin_perm = 'change_' + type
             if user.has_perm(admin_perm, item):
+                subcontext['admin'] = True
+                subcontext['users'] = item.group.user_set.all()
+                subcontext['pending_users'] = item.group.pendinggroupmember_set.all()
+                groups = list(get_groups_with_perms(item).exclude(id=item.group.id))
                 if type == 'show':
-                    subcontext['admin'] = True
-                    subcontext['users'] = get_users_with_perms(item, with_group_users=False)
-                    subcontext['pending_users'] = item.pendingadmin_set.all()
-                    groups = list(get_groups_with_perms(item))
-                    if type == 'show':
-                        for society in item.societies.all():
-                            groups = groups + [society.group]
-                        for venue in Venue.objects.filter(performance__show=item).distinct():
-                            groups = groups + [venue.group]
-                    subcontext['groups'] = groups
-                    
-                elif type == 'venue' or type == 'society':
-                    subcontext['admin'] = True
-                    if item.group:
-                        subcontext['users'] = item.group.user_set.all()
-                        subcontext['pending_users'] = item.group.pendinggroupmember_set.all()
+                    for society in item.societies.all():
+                        groups = groups + [society.group]
+                    for venue in Venue.objects.filter(performance__show=item).distinct():
+                        groups = groups + [venue.group]
+                subcontext['groups'] = groups
             if user.has_perm('drama.approve_' + type, item):
                 subcontext['approve'] = True
             return self.template.render(template.Context(subcontext))
