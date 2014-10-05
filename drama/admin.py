@@ -1,8 +1,6 @@
 from django.contrib import admin
 from drama.models import *
-from simple_history.admin import SimpleHistoryAdmin
-from django.contrib.auth.models import User
-from django.contrib.auth.admin import UserAdmin
+
 
 class PerformanceInline(admin.TabularInline):
     model = Performance
@@ -30,7 +28,7 @@ class AuditionInline(admin.TabularInline):
 
 
 @admin.register(Show)
-class ShowAdmin(SimpleHistoryAdmin):
+class ShowAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {
          'fields': ['name', 'author', 'desc', 'societies', 'image']}),
@@ -44,7 +42,7 @@ class ShowAdmin(SimpleHistoryAdmin):
 
 
 @admin.register(TechieAd)
-class TechieAdAdmin(SimpleHistoryAdmin):
+class TechieAdAdmin(admin.ModelAdmin):
     list_display = ['show', 'contact', 'deadline']
     inlines = [TechieAdInline]
     search_fields = ['show']
@@ -52,57 +50,57 @@ class TechieAdAdmin(SimpleHistoryAdmin):
 
 
 @admin.register(Audition)
-class AuditionAdmin(SimpleHistoryAdmin):
+class AuditionAdmin(admin.ModelAdmin):
     list_display = ['show', 'contact']
     inlines = [AuditionInline]
     search_fields = ['show']
     raw_id_fields = ['show']
 
 @admin.register(Person)
-class PersonAdmin(SimpleHistoryAdmin):
+class PersonAdmin(admin.ModelAdmin):
     list_display = ['name','num_shows','user_email',]
     search_fields = ['name',]
     raw_id_fields = ['user']
 
     
 @admin.register(Venue)
-class DramaObjectAdmin(SimpleHistoryAdmin):
+class DramaObjectAdmin(admin.ModelAdmin):
     list_display = ['name','approved']
     search_fields = ['name']
     list_filter = ['approved']
     
 @admin.register(Role)
-class RoleAdmin(SimpleHistoryAdmin):
+class RoleAdmin(admin.ModelAdmin):
     list_display = ['name','cat','approved']
     search_fields = ['name']
     list_filter = ['cat','approved']
     
 @admin.register(Society)
-class SocietyAdmin(SimpleHistoryAdmin):
+class SocietyAdmin(admin.ModelAdmin):
     list_display = ['name','shortname','approved']
     search_fields = ['name','shortname']
     list_filter = ['approved']
     
 @admin.register(ShowApplication)
-class ShowApplicationAdmin(SimpleHistoryAdmin):
+class ShowApplicationAdmin(admin.ModelAdmin):
     list_display = ['name','show','deadline']
     search_fields = ['name', 'show__name']
     raw_id_fields = ['show']
 
 @admin.register(SocietyApplication)
-class SocietyApplicationAdmin(SimpleHistoryAdmin):
+class SocietyApplicationAdmin(admin.ModelAdmin):
     list_display = ['name','society', 'deadline']
     search_fields = ['name', 'society__name', 'society__shortname']
     raw_id_fields = ['society']
 
 @admin.register(VenueApplication)
-class VenueApplicationAdmin(SimpleHistoryAdmin):
+class VenueApplicationAdmin(admin.ModelAdmin):
     list_display = ['name','venue','deadline']
     search_fields = ['name', 'venue__name']
     raw_id_fields = ['venue']
 
 @admin.register(TermDate)
-class TermDateAdmin(SimpleHistoryAdmin):
+class TermDateAdmin(admin.ModelAdmin):
     list_display = ['__str__','start']
     list_filter = ['term','year']
     list_editable = ['start']
@@ -110,8 +108,3 @@ class TermDateAdmin(SimpleHistoryAdmin):
 @admin.register(ApprovalQueueItem)
 class ApprovalQueueAdmin(admin.ModelAdmin):
     list_display = ['content_object']
-
-admin.site.unregister(User)
-@admin.register(User)
-class CustomUserAdmin(SimpleHistoryAdmin, UserAdmin):
-    pass
