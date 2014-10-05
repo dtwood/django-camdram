@@ -218,7 +218,6 @@ class DramaObjectModel(models.Model):
 
 
 class Person(DramaObjectModel):
-    history = HistoricalRecords()
     objects = DramaObjectManager()
     user = models.OneToOneField(settings.AUTH_USER_MODEL, blank=True, null=True)
 
@@ -302,7 +301,6 @@ class Person(DramaObjectModel):
 
 
 class Venue(DramaObjectModel):
-    history = HistoricalRecords()
     objects = DramaObjectManager()
 
     def __str__(self):
@@ -345,7 +343,6 @@ class Venue(DramaObjectModel):
         
 
 class Society(DramaObjectModel):
-    history = HistoricalRecords()
     objects = DramaObjectManager()
     shortname = models.CharField(max_length=100, verbose_name="Abbreviaiton")
     image = models.ImageField(
@@ -388,7 +385,6 @@ class Society(DramaObjectModel):
         
 
 class Show(DramaObjectModel):
-    history = HistoricalRecords()
     objects = ShowManager()
     book = models.URLField('Booking Link', blank=True)
     prices = models.CharField(max_length=30, blank=True)
@@ -565,7 +561,6 @@ class Performance(models.Model):
 
 class Role(DramaObjectModel):
     objects = DramaObjectManager()
-    history = HistoricalRecords()
     categories = [
         ('cast', 'Cast'), ('band', 'Band'), ('prod', 'Production Team')]
     cat = models.CharField(
