@@ -55,4 +55,5 @@ $(function () {
 
 $(function () {
     $('.date').datepicker();
+    $('#id_date').datepicker();
 })
