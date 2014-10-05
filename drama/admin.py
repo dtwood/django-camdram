@@ -1,5 +1,7 @@
 from django.contrib import admin
 from drama.models import *
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 
 
 class PerformanceInline(admin.TabularInline):
@@ -111,5 +113,19 @@ class ApprovalQueueAdmin(admin.ModelAdmin):
 
 @admin.register(LogItem)
 class LogAdmin(admin.ModelAdmin):
-    list_display = ['content_object', 'cat', 'desc', 'user_email','datetime']
-    list_filter = ['cat',]
+    list_display = ['object_link', 'cat', 'desc', 'user_email','datetime']
+    list_filter = ['cat','user__email']
+    list_display_links = ['cat']
+admin.site.unregister(User)
+
+class CustomUserAdmin(UserAdmin):
+    def __init__(self, *args, **kwargs):
+        result = super(CustomUserAdmin, self).__init__(*args, **kwargs)
+        self.list_display = self.list_display + ('log_link',)
+
+    def log_link(self, obj):
+        return '<a href="{0}">Logs</a>'.format('/admin/drama/logitem/?user_id__exact={0}'.format(obj.id))
+    log_link.allow_tags = True
+    log_link.short_description = 'Logs'
+
+admin.site.register(User, CustomUserAdmin)

@@ -41,6 +41,7 @@ class AdminPanelNode(template.Node):
                 subcontext['groups'] = groups
             if user.has_perm('drama.approve_' + type, item):
                 subcontext['approve'] = True
+            subcontext['staff'] = user.is_staff
             return self.template.render(template.Context(subcontext))
         else:
             return ""

@@ -136,6 +136,12 @@ class DramaObjectModel(models.Model):
 
     def get_pending_admin_revoke_url(self):
         return self.get_url('revoke-pending-admin')
+
+    def get_admin_interface_url(self):
+        return reverse('admin:drama_{0}_change'.format(self.class_name()), args=[self.id])
+
+    def get_log_url(self):
+        return '/admin/drama/logitem/?content_type_id__exact={0}&object_id__exact={1}'.format(ContentType.objects.get_for_model(self).id,self.id)
     
     def get_link(self, override_approval=False):
         """
@@ -796,7 +802,7 @@ class LogItem(models.Model):
         ('ADMIN', 'Admin Change'),
         ('DELETE', 'Delete'),
         ]
-    cat = models.CharField(max_length=10, choices=CAT_CHOICES)
+    cat = models.CharField('Type', max_length=10, choices=CAT_CHOICES)
     datetime = models.DateTimeField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     content_type = models.ForeignKey(ContentType)
@@ -806,3 +812,6 @@ class LogItem(models.Model):
 
     def user_email(self):
         return self.user.email
+
+    def object_link(self):
+        return self.content_object.get_link_always()
