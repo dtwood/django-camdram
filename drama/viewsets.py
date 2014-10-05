@@ -10,6 +10,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, BasePermission
 from rest_framework.exceptions import MethodNotAllowed
 from drama import serializers, models, views, forms, feeds
+from drama.models import LogItem
+from django.utils import timezone
+from django.contrib import auth
 
 class CamdramPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -34,6 +37,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
         if request.user.has_perm('drama.add_' + self.model.class_name()):
             view = views.MyCreateView.as_view(model=self.model, model_name=self.model.class_name(), form_class = self.form)
             return view(request, *args, **kwargs)
+        #Logging in MyCreateView
         else:
             raise PermissionDenied
     
@@ -54,6 +58,8 @@ class ObjectViewSet(viewsets.ModelViewSet):
                 form = self.form(request.POST, request.FILES, instance=temp_item)
                 if form.is_valid():
                     form.save()
+                    log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=self.request.user, content_object=item, desc='')
+                    log_item.save()
                     return redirect(item.get_absolute_url())
                 else:
                     data = {'content_form':form,
@@ -70,8 +76,9 @@ class ObjectViewSet(viewsets.ModelViewSet):
     def remove(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.change_' + self.model.class_name(), item):
-            view = DeleteView.as_view(model=self.model, success_url="/")
+            view = views.MyDeleteView.as_view(model=self.model, success_url="/")
             return view(request, slug=slug, *args, **kwargs)
+        #Logging in MyDeleteView
         else:
             raise PermissionDenied
 
@@ -80,6 +87,8 @@ class ObjectViewSet(viewsets.ModelViewSet):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):
             item.approve()
+            log_item = LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Approved')
+            log_item.save()
             return redirect(item.get_absolute_url())
         else:
             raise PermissionDenied
@@ -89,6 +98,8 @@ class ObjectViewSet(viewsets.ModelViewSet):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):
             item.unapprove()
+            log_item = LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Unapproved')
+            log_item.save()
             return redirect(item.get_absolute_url())
         else:
             raise PermissionDenied
@@ -128,6 +139,8 @@ class ObjectViewSet(viewsets.ModelViewSet):
                 form = forms.AdminForm(request.POST)
                 if form.is_valid():
                     item.add_admin(form.cleaned_data['email'])
+                    log_item = LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Added {0}'.format(form.cleaned_data['email']))
+                    log_item.save()
                     return redirect(item.get_absolute_url())
                 else:
                     context = {
@@ -140,7 +153,13 @@ class ObjectViewSet(viewsets.ModelViewSet):
                     return render(request, 'drama/change_admins.html', context)
             elif request.method == "DELETE":
                 username = request.DATA['username']
-                item.remove_admin(username)
+                try:
+                    user = auth.get_user_model().objects.filter(username=username)[0]
+                    item.revoke_admin(user)
+                    log_item = LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Removed {0}'.format(user.email))
+                    log_item.save()
+                except IndexError:
+                    pass
                 return redirect(item.get_admins_url())
             else:
                 return redirect(item.get_absolute_url())
@@ -152,7 +171,13 @@ class ObjectViewSet(viewsets.ModelViewSet):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('change_' + item.class_name(), item):
             username = request.DATA['username']
-            item.remove_admin(username)
+            try:
+                user = auth.get_user_model().objects.filter(username=username)[0]
+                item.revoke_admin(user)
+                log_item = LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Removed {0}'.format(user.email))
+                log_item.save()
+            except IndexError:
+                pass
             return redirect(item.get_admins_url())
         else:
             raise PermissionDenied
@@ -163,6 +188,8 @@ class ObjectViewSet(viewsets.ModelViewSet):
         if request.user.has_perm('change_' + item.class_name(), item):
             email = request.DATA['email']
             item.remove_pending_admin(email)
+            log_item = LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Removed {0}'.format(email))
+            log_item.save()
             return redirect(item.get_admins_url())
         else:
             raise PermissionDenied
@@ -184,6 +211,8 @@ class OrganizationViewSet(ObjectViewSet):
                 bound_form = self.applicationform(request.POST, instance=parent)
                 if bound_form.is_valid():
                     bound_form.save()
+                    log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=parent, desc='Changed Applications')
+                    log_item.save()
                     return redirect(parent.get_absolute_url())
                 else:
                     context = {}
@@ -225,6 +254,8 @@ class PersonViewSet(ObjectViewSet):
         if person.user is not None:
             raise PermissionDenied
         else:
+            log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=person, desc='Linked Person')
+            log_item.save()
             return person.link_user(user)
 
 class SocietyViewSet(OrganizationViewSet):
@@ -257,11 +288,13 @@ class ShowViewSet(OrganizationViewSet):
             if request.user.has_perm('drama.change_show', show):
                 form = forms.CastForm(request.POST)
                 if form.is_valid():
-                    character = get_object_or_404(Role,name='Character')
+                    character = get_object_or_404(models.Role,name='Character')
                     name = form.cleaned_data['role']
                     person = form.cleaned_data['person']
                     r = models.RoleInstance(name=name, show=show,person=person,role=character)
                     r.save()
+                    log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added cast member: {0}'.format(person.name))
+                    log_item.save()
                 return redirect(show.get_absolute_url())
             else:
                 raise PermissionDenied
@@ -281,6 +314,8 @@ class ShowViewSet(OrganizationViewSet):
                     person = form.cleaned_data['person']
                     r = models.RoleInstance(name=name, show=show,person=person,role=role)
                     r.save()
+                    log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added band member: {0}'.format(person.name))
+                    log_item.save()
                 return redirect(show.get_absolute_url())
             else:
                 raise PermissionDenied
@@ -300,6 +335,8 @@ class ShowViewSet(OrganizationViewSet):
                     person = form.cleaned_data['person']
                     r = models.RoleInstance(name=name, show=show,person=person,role=role)
                     r.save()
+                    log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added production team member: {0}'.format(person.name))
+                    log_item.save()
                 return redirect(show.get_absolute_url())
             else:
                 raise PermissionDenied
@@ -316,6 +353,8 @@ class ShowViewSet(OrganizationViewSet):
                     raise PermissionDenied
                 item.sort = index
                 item.save()
+            log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Reordered Roles')
+            log_item.save()
             return HttpResponse('')
         else:
             raise PermissionDenied
@@ -327,6 +366,8 @@ class ShowViewSet(OrganizationViewSet):
         if role.show != show:
             raise Http404
         if request.user.has_perm('drama.change_show', show):
+            log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Removed company member: {0}'.format(role.person.name))
+            log_item.save()
             role.delete()
             return redirect(show.get_absolute_url())
         else:
@@ -346,6 +387,8 @@ class ShowViewSet(OrganizationViewSet):
                     bound_form = form(request.POST, request.FILES, instance=item, parent=show, parent_name='show')
                     if bound_form.is_valid():
                         bound_form.save()
+                        log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Changed {0}'.format(item.__class__.__name__))
+                        log_item.save()
                         return redirect(show.get_absolute_url())
                     else:
                         data = {'content_form': bound_form, 'parent': show}
@@ -361,6 +404,8 @@ class ShowViewSet(OrganizationViewSet):
                     bound_form = form(request.POST, request.FILES, parent=show, parent_name='show')
                     if bound_form.is_valid():
                         bound_form.save()
+                        log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added {0}'.format(model.__name__))
+                        log_item.save()
                         return redirect(show.get_absolute_url())
                     else:
                         data = {'content_form': bound_form, 'parent': show}
@@ -375,10 +420,10 @@ class ShowViewSet(OrganizationViewSet):
         if request.user.has_perm('drama.change_show', show):
             try:
                 item = model.objects.filter(show__slug=slug)[0]
+                view = views.MyDeleteView.as_view(model=model, success_url="/", log_object=show, log_message='Removed {0}'.format(item.__class__.__name__))
+                return view(request, pk=item.pk, *args, **kwargs)
             except IndexError:
                 raise Http404
-            view = views.DeleteView.as_view(model=model, success_url="/")
-            return view(request, pk=item.pk, *args, **kwargs)
         else:
             raise PermissionDenied
 
@@ -405,7 +450,7 @@ class DramaRouter(routers.DefaultRouter):
             url=r'^{prefix}{trailing_slash}$',
             mapping={
                 'get': 'list',
-                'post': 'create'
+                #'post': 'create'
             },
             name='{basename}-list',
             initkwargs={'suffix': 'List'}
@@ -425,9 +470,9 @@ class DramaRouter(routers.DefaultRouter):
             url=r'^{prefix}/{lookup}{trailing_slash}$',
             mapping={
                 'get': 'retrieve',
-                'put': 'update',
-                'patch': 'partial_update',
-                'delete': 'destroy'
+                #'put': 'update',
+                #'patch': 'partial_update',
+                #'delete': 'destroy'
             },
             name='{basename}-detail',
             initkwargs={'suffix': 'Instance'}

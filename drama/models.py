@@ -99,11 +99,6 @@ class DramaObjectModel(models.Model):
         assign_perm('drama.change_' + self.class_name(), self.group, self)
         return result
 
-    def delete(self):
-        self.group.delete()
-        super(DramaObjectModel, self).delete()
-
-    
     @classmethod
     def class_name(cls):
         return cls.__name__.lower()
@@ -786,3 +781,21 @@ class TermDate(models.Model):
             return (None, None)
 
 
+class LogItem(models.Model):
+    CAT_CHOICES = [
+        ('CREATE', 'Create'),
+        ('EDIT', 'Edit'),
+        ('APPROVE', 'Approval Change'),
+        ('ADMIN', 'Admin Change'),
+        ('DELETE', 'Delete'),
+        ]
+    cat = models.CharField(max_length=10, choices=CAT_CHOICES)
+    datetime = models.DateTimeField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    desc = models.TextField()
+
+    def user_email(self):
+        return self.user.email

@@ -57,6 +57,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'issues',
     'autofixture',
+    'django_extensions',
 )
 
 MIDDLEWARE_CLASSES = (

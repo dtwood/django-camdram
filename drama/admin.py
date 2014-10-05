@@ -108,3 +108,8 @@ class TermDateAdmin(admin.ModelAdmin):
 @admin.register(ApprovalQueueItem)
 class ApprovalQueueAdmin(admin.ModelAdmin):
     list_display = ['content_object']
+
+@admin.register(LogItem)
+class LogAdmin(admin.ModelAdmin):
+    list_display = ['content_object', 'cat', 'desc', 'user_email','datetime']
+    list_filter = ['cat',]

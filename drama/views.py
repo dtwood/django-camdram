@@ -166,13 +166,35 @@ class MyCreateView(autocomplete_light.CreateView):
             result = redirect(self.get_success_url())
         else:
             result = super(MyCreateView, self).form_valid(form)
+        log_item = LogItem(cat='CREATE', datetime=timezone.now(), user=self.request.user, content_object=self.object, desc='')
+        log_item.save()
         if self.request.user.has_perm('drama.approve_' + self.object.class_name(), self.object):
             self.object.approve()
+            log_item = LogItem(cat='APPROVE', datetime=timezone.now(), user=self.request.user, content_object=self.object, desc='Auto-approved')
+            log_item.save()
         else:
             item = ApprovalQueueItem(created_by=self.request.user, content_object=self.object)
             item.save()
         self.object.grant_admin(self.request.user)
         return result
+
+class MyDeleteView(DeleteView):
+    log_object = None
+    log_message = None
+    
+    def __init__(self, *args, log_object=None, log_message=None, **kwargs):
+        self.log_object = log_object
+        self.log_message = log_message
+        return super(MyDeleteView, self).__init__(*args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        if not self.log_object:
+            self.log_object = self.get_object()
+        if not self.log_message:
+            self.log_message = ''
+        log_item = LogItem(cat='DELETE', datetime=timezone.now(), user=request.user, content_object=self.log_object, desc=self.log_message)
+        log_item.save()
+        return super(MyDeleteView, self).delete(self, request, *args, **kwargs)
 
 
 class EmailRegistrationView(RegistrationView):
@@ -197,6 +219,8 @@ def approval_ignore(request, key=None):
     item = get_object_or_404(ApprovalQueueItem,pk=key)
     if request.user.has_perm('drama.approve_' + item.content_object.class_name(), item.content_object):
         item.delete()
+        log_item = LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item.object, desc='Ignored')
+        log_item.save()
         return redirect(reverse('approvals'))
     else:
         raise PermissionDenied
@@ -207,6 +231,8 @@ def approval_approve(request, key=None):
     item = get_object_or_404(ApprovalQueueItem,pk=key)
     if request.user.has_perm('drama.approve_' + item.content_object.class_name(), item.content_object):
         item.content_object.approve()
+        log_item = LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item.object, desc='Approved')
+        log_item.save()
         return redirect(reverse('approvals'))
     else:
         raise PermissionDenied
