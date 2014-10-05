@@ -77,6 +77,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
             raise PermissionDenied
 
     @detail_route(methods=['GET','POST'])
+    @transaction.atomic()
     def remove(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.change_' + self.model.class_name(), item):
@@ -446,6 +447,7 @@ class ShowViewSet(OrganizationViewSet):
         else:
             raise PermissionDenied
     
+    @transaction.atomic()
     def related_remove(self, request, model, slug, *args, **kwargs):
         show = get_object_or_404(models.Show, slug=slug)
         if request.user.has_perm('drama.change_show', show):
