@@ -15,7 +15,10 @@ from django.shortcuts import redirect
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail
 import reversion
+import pystache
+from django.template import defaultfilters
 
 class ApprovalQueueItem(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -49,6 +52,11 @@ class ShowApprovedQuerySet(models.query.QuerySet):
         return self.filter(show__approved=False)
 
 ShowApprovedManager = models.Manager.from_queryset(ShowApprovedQuerySet)
+
+class AdvertManager(ShowApprovedManager):
+    def get_queryset(self):
+        return super(AdvertManager, self).get_queryset().annotate(closing_night=models.Max('show__performance__end_date'), opening_night=models.Min('show__performance__start_date'))
+    
 
 class ShowManager(DramaObjectManager):
     def get_queryset(self):
@@ -341,6 +349,11 @@ class Venue(DramaObjectModel):
 
     def get_techieads(self):
         return TechieAd.objects.approved().filter(show__performance__venue=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
+
+    def get_safe_context(self, date_format):
+        return {'name':self.name,
+                'url': self.get_absolute_url(),
+                }
         
 
 class Society(DramaObjectModel):
@@ -383,6 +396,12 @@ class Society(DramaObjectModel):
 
     def get_techieads(self):
         return TechieAd.objects.approved().filter(show__societies=self).filter(deadline__gte=timezone.now()).order_by('deadline').distinct()
+
+    def get_safe_context(self, date_format):
+        return {'name': self.name,
+                'shortname': self.shortname,
+                'url': self.get_absolute_url(),
+                }
         
 @reversion.register(follow=('performance_set','roleinstance_set','showapplication_set','audition','techiead'))
 class Show(DramaObjectModel):
@@ -522,6 +541,18 @@ class Show(DramaObjectModel):
 
     def get_role_reorder_url(self):
         return self.get_url('role-reorder')
+
+    def get_safe_context(self, date_format):
+        term, week = TermDate.get_label(self.opening_night)
+        performances = []
+        for perf in self.performance_set.all():
+            performances.append(perf.get_safe_context(date_format))
+        return {'name': self.name,
+                'term': term,
+                'week': week,
+                'performances': performances,
+                'url': self.get_absolute_url(),
+                }
     
 
 class PerformanceInstance:
@@ -566,6 +597,12 @@ class Performance(models.Model):
         else:
             start_date = self.start_date
         return (end_date - start_date).days + 1
+
+    def get_safe_context(self, date_format):
+        return {'start_date': defaultfilters.date(self.start_date, date_format),
+                'end_date': defaultfilters.date(self.end_date, date_format),
+                'time': defaultfilters.date(self.time, 'g:iA'),
+                }
 
 
 class Role(DramaObjectModel):
@@ -620,7 +657,7 @@ class RoleInstance(models.Model):
 
 @reversion.register(follow=('techieadrole_set',))
 class TechieAd(models.Model):
-    objects = ShowApprovedManager()
+    objects = AdvertManager()
 
     def __str__(self):
         return 'Tech ad for ' + self.show.name
@@ -636,6 +673,22 @@ class TechieAd(models.Model):
         return self.show.get_url('remove-technical')
     def can_edit(self, user):
         return user.has_perm('drama.change_show',self.show)
+    def get_url(self):
+        return self.get_absolute_url() #TODO techiead item
+        
+    def get_safe_context(self, date_format):
+        positions = []
+        for pos in self.techieadrole_set.all():
+            positions.append(pos.get_safe_context(date_format))
+        return {'show': self.show.get_safe_context(date_format),
+                'positions': positions,
+                'deadline_date': defaultfilters.date(self.deadline, date_format),
+                'deadline_time': defaultfilters.date(self.deadline, 'g:iA'),
+                'deadline': self.deadline,
+                'description': self.desc,
+                'contact': self.contact,
+                'url': self.get_url(),
+                }
 
 
 @reversion.register()
@@ -650,11 +703,14 @@ class TechieAdRole(models.Model):
         if not self.id:
             self.slug = slugify(self.name)
         super(TechieAdRole, self).save(*args, **kwargs)
+    def get_safe_context(self, date_format):
+        return {'name': self.name,
+                }
 
 
 @reversion.register(follow=('auditioninstance_set',))
 class Audition(models.Model):
-    objects = ShowApprovedManager()
+    objects = AdvertManager()
     show = models.OneToOneField(Show)
     desc = models.TextField('Description', blank=True)
     contact = models.CharField(max_length=200, blank=True)
@@ -667,6 +723,19 @@ class Audition(models.Model):
         return self.show.get_url('remove-auditions')
     def can_edit(self, user):
         return user.has_perm('drama.change_show',self.show)
+    def get_url(self):
+        return self.show.get_absolute_url() #TODO item in auditions
+    def get_safe_context(self, date_format):
+        sessions = []
+        for ses in self.auditioninstance_set.all():
+            sessions.append(ses.get_safe_context(date_format))
+        return {'show': self.show.get_safe_context(date_format),
+                'description': self.desc,
+                'sessions': sessions,
+                'contact': self.contact,
+                'url': self.get_url()
+                }
+                
 
 
 @reversion.register()
@@ -676,6 +745,12 @@ class AuditionInstance(models.Model):
     end_datetime = models.DateTimeField()
     start_time = models.TimeField()
     location = models.CharField(max_length=200)
+    def get_safe_context(self, date_format):
+        return {'date': defaultfilters.date(self.end_datetime, date_format),
+                'start_time': defaultfilters.date(self.start_time, 'g:iA'),
+                'end_time': defaultfilters.date(self.end_datetime, 'g:iA'),
+                'location': self.location,
+                }
 
     @property
     def date(self):
@@ -694,13 +769,37 @@ class Application(models.Model):
     slug = models.SlugField(
         max_length=200, blank=True, editable=False, unique=True)
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.parent().name + '-' + self.name)
+            if self.__class__.objects.filter(slug=base_slug).count() > 0:
+                for i in itertools.count(2):
+                    slug = slugify(base_slug + '-' + str(i))
+                    if Show.objects.filter(slug=slug).count() == 0:
+                        break
+            else:
+                slug = base_slug
+            self.slug = slug
+        return super(Application, self).save(*args, **kwargs)
+
     def get_absolute_url(self):
         return self.parent().get_absolute_url()
+    def get_url(self):
+        return self.get_absolute_url() #TODO item in applications
+    def get_safe_context(self, date_format):
+        return {'name': self.name,
+                'parent': self.parent().get_safe_context(date_format),
+                'description': self.desc,
+                'deadline_date': defaultfilters.date(self.deadline, date_format),
+                'deadline_time': defaultfilters.date(self.deadline, 'g:iA'),
+                'deadline': self.deadline,
+                'url': self.get_url(),
+                } 
 
 
 @reversion.register()
 class ShowApplication(Application):
-    objects = ShowApprovedManager()
+    objects = AdvertManager()
     show = models.ForeignKey(Show)
 
     def parent(self):
@@ -822,3 +921,54 @@ class LogItem(models.Model):
 
     def object_link(self):
         return self.content_object.get_link_always()
+
+class EmailList(DramaObjectModel):
+    html_template = models.TextField()
+    plaintext_template = models.TextField()
+    default_address = models.EmailField()
+    default_header = models.TextField()
+    default_subject = models.CharField(max_length=256)
+    from_addr = models.EmailField()
+    date_format = models.CharField(max_length=50, default='D jS F Y')
+
+    def get_context(self, header):
+        audition_objects = Audition.objects.approved().annotate(end_auditions=models.Max('auditioninstance__end_datetime')).filter(end_auditions__gte=timezone.now()).order_by('opening_night')
+        auditions = []
+        for aud in audition_objects:
+            auditions.append(aud.get_safe_context(self.date_format))
+        techiead_objects = TechieAd.objects.approved().filter(deadline__gte=timezone.now()).order_by('opening_night')
+        techieads = []
+        for tec in techiead_objects:
+            techieads.append(tec.get_safe_context(self.date_format))
+        applications = []
+        venapp_objects = VenueApplication.objects.filter(venue__approved=True, deadline__gte=timezone.now()).order_by('deadline')
+        for app in venapp_objects:
+            applications.append(app.get_safe_context(self.date_format))
+        socapp_objects = SocietyApplication.objects.filter(society__approved=True, deadline__gte=timezone.now()).order_by('deadline')
+        for app in socapp_objects:
+            applications.append(app.get_safe_context(self.date_format))
+        showapp_objects = ShowApplication.objects.filter(deadline__gte=timezone.now()).order_by('opening_night', 'deadline')
+        for app in showapp_objects:
+            applications.append(app.get_safe_context(self.date_format))
+        return {'auditions': auditions,
+                'techieads': techieads,
+                'applications': applications,
+                'by_role': None, #TODO
+                'header': header,
+                }
+
+    def render_html(self):
+        return pystache.render(self.html_template, self.get_context())
+
+    def render_plaintext(self):
+        return pystache.render(self.plaintext_template, self.get_context())
+
+    def send_message(self, address=None, subject=None, header=None):
+        if not address:
+            address = self.default_address
+        if not header:
+            header = self.default_header
+        if not subject:
+            subject = self.default_subject
+        return send_mail(subject=subject, message=self.render_plaintext(header), from_email=self.from_addr,
+                         recipient_list=[address], html_message=self.render_html(header))
