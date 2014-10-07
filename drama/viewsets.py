@@ -480,6 +480,88 @@ class ShowViewSet(OrganizationViewSet):
     def remove_auditions(self, request, slug):
         return self.related_remove(request, models.Audition, slug) 
 
+
+class EmailListViewSet(ObjectViewSet):
+    queryset = models.EmailList.objects.all()
+    serializer_class = serializers.EmailListSerializer
+    model = models.EmailList
+    form = forms.EmailListForm
+
+
+    def list(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            self.queryset = get_objects_for_user(request.user, 'drama.change_emaillist')
+        return super(EmailListViewSet, self).list(request, *args, **kwargs)
+
+    @detail_route(methods=['GET','POST'])
+    def preview_text(self, request, slug):
+        emaillist = get_object_or_404(models.EmailList, slug=slug)
+        if request.user.has_perm('drama.change_emaillist', emaillist):
+            if request.method == 'GET':
+                return HttpResponse(emaillist.render_plaintext(emaillist.default_header), content_type='text/plain')
+            elif request.method == 'POST':
+                form = forms.EmailForm(request.POST)
+                header = form.data['header']
+                return HttpResponse(emaillist.render_plaintext(header), content_type='text/plain')
+            else:
+                raise MethodNotAllowed
+        else:
+            raise PermissionDenied
+        
+    @detail_route(methods=['GET','POST'])
+    def preview_html(self, request, slug):
+        emaillist = get_object_or_404(models.EmailList, slug=slug)
+        if request.user.has_perm('drama.change_emaillist', emaillist):
+            if request.method == 'GET':
+                return HttpResponse(emaillist.render_html(emaillist.default_header))
+            elif request.method == 'POST':
+                form = forms.EmailForm(request.POST)
+                header = form.data['header']
+                return HttpResponse(emaillist.render_html(header))
+            else:
+                raise MethodNotAllowed
+        else:
+            raise PermissionDenied
+        
+    @detail_route(methods=['GET','POST'])
+    def send_message(self, request, slug):
+        emaillist = get_object_or_404(models.EmailList, slug=slug)
+        if request.user.has_perm('drama.change_emaillist', emaillist):
+            if request.method == 'GET':
+                form = forms.EmailForm(initial = {'header':emaillist.default_header,
+                                                  'subject':emaillist.default_subject,
+                                                  'address':emaillist.default_address,
+                                                  })
+                return render(request, 'drama/emaillist_sendmessage.html',
+                              {'object': emaillist, 'message_form': form})
+            elif request.method == 'POST':
+                form = forms.EmailForm(request.POST)
+                if form.is_valid():
+                    header = form.cleaned_data['header']
+                    subject = form.cleaned_data['subject']
+                    address = form.cleaned_data['address']
+                    emaillist.send_message(address, subject, header)
+                    return redirect(emaillist.get_absolute_url())
+                else:
+                    return render(request, 'drama/emaillist_sendmessage.html',
+                              {'object': emaillist, 'message_form': form})
+            else:
+                raise MethodNotAllowed
+        else:
+            raise PermissionDenied
+
+    @detail_route(methods=['POST'])
+    def form_handler(self, request, slug):
+        if 'preview-text' in request.POST:
+            return self.preview_text(request, slug)
+        elif 'preview-html' in request.POST:
+            return self.preview_html(request, slug)
+        elif 'send-message' in request.POST:
+            return self.send_message(request, slug)
+        else:
+            raise Http404
+        
+
 class DramaRouter(routers.DefaultRouter):
     routes = [
         # List route.

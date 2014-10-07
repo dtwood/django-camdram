@@ -303,3 +303,21 @@ class AdminForm(forms.Form):
 class DiaryJumpForm(forms.Form):
     term = forms.ChoiceField(choices=TermDate.TERM_CHOICES)
     year = forms.ChoiceField(choices=TermDate.YEAR_CHOICES)
+
+class EmailForm(forms.Form):
+    '''
+    For previewing/sending EmailList messages.
+    '''
+    address = forms.EmailField()
+    subject = forms.CharField(max_length=256)
+    header = forms.CharField(widget=forms.Textarea())
+
+
+class EmailListForm(forms.ModelForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+
+    class Meta:
+        model = EmailList
+        fields = ['name', 'desc', 'default_address', 'from_addr', 'default_subject', 'default_header', 'html_template','plaintext_template', 'date_format']
+

@@ -928,8 +928,13 @@ class EmailList(DramaObjectModel):
     default_address = models.EmailField()
     default_header = models.TextField()
     default_subject = models.CharField(max_length=256)
-    from_addr = models.EmailField()
+    from_addr = models.EmailField('From Address')
     date_format = models.CharField(max_length=50, default='D jS F Y')
+
+    class Meta:
+        permissions = (('view_emaillists', 'View Email Lists'),
+                       ('approve_emaillist', 'Approve Email Lists'),
+                       )
 
     def get_context(self, header):
         audition_objects = Audition.objects.approved().annotate(end_auditions=models.Max('auditioninstance__end_datetime')).filter(end_auditions__gte=timezone.now()).order_by('opening_night')
@@ -957,11 +962,11 @@ class EmailList(DramaObjectModel):
                 'header': header,
                 }
 
-    def render_html(self):
-        return pystache.render(self.html_template, self.get_context())
+    def render_html(self, header):
+        return pystache.render(self.html_template, self.get_context(header))
 
-    def render_plaintext(self):
-        return pystache.render(self.plaintext_template, self.get_context())
+    def render_plaintext(self, header):
+        return pystache.render(self.plaintext_template, self.get_context(header))
 
     def send_message(self, address=None, subject=None, header=None):
         if not address:
@@ -972,3 +977,18 @@ class EmailList(DramaObjectModel):
             subject = self.default_subject
         return send_mail(subject=subject, message=self.render_plaintext(header), from_email=self.from_addr,
                          recipient_list=[address], html_message=self.render_html(header))
+
+    def get_form_handler_url(self):
+        return self.get_url('form-handler') 
+
+    def get_preview_html_url(self):
+        return self.get_url('preview-html') 
+
+    def get_preview_text_url(self):
+        return self.get_url('preview-text') 
+
+    def get_send_message_url(self):
+        return self.get_url('send-message') 
+
+    def get_absolute_url(self):
+        return self.get_send_message_url()

@@ -1,0 +1,28 @@
+{% extends "drama/base.html" %}
+{% block title %}Mailing Lists{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="large-12 columns">
+    <h3>Mailing Lists</h3>
+    <table>
+      <thead>
+	<tr>
+	  <th>Mailing List</th>
+	  <th colspan="3">Action</th>
+	</tr>
+      </thead>
+      <tbody>
+	{% for item in object_list %}
+	<tr>
+	  <th>{{item.name}}</th>
+	  <th><a href="{{item.get_send_message_url}}"><i class="fa fa-envelope"></i> Send Message</a></th>
+	  <th><a href="{{item.get_preview_html_url}}"><i class="fa fa-file-code-o"></i> Preview HTML</a></th>
+	  <th><a href="{{item.get_preview_text_url}}"><i class="fa fa-file-text-o"></i> Preview Plainext</a></th>
+	</tr>
+	{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

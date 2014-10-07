@@ -65,3 +65,9 @@ class ShowSerializer(serializers.HyperlinkedModelSerializer):
         model = models.Show
         lookup_field = 'slug'
         fields = ('id', 'url', 'name', 'author', 'societies', 'desc', 'performances', 'cast', 'band', 'prod', 'image')
+
+class EmailListSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = models.EmailList
+        lookup_field = 'slug'
+        fields = ('name',)

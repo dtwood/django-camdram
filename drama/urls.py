@@ -15,6 +15,7 @@ router.register(r'people', viewsets.PersonViewSet)
 router.register(r'societies', viewsets.SocietyViewSet)
 router.register(r'venues', viewsets.VenueViewSet)
 router.register(r'shows', viewsets.ShowViewSet)
+router.register(r'mailinglists', viewsets.EmailListViewSet)
 
 
 # pass in with a slug, model_name, model, form, template and get_context and get apropriate views

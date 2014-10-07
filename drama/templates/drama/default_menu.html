@@ -7,8 +7,11 @@
 {% if admin %}
 <li><a href="{% url 'admin:index'%}"><i class="fa fa-key fa-fw"></i> Admin Interface</a></li>
 {% endif %}
-<li><a href="{% url 'show-admin'%}"><i class="fa fa-ticket fa-fw"></i> Show Admin</a></li>
+{% if view_emaillists %}
+<li><a href="{% url 'emaillist-list' %}"><i class="fa fa-envelope"></i> Mailing Lists</a></li>
+{% endif %}
 {% if add_show %}
+<li><a href="{% url 'show-admin'%}"><i class="fa fa-ticket fa-fw"></i> Show Admin</a></li>
 <li><a href="{% url 'show-new' %}"><i class="fa fa-plus-circle fa-fw"></i> Add a show</a></li>
 {% endif %}
 {% if add_venue %}

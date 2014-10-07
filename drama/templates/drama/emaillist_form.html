@@ -1,0 +1,34 @@
+{% extends "drama/base.html" %}
+{% load drama_admin %}
+
+{% block title %}Mailing List: {% if object %}{{object.name}} - Edit{% else %}Create{% endif %}{% endblock %}
+
+{% block content %}
+<div class="row">
+  {% if object %}
+  {% admin_panel object %}
+  <h3>Edit Mailing List</h3>
+  {% else %}
+  <h3>Create a new mailing list</h3>
+  <div class="panel">
+    <p>Please fill in the details below to add a new mailing list to Camdram. Required fields are marked with an asterisk (*), and all fields can be modified later if necessary.</p>
+  </div>
+  {% endif %}
+  <form action="" enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {% include "drama/form_field.html" with field=content_form.name %}
+    {% include "drama/form_field.html" with field=content_form.desc %}
+    {% include "drama/form_field.html" with field=content_form.default_address %}
+    {% include "drama/form_field.html" with field=content_form.from_addr %}
+    {% include "drama/form_field.html" with field=content_form.default_subject %}
+    {% include "drama/form_field.html" with field=content_form.default_header %}
+    {% include "drama/form_field.html" with field=content_form.html_template %}
+    {% include "drama/form_field.html" with field=content_form.plaintext_template %}
+    {% include "drama/form_field.html" with field=content_form.date_format %}
+    <div class="right">
+      <button type="submit">Save</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+    

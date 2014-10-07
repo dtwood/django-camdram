@@ -1,0 +1,16 @@
+{% extends "drama/base.html" %}
+{% load drama_admin %}
+{% block title %}Mailing List: {{object.name}}{% endblock %}
+
+{% block content %}
+<div class="row">
+  {% admin_panel object %}
+  <div class="large-12 columns panel">
+    <div id="entity-header">
+      <h2>{{object.name}}</h2>
+    </div>
+    <p>{{object.desc}}</p>
+  </div>
+</div>
+
+{% endblock %}

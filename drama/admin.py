@@ -130,3 +130,4 @@ class CustomUserAdmin(UserAdmin):
     log_link.short_description = 'Logs'
 
 admin.site.register(User, CustomUserAdmin)
+admin.site.register(EmailList)

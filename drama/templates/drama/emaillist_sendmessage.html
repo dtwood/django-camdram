@@ -1,0 +1,25 @@
+{% extends "drama/base.html" %}
+{% load drama_admin %}
+
+{% block title %}Mailing List: Send Message{% endblock %}
+
+{% block content %}
+<div class="row">
+  {% admin_panel object %}
+  <h3>Send Message</h3>
+  <form action="{{object.get_form_handler_url}}" enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {% include "drama/form_field.html" with field=message_form.address %}
+    {% include "drama/form_field.html" with field=message_form.subject %}
+    {% include "drama/form_field.html" with field=message_form.header %}
+    <div class="right">
+     <ul class="inline">
+       <li><input class="button" type="submit" value="Send Message" name="send-message" /></li>
+       <li><input class="button" type="submit" value="Preview HTML" name="preview-html" /></li>
+       <li><input class="button" type="submit" value="Preview Plaintext" name="preview-text" /></li>
+     </ul>
+    </div>
+  </form>
+</div>
+{% endblock %}
+    
