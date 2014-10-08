@@ -513,13 +513,13 @@ class Show(DramaObjectModel):
             return [(None, prod[0])] + list(zip(prod[0:],prod[1:]))
 
     def get_cast_form(self):
-        return drama.forms.CastForm()
+        return drama.forms.CastForm(prefix='cast')
         
     def get_band_form(self):
-        return drama.forms.BandForm()
+        return drama.forms.BandForm(prefix='band')
 
     def get_prod_form(self):
-        return drama.forms.ProdForm()
+        return drama.forms.ProdForm(prefix='prod')
     
     def get_performances(self):
         return Performance.objects.filter(show=self)

@@ -306,7 +306,7 @@ class ShowViewSet(OrganizationViewSet):
         show = get_object_or_404(self.model, slug=slug)
         if request.method == "POST":
             if request.user.has_perm('drama.change_show', show):
-                form = forms.CastForm(request.POST)
+                form = forms.CastForm(request.POST, prefix='cast')
                 if form.is_valid():
                     character = get_object_or_404(models.Role,name='Character')
                     name = form.cleaned_data['role']
@@ -329,7 +329,7 @@ class ShowViewSet(OrganizationViewSet):
         show = get_object_or_404(self.model, slug=slug)
         if request.method == "POST":
             if request.user.has_perm('drama.change_show', show):
-                form = forms.BandForm(request.POST)
+                form = forms.BandForm(request.POST, prefix='band')
                 if form.is_valid():
                     role = form.cleaned_data['role']
                     name = form.cleaned_data['name']
@@ -352,7 +352,7 @@ class ShowViewSet(OrganizationViewSet):
         show = get_object_or_404(self.model, slug=slug)
         if request.method == "POST":
             if request.user.has_perm('drama.change_show', show):
-                form = forms.ProdForm(request.POST)
+                form = forms.ProdForm(request.POST, prefix='prod')
                 if form.is_valid():
                     role = form.cleaned_data['role']
                     name = form.cleaned_data['name']
