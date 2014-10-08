@@ -42,6 +42,7 @@ class AdminPanelNode(template.Node):
             if user.has_perm('drama.approve_' + type, item):
                 subcontext['approve'] = True
             subcontext['staff'] = user.is_staff
+            subcontext['csrf_token'] = context['csrf_token']
             return self.template.render(template.Context(subcontext))
         else:
             return ""
@@ -75,6 +76,7 @@ class DefaultMenuNode(template.Node):
             'view_emaillists':user.has_perm('drama.view_emaillists'),
             'approval_queue':approvable,
             'admin':user.is_staff,
+            'csrf_token': context['csrf_token'],
             }
         return self.template.render(template.Context(subcontext))
         

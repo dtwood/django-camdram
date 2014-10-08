@@ -3,7 +3,7 @@
 {% block title %}Person: {{object.name}}{% endblock %}
 
 {% block extra_menu %}
-<li><a href="{% url 'person-link' slug=object.slug %}"><i class="fa fa-chain fa-fw"></i> This is me</a></li>
+<li><a href="#" onclick="$(this).children('form').first().submit(); return false;" display="block"><form action="{% url 'person-link' slug=object.slug %}" method="post">{% csrf_token %}</form><i class="fa fa-chain fa-fw"></i> This is me</a></li>
 {% endblock %}
 
 {% block content %}

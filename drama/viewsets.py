@@ -87,7 +87,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
         else:
             raise PermissionDenied
 
-    @detail_route(methods=['GET','POST'])
+    @detail_route(methods=['POST'])
     @transaction.atomic()
     def approve(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
@@ -99,9 +99,10 @@ class ObjectViewSet(viewsets.ModelViewSet):
         else:
             raise PermissionDenied
 
-    @detail_route(methods=['GET'])
+    @detail_route(methods=['POST'])
     @transaction.atomic()
     def unapprove(self, request, slug, *args, **kwargs):
+        print('hello')
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):
             item.unapprove()
@@ -264,7 +265,7 @@ class PersonViewSet(ObjectViewSet):
     model = models.Person
     form = forms.PersonForm
 
-    @detail_route(methods=['GET'])
+    @detail_route(methods=['POST'])
     @transaction.atomic()
     def link(self, request, slug, *args, **kwargs):
         person = get_object_or_404(self.model, slug=slug)

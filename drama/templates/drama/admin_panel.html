@@ -17,9 +17,9 @@
     {% endif %}
     {% if approve %}
     {% if approved %}
-    <li><a href="{{item.get_unapprove_url}}"><i class="fa fa-times-circle"> </i> Unapprove this {{type}}</a></li>
+    <li><form action="{{item.get_unapprove_url}}" method="post">{% csrf_token %}<a href="#" onclick="$(this).parent().submit(); return false;"><i class="fa fa-times-circle"> </i> Unapprove this {{type}}</a></form></li>
     {% else %}
-    <li><a href="{{item.get_approve_url}}"><i class="fa fa-check-circle"> </i> Approve this {{type}}</a></li>
+    <li><form action="{{item.get_approve_url}}" method="post">{% csrf_token %}<a href="#" onclick="$(this).parent().submit(); return false;"><i class="fa fa-check-circle"> </i> Approve this {{type}}</a></form></li>
     {% endif %}
     {% endif %}
     {% if staff %}
