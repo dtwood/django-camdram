@@ -541,7 +541,7 @@ class EmailListViewSet(ObjectViewSet):
                     subject = form.cleaned_data['subject']
                     address = form.cleaned_data['address']
                     emaillist.send_message(address, subject, header)
-                    return redirect(emaillist.get_absolute_url())
+                    return redirect(emaillist.get_list_url())
                 else:
                     return render(request, 'drama/emaillist_sendmessage.html',
                               {'object': emaillist, 'message_form': form})

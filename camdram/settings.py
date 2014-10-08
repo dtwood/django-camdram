@@ -20,8 +20,9 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
     )
 
-EMAIL_FROM_DOMAIN = 'camdram.net'
+EMAIL_FROM_DOMAIN = 'camdram.com'
 NEW_ISSUE_ADDRESSES = ['websuport']
+DOMAIN_FOR_URI = 'http://www.camdram.com'
 
 
 # Quick-start development settings - unsuitable for production

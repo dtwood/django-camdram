@@ -15,7 +15,7 @@
       <tbody>
 	{% for item in object_list %}
 	<tr>
-	  <th>{{item.name}}</th>
+	  <th><b>{{item.get_link_always}}</b></th>
 	  <th><a href="{{item.get_send_message_url}}"><i class="fa fa-envelope"></i> Send Message</a></th>
 	  <th><a href="{{item.get_preview_html_url}}"><i class="fa fa-file-code-o"></i> Preview HTML</a></th>
 	  <th><a href="{{item.get_preview_text_url}}"><i class="fa fa-file-text-o"></i> Preview Plainext</a></th>

@@ -352,7 +352,7 @@ class Venue(DramaObjectModel):
 
     def get_safe_context(self, date_format):
         return {'name':self.name,
-                'url': self.get_absolute_url(),
+                'url': settings.DOMAIN_FOR_URI + self.get_absolute_url(),
                 }
         
 
@@ -400,7 +400,7 @@ class Society(DramaObjectModel):
     def get_safe_context(self, date_format):
         return {'name': self.name,
                 'shortname': self.shortname,
-                'url': self.get_absolute_url(),
+                'url': settings.DOMAIN_FOR_URI + self.get_absolute_url(),
                 }
         
 @reversion.register(follow=('performance_set','roleinstance_set','showapplication_set','audition','techiead'))
@@ -551,7 +551,7 @@ class Show(DramaObjectModel):
                 'term': term,
                 'week': week,
                 'performances': performances,
-                'url': self.get_absolute_url(),
+                'url': settings.DOMAIN_FOR_URI + self.get_absolute_url(),
                 }
     
 
@@ -687,7 +687,7 @@ class TechieAd(models.Model):
                 'deadline': self.deadline,
                 'description': self.desc,
                 'contact': self.contact,
-                'url': self.get_url(),
+                'url': settings.DOMAIN_FOR_URI + self.get_url(),
                 }
 
 
@@ -733,7 +733,7 @@ class Audition(models.Model):
                 'description': self.desc,
                 'sessions': sessions,
                 'contact': self.contact,
-                'url': self.get_url()
+                'url': settings.DOMAIN_FOR_URI + self.get_url()
                 }
                 
 
@@ -793,7 +793,7 @@ class Application(models.Model):
                 'deadline_date': defaultfilters.date(self.deadline, date_format),
                 'deadline_time': defaultfilters.date(self.deadline, 'g:iA'),
                 'deadline': self.deadline,
-                'url': self.get_url(),
+                'url': settings.DOMAIN_FOR_URI + self.get_url(),
                 } 
 
 
