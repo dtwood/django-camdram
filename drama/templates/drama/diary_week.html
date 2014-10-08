@@ -1,4 +1,4 @@
-<div class="diary-week" data-start="{{start_date}}" data-end="{{end_date}}">
+<div class="diary-week {% if hide %}hide{% endif %}" data-start="{{start_date}}" data-end="{{end_date}}">
   {% if label %}
   <h5 class="diary-week-label">{{label}}</h5>
   {% endif %}

@@ -902,6 +902,15 @@ class TermDate(models.Model):
         else:
             return (None, None)
 
+    @classmethod
+    def get_weeklabel(cls, date):
+        term = cls.get_term(date)
+        if term:
+            week = math.floor((date - term.start)/timedelta(days=7))
+            return '{} Week {}'.format(term.get_term_display(), str(week))
+        else:
+            return (None, None)
+
 
 class LogItem(models.Model):
     CAT_CHOICES = [

@@ -67,7 +67,7 @@ def diary_row(events, start_date, row_template):
         last_date = min(end_date, event.end_date)
     return row_template.render(template.Context({'events': diary_events}))
 
-def diary_week(events, week, week_template=None, row_template=None, label=None):
+def diary_week(events, week, week_template=None, row_template=None, label=None, hide=None):
     """
     Events is a queryset of events, week is a datetime.date within the week,
     week_template and row_template are self explanitory.
@@ -85,7 +85,13 @@ def diary_week(events, week, week_template=None, row_template=None, label=None):
     rows = []
     for row in packed:
         rows.append(diary_row(row, start_date, row_template))
-    return week_template.render(template.Context({'dates':dates, 'rows':rows, 'start_date': start_date.strftime("%Y-%m-%d"), 'end_date': end_date.strftime("%Y-%m-%d"),'label':label}))
+    return week_template.render(template.Context({'dates':dates,
+                                                  'rows':rows,
+                                                  'start_date': start_date.strftime("%Y-%m-%d"),
+                                                  'end_date': end_date.strftime("%Y-%m-%d"),
+                                                  'label':label,
+                                                  'hide':hide,
+                                                  }))
 
 def diary(start_date, end_date, events, with_labels=False):
     diary_week_template = get_template('drama/diary_week.html')

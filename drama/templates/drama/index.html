@@ -1,7 +1,24 @@
 {% extends "drama/base.html" %}
 {% load drama_admin %}
+{% load compressed %}
 
 {% block title %}Home{% endblock %}
+
+{% block extra_headers %}
+<script>
+$(function () {
+$('.ui-dragable').draggable({'axis':'x'});
+$('.week-link').click(function () {
+    $('#home-diary-nav ul').children('.current').removeClass('current')
+    $(this).addClass('current')
+    var id = $(this).attr('id');
+    var current = $('#home-diary').children().not('.hide');
+    current.addClass('hide')
+    $('#home-diary').children('[data-start='+id+']').removeClass('hide')
+});
+});
+</script>
+{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -14,13 +31,15 @@
   <div id="home-diary-container" style="height: auto;">
     <div id="home-diary-nav">
       <ul class="ui-dragable">
-	{% for date in dates %}
-	<li class="week-link" id="{{date.start_date|date:'Y-m-d'}}"><a>{{date.label}}<em>{{date.start_date}} - {{date.end_date}}</em></a></li>
+	{% for week in weeks %}
+	<li class="week-link{% if week.current %} current{% endif %}" id="{{week.start_date|date:'Y-m-d'}}"><a>{{week.name}} <em>{{week.label}}</em></a></li>
 	{% endfor %}
       </ul>
     </div>
     <div id="home-diary">
-      {{diary|safe}}
+      {% for week in weeks %}
+      {{week.diary | safe}}
+      {% endfor %}
     </div>
   </div>
 </div>

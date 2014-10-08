@@ -20,8 +20,9 @@ from collections import namedtuple
 from django.views.decorators.http import require_http_methods, require_POST
 import reversion
 from django.db import transaction
+from django.template import defaultfilters
 
-WeekContainer = namedtuple('WeekContainer', 'label start_date end_date')
+WeekContainer = namedtuple('WeekContainer', 'name label diary start_date current')
 
 def index(request):
     today = timezone.now().date()
@@ -31,6 +32,22 @@ def index(request):
     performances = 0
     for p in performance_objects:
         performances += p.performance_count(start_date, end_date)
+    dates = [start_date + datetime.timedelta(weeks=x) for x in range(-4,11)]
+    weeks = []
+    for date in dates:
+        current = False
+        if date == start_date:
+            current = True
+            label = 'This week'
+        elif date == start_date + datetime.timedelta(weeks=1):
+            label = 'Next week'
+        else:
+            label = '{} - {}'.format(defaultfilters.date(date,'j b').title(), defaultfilters.date(date + datetime.timedelta(days=6),'j b').title())
+        weeks.append(WeekContainer(name=TermDate.get_weeklabel(date),
+                                   current = current,
+                                   label=label,
+                                   diary=util.diary_week(Performance.objects.approved(), date, hide=(not current)),
+                                   start_date = date))
     context = {
         'shows': Show.objects.filter(performance__end_date__gte=start_date, performance__start_date__lte=end_date).filter(approved=True).distinct().count(),
         'venues': Venue.objects.filter(performance__end_date__gte=start_date, performance__start_date__lte=end_date).filter(performance__show__approved=True).distinct().count(),
@@ -42,6 +59,7 @@ def index(request):
         'venueapps': VenueApplication.objects.filter(deadline__gte=timezone.now()).filter(venue__approved=True).order_by('deadline'),
         'showapps': ShowApplication.objects.filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline'),
         'diary': util.diary_week(Performance.objects.filter(show__approved=True), today),
+        'weeks': weeks,
     }
     return render(request, 'drama/index.html', context)
 
