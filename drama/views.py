@@ -145,8 +145,14 @@ def contact_us(request):
     return HttpResponse("Hello World")
 
 
-def my_redirect(request, model_name, slug, *args, **kwargs):
-    return redirect(reverse(model_name) + '#' + slug)
+def techiead_item(request, slug, *args, **kwargs):
+    return redirect(reverse('technical') + '#' + slug)
+
+def audition_item(request, slug, *args, **kwargs):
+    return redirect(reverse('auditions') + '#' + slug)
+
+def application_item(request, slug, *args, **kwargs):
+    return redirect(reverse('applications') + '#' + slug)
 
 
 class MyCreateView(autocomplete_light.CreateView):

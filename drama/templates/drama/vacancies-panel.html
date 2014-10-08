@@ -2,16 +2,16 @@
   <h5>{{title}}</h5>
   <ul>
     {% for app in ourapps %}
-    <li>{{app.name}} open until {{app.deadline|date:"G:i"}} on {{app.deadline|date:"l jS F"}} - <a href="{% url 'item' model_name='applications' slug=app.slug %}">more details</a></li>
+    <li>{{app.name}} open until {{app.deadline|date:"G:i"}} on {{app.deadline|date:"l jS F"}} - <a href="{% url 'application-item' slug=app.slug %}">more details</a></li>
     {% endfor %}
     {% for app in object.get_showapps %}
-    <li>{{app.show.get_link}} is looking for: {{app.name}} - <a href="{% url 'item' model_name='applications' slug=app.slug %}">more details</a></li>
+    <li>{{app.show.get_link}} is looking for: {{app.name}} - <a href="{% url 'application-item' slug=app.slug %}">more details</a></li>
     {% endfor %}
     {% for audition in object.get_auditions %}
-    <li>{{audition.audition.show.get_link}} is holding auditions: from {{audition.start_time|date:"G:i"}} to {{audition.end_datetime|date:"G:i"}} on {{audition.end_datetime|date:"l jS F"}} at {{audition.location}} - <a href="{% url 'item' model_name='auditions' slug=audition.audition.show.slug %}">more details</a></li>
+    <li>{{audition.audition.show.get_link}} is holding auditions: from {{audition.start_time|date:"G:i"}} to {{audition.end_datetime|date:"G:i"}} on {{audition.end_datetime|date:"l jS F"}} at {{audition.location}} - <a href="{% url 'audition-item' slug=audition.audition.show.slug %}">more details</a></li>
     {% endfor %}
     {% for techiead in object.get_techieads %}
-    <li>{{techiead.show.get_link}} is looking for: {% for role in techiead.techieadrole_set.all %}{{role.name}}{% include "drama/comma.html" %} {% endfor %}- <a href="{% url 'item' model_name='technical' slug=techiead.show.slug %}">more details</a></li>
+    <li>{{techiead.show.get_link}} is looking for: {% for role in techiead.techieadrole_set.all %}{{role.name}}{% include "drama/comma.html" %} {% endfor %}- <a href="{% url 'techiead-item' slug=techiead.show.slug %}">more details</a></li>
     {% endfor %}
   </ul>
 </div>

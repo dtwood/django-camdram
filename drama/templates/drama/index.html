@@ -37,19 +37,19 @@
       <h5>Get Involved</h5>
       <ul>
 	{% for audition in auditions %}
-	<li>{{audition.audition.show.get_link}} is holding auditions in {{audition.location}} from {{audition.start_time}} to {{audition.end_datetime.time}} on {{audition.end_datetime|date:'D dS F'}} - <a href="{% url 'item' model_name='auditions' slug=audition.audition.show.slug %}">more details</a></li>
+	<li>{{audition.audition.show.get_link}} is holding auditions in {{audition.location}} from {{audition.start_time}} to {{audition.end_datetime.time}} on {{audition.end_datetime|date:'D dS F'}} - <a href="{% url 'audition-item' slug=audition.audition.show.slug %}">more details</a></li>
 	{% endfor %}
 	{% for techiead in techieads %}
-	<li>{{techiead.show.get_link}} is looking for: {% for role in techiead.techieadrole_set.all %}{% if not forloop.first %}, {% endif %}{{role.name}}{% endfor %} - <a href="{% url 'item' model_name='technical' slug=techiead.show.slug %}">more details</a></li>
+	<li>{{techiead.show.get_link}} is looking for: {% for role in techiead.techieadrole_set.all %}{% if not forloop.first %}, {% endif %}{{role.name}}{% endfor %} - <a href="{% url 'techiead-item' slug=techiead.show.slug %}">more details</a></li>
 	{% endfor %}
 	{% for societyapp in societyapps %}
-	<li>{{societyapp.society.get_link}} has announced: {{societyapp.name}} - <a href="{% url 'item' model_name='applications' slug=societyapp.society.slug %}">more details</a></li>
+	<li>{{societyapp.society.get_link}} has announced: {{societyapp.name}} - <a href="{% url 'application-item' slug=societyapp.society.slug %}">more details</a></li>
 	{% endfor %}
 	{% for venueapp in venueapps %}
-	<li>{{venueapp.venue.get_link}} has announced: {{venueapp.name}} - <a href="{% url 'item' model_name='applications' slug=venueapp.venue.slug %}">more details</a></li>
+	<li>{{venueapp.venue.get_link}} has announced: {{venueapp.name}} - <a href="{% url 'application-item' slug=venueapp.venue.slug %}">more details</a></li>
 	{% endfor %}
 	{% for showapp in showapps %}
-	<li>{{showapp.show.get_link}} has announced: {{showapp.name}} - <a href="{% url 'item' model_name='applications' slug=showapp.show.slug %}">more details</a></li>
+	<li>{{showapp.show.get_link}} has announced: {{showapp.name}} - <a href="{% url 'application-item' slug=showapp.show.slug %}">more details</a></li>
 	{% endfor %}
       </ul>
     </div>

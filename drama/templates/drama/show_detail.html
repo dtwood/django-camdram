@@ -44,10 +44,10 @@
   <div class="vacancies-panel">
     <h5> Get involved with <em>{{object.name}}</em>:</h5>
     {% for application in object.get_apps %}
-    <p>{{application.name}} - <a href="{% url 'item' model_name='applications' slug=application.slug %}">more details</a></p>
+    <p>{{application.name}} - <a href="{% url 'application-item' slug=application.slug %}">more details</a></p>
     {% endfor %}
     {% if object.get_auditions %}
-    <p>Auditions are being held at the times below - <a href="{% url 'item' model_name='auditions' slug=object.slug %}">more details</a></p>
+    <p>Auditions are being held at the times below - <a href="{% url 'audition-item' slug=object.slug %}">more details</a></p>
     <ul>
     {% for instance in object.get_auditions %}
     <li>{{instance.end_datetime|date:"D dS F"}}, {{instance.start_time|date:"g:iA"|lower}} - {{instance.end_datetime|date:"g:iA"|lower}}, {{instance.location}}</li>
@@ -55,7 +55,7 @@
     </ul>
     {% endif %}
     {% if object.get_techiead %}
-    <p>We are looking for: {% for role in object.get_techiead.techieadrole_set.all%}{{role.name}}{% include "drama/comma.html" %} {% endfor %}- <a href="{% url 'item' model_name='technical' slug=object.slug %}">more details</a></p>
+    <p>We are looking for: {% for role in object.get_techiead.techieadrole_set.all%}{{role.name}}{% include "drama/comma.html" %} {% endfor %}- <a href="{% url 'techiead-item' slug=object.slug %}">more details</a></p>
     {% endif %}
   </div>
 </div>

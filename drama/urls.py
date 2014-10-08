@@ -18,19 +18,6 @@ router.register(r'shows', viewsets.ShowViewSet)
 router.register(r'mailinglists', viewsets.EmailListViewSet)
 
 
-# pass in with a slug, model_name, model, form, template and get_context and get apropriate views
-# model_name and slug should be captured, the others passed in a dict
-# get_context and template are used only when displaying a single item
-# model_name is only for url reversal
-
-redirector_patterns = patterns('drama.views',
-                               url(r'^$', 'my_redirect', name='item'),
-                               )
-
-related_redirector_patterns = patterns('drama.views',
-                               url(r'^$', 'my_redirect', name='item'),
-                               )
-
 vacancy_patterns = patterns('drama.views',
                             url(r'^technical/$', 'techieads', name='technical'),
                             url(r'^technical/feed/$', feeds.TechieAdFeed(), name='techiead_feed'),
@@ -39,11 +26,9 @@ vacancy_patterns = patterns('drama.views',
                             url(r'^auditions/feed/$', feeds.AuditionFeed(), name='auditions_feed'),
                             url(r'^applications/$', 'applications', name='applications'),
                             url(r'^applications/feed/$', feeds.ApplicationFeed(), name='applications_feed'),
-                            url(r'^(?P<model_name>technical)/(?P<slug>[^/]*)/$', 'my_redirect', name='item'),
-                            url(r'^(?P<model_name>auditions)/(?P<slug>[^/]*)/',
-                                include(related_redirector_patterns), {'model': Audition, 'form': AuditionForm, }),
-                            url(r'^(?P<model_name>applications)/(?P<slug>[^/]*)/',
-                                include(redirector_patterns), {'model': Application, 'form': ApplicationForm, }),
+                            url(r'^technical/(?P<slug>[^/]*)/$', 'techiead_item', name='techiead-item'),
+                            url(r'^auditions/(?P<slug>[^/]*)/$', 'audition_item', name='audition-item'),
+                            url(r'^applications/(?P<slug>[^/]*)/$', 'application_item', name='application-item'),
                             url(r'^(?P<show_slug>[^/]*)/(?P<role_slug>[^/]*)/$',
                                 'ad_role', name='ad_role'),
                             )

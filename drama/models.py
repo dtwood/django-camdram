@@ -674,7 +674,7 @@ class TechieAd(models.Model):
     def can_edit(self, user):
         return user.has_perm('drama.change_show',self.show)
     def get_url(self):
-        return self.get_absolute_url() #TODO techiead item
+        return reverse('techiead-item', kwargs={'slug': self.show.slug})
         
     def get_safe_context(self, date_format):
         positions = []
@@ -724,7 +724,8 @@ class Audition(models.Model):
     def can_edit(self, user):
         return user.has_perm('drama.change_show',self.show)
     def get_url(self):
-        return self.show.get_absolute_url() #TODO item in auditions
+        return reverse('audition-item', kwargs={'slug': self.show.slug})
+
     def get_safe_context(self, date_format):
         sessions = []
         for ses in self.auditioninstance_set.all():
@@ -784,8 +785,10 @@ class Application(models.Model):
 
     def get_absolute_url(self):
         return self.parent().get_absolute_url()
+
     def get_url(self):
-        return self.get_absolute_url() #TODO item in applications
+        return reverse('application-item', kwargs={'slug': self.slug})
+
     def get_safe_context(self, date_format):
         return {'name': self.name,
                 'parent': self.parent().get_safe_context(date_format),
