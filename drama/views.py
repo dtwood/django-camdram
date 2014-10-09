@@ -1,6 +1,4 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from drama.models import *
-from drama.forms import *
 from django.utils import timezone
 from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
@@ -9,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from haystack.query import SearchQuerySet
 from django.views.generic import TemplateView, DetailView, CreateView, UpdateView, DeleteView, ListView, View
-from drama import util
+from drama import util, models, forms
 import json
 import datetime
 import autocomplete_light
@@ -28,7 +26,7 @@ def index(request):
     today = timezone.now().date()
     start_date = datetime.date.fromordinal(today.toordinal() - today.weekday())
     end_date = datetime.date.fromordinal(today.toordinal() - today.weekday() + 6)
-    performance_objects = Performance.objects.filter(end_date__gte=start_date, start_date__lte=end_date, show__approved=True).distinct()
+    performance_objects = models.Performance.objects.filter(end_date__gte=start_date, start_date__lte=end_date, show__approved=True).distinct()
     performances = 0
     for p in performance_objects:
         performances += p.performance_count(start_date, end_date)
@@ -43,21 +41,21 @@ def index(request):
             label = 'Next week'
         else:
             label = '{} - {}'.format(defaultfilters.date(date,'j b').title(), defaultfilters.date(date + datetime.timedelta(days=6),'j b').title())
-        weeks.append(WeekContainer(name=TermDate.get_weeklabel(date),
+        weeks.append(WeekContainer(name=models.TermDate.get_weeklabel(date),
                                    current = current,
                                    label=label,
-                                   diary=util.diary_week(Performance.objects.approved(), date, hide=(not current)),
+                                   diary=util.diary_week(models.Performance.objects.approved(), date, hide=(not current)),
                                    start_date = date))
     context = {
-        'shows': Show.objects.filter(performance__end_date__gte=start_date, performance__start_date__lte=end_date).filter(approved=True).distinct().count(),
-        'venues': Venue.objects.filter(performance__end_date__gte=start_date, performance__start_date__lte=end_date).filter(performance__show__approved=True).distinct().count(),
-        'people': Person.objects.filter(roleinstance__show__performance__end_date__gte=start_date, roleinstance__show__performance__start_date__lte=end_date, roleinstance__show__approved=True).distinct().count(),
+        'shows': models.Show.objects.filter(performance__end_date__gte=start_date, performance__start_date__lte=end_date).filter(approved=True).distinct().count(),
+        'venues': models.Venue.objects.filter(performance__end_date__gte=start_date, performance__start_date__lte=end_date).filter(performance__show__approved=True).distinct().count(),
+        'people': models.Person.objects.filter(roleinstance__show__performance__end_date__gte=start_date, roleinstance__show__performance__start_date__lte=end_date, roleinstance__show__approved=True).distinct().count(),
         'performances': performances,
-        'auditions': AuditionInstance.objects.filter(end_datetime__gte=timezone.now()).order_by('end_datetime', 'start_time').filter(audition__show__approved=True).select_related('audition'),
-        'techieads': TechieAd.objects.filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline'),
-        'societyapps': SocietyApplication.objects.filter(deadline__gte=timezone.now()).filter(society__approved=True).order_by('deadline'),
-        'venueapps': VenueApplication.objects.filter(deadline__gte=timezone.now()).filter(venue__approved=True).order_by('deadline'),
-        'showapps': ShowApplication.objects.filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline'),
+        'auditions': models.AuditionInstance.objects.filter(end_datetime__gte=timezone.now()).order_by('end_datetime', 'start_time').filter(audition__show__approved=True).select_related('audition'),
+        'techieads': models.TechieAd.objects.filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline'),
+        'societyapps': models.SocietyApplication.objects.filter(deadline__gte=timezone.now()).filter(society__approved=True).order_by('deadline'),
+        'venueapps': models.VenueApplication.objects.filter(deadline__gte=timezone.now()).filter(venue__approved=True).order_by('deadline'),
+        'showapps': models.ShowApplication.objects.filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline'),
         'diary': util.diary_week(Performance.objects.filter(show__approved=True), today),
         'weeks': weeks,
     }
@@ -74,10 +72,10 @@ def diary(request, week=None):
     else:
         end = week + datetime.timedelta(days=56)
     prev = week - datetime.timedelta(days=7)
-    events = Performance.objects.filter(show__approved=True)
+    events = models.Performance.objects.filter(show__approved=True)
     diary = util.diary(week, end, events, with_labels=True)
-    current_term = TermDate.get_term(timezone.now())
-    jump_form = DiaryJumpForm(initial={'term':current_term.term, 'year':current_term.year})
+    current_term = models.TermDate.get_term(timezone.now())
+    jump_form = forms.DiaryJumpForm(initial={'term':current_term.term, 'year':current_term.year})
     return render(request, "drama/diary.html", {'diary': diary, 'start':week, 'end':end, 'prev':prev, 'jump_form': jump_form})
 
 def diary_week(request):
@@ -85,22 +83,22 @@ def diary_week(request):
         week = datetime.datetime.strptime(request.GET['week'],"%Y-%m-%d").date()
     else:
         raise Http404
-    events = Performance.objects.filter(show__approved=True)
-    term_label, week_label = TermDate.get_label(week)
+    events = models.Performance.objects.filter(show__approved=True)
+    term_label, week_label = models.TermDate.get_label(week)
     diary_week = {'html':util.diary_week(events, week, label=week_label), 'term_label':term_label}
     data = json.dumps(diary_week)
     return HttpResponse(data, content_type='application/json')
 
 def diary_jump(request):
-    form = DiaryJumpForm(request.GET)
+    form = forms.DiaryJumpForm(request.GET)
     if form.is_valid():
-        term = get_object_or_404(TermDate,term=form.cleaned_data['term'], year=form.cleaned_data['year'])
+        term = get_object_or_404(models.TermDate,term=form.cleaned_data['term'], year=form.cleaned_data['year'])
         return redirect(reverse('diary', kwargs={'week': term.start.strftime('%Y-%m-%d')}))
     else:
         raise Http404
 
 def auditions(request):
-    aud_instances = AuditionInstance.objects.filter(end_datetime__gte=timezone.now()).order_by(
+    aud_instances = models.AuditionInstance.objects.filter(end_datetime__gte=timezone.now()).order_by(
         'end_datetime', 'start_time').filter(audition__show__approved=True).select_related('audition')
     seen = set()
     seen_add = seen.add
@@ -116,11 +114,11 @@ def auditions_diary(request):
 
 
 def applications(request):
-    showads = ShowApplication.objects.filter(
+    showads = models.ShowApplication.objects.filter(
         deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline')
-    socads = SocietyApplication.objects.filter(
+    socads = models.SocietyApplication.objects.filter(
         deadline__gte=timezone.now()).filter(society__approved=True).order_by('deadline')
-    venueads = VenueApplication.objects.filter(
+    venueads = models.VenueApplication.objects.filter(
         deadline__gte=timezone.now()).filter(venue__approved=True).order_by('deadline')
     context = {'showads': showads, 'venueads': venueads, 'socads': socads,
                'current_roletype': 'applications', 'current_pagetype': 'vacancies'}
@@ -129,14 +127,14 @@ def applications(request):
 
 def ad_role(request, show_slug, role_slug):
     role = get_object_or_404(
-        TechieAdRole, slug=role_slug, ad__show__slug=show_slug)
+        models.TechieAdRole, slug=role_slug, ad__show__slug=show_slug)
     context = {'role': role, 'current_roletype': '',
                'current_pagetype': 'vacancies'}
     return render(request, 'drama/ad_role.html', context)
 
 
 def techieads(request):
-    ads = TechieAd.objects.filter(
+    ads = models.TechieAd.objects.filter(
         deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline')
     context = {'ads': ads, 'current_roletype': 'techie',
                'current_pagetype': 'vacancies'}
@@ -220,7 +218,7 @@ class MyDeleteView(DeleteView):
 
 
 class EmailRegistrationView(RegistrationView):
-    form_class = EmailRegistrationForm
+    form_class = forms.EmailRegistrationForm
     def register(self, request, **cleaned_data):
         cleaned_data['username'] = hashlib.md5(cleaned_data['email'].encode('utf-8')).hexdigest()[0:30]
         return super(EmailRegistrationView, self).register(request, **cleaned_data)
@@ -232,14 +230,14 @@ def show_admin(request):
 
 @login_required
 def approval_queue(request):
-    queue = [x for x in ApprovalQueueItem.objects.all() if request.user.has_perm('drama.approve_' + x.content_object.class_name(), x.content_object)]
+    queue = [x for x in models.ApprovalQueueItem.objects.all() if request.user.has_perm('drama.approve_' + x.content_object.class_name(), x.content_object)]
     return render(request, 'drama/approval_queue.html', {'queue':queue})
     
 @login_required
 @require_POST
 @transaction.atomic()
 def approval_ignore(request, key=None):
-    item = get_object_or_404(ApprovalQueueItem,pk=key)
+    item = get_object_or_404(models.ApprovalQueueItem,pk=key)
     if request.user.has_perm('drama.approve_' + item.content_object.class_name(), item.content_object):
         item.delete()
         log_item = LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item.object, desc='Ignored')
@@ -252,7 +250,7 @@ def approval_ignore(request, key=None):
 @require_POST
 @transaction.atomic()
 def approval_approve(request, key=None):
-    item = get_object_or_404(ApprovalQueueItem,pk=key)
+    item = get_object_or_404(models.ApprovalQueueItem,pk=key)
     if request.user.has_perm('drama.approve_' + item.content_object.class_name(), item.content_object):
         item.content_object.approve()
         log_item = LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item.object, desc='Approved')

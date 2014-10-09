@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from issues.models import *
+from issues import models
 import email
 import re
 from django.conf import settings
@@ -28,9 +28,9 @@ class Command(BaseCommand):
                     _ , from_addr = email.utils.parse(mail.get('From'))
                     if local_part in settings.NEW_ISSUE_ADDRESSES:
                         subject = mail.get('Subject')
-                        issue = Issue(name=subject, desc=body, email=from_addr, opened=timezone.now())
+                        issue = models.Issue(name=subject, desc=body, email=from_addr, opened=timezone.now())
                         issue.save()
                     elif match:
                         key = match.group(1)
-                        issue = Issue.objects.get(pk=key)
+                        issue = models.Issue.objects.get(pk=key)
                         issue.add_message(from_addr, body)

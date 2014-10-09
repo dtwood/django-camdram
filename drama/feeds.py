@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils import timezone
 from django_ical.views import ICalFeed
-from drama.models import *
+from drama import models
 import itertools
 import datetime
 
@@ -14,7 +14,7 @@ class AuditionFeed(Feed):
     description_template = 'drama/audition_feed.html'
 
     def items(self):
-        aud_instances = AuditionInstance.objects.filter(end_datetime__gte=timezone.now()).order_by(
+        aud_instances = models.AuditionInstance.objects.filter(end_datetime__gte=timezone.now()).order_by(
             'end_datetime', 'start_time').filter(audition__show__approved=True).select_related('audition')
         seen = set()
         seen_add = seen.add
@@ -34,7 +34,7 @@ class TechieAdFeed(Feed):
     description_template = 'drama/techiead_feed.html'
 
     def items(self):
-        return TechieAd.objects.filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline')
+        return models.TechieAd.objects.filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline')
 
     def item_title(self, item):
         return item.show.name
@@ -46,11 +46,11 @@ class ApplicationFeed(Feed):
     description_template = 'drama/application_feed.html'
 
     def items(self):
-        showads = ShowApplication.objects.filter(
+        showads = models.ShowApplication.objects.filter(
             deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline')
-        socads = SocietyApplication.objects.filter(
+        socads = models.SocietyApplication.objects.filter(
             deadline__gte=timezone.now()).filter(society__approved=True).order_by('deadline')
-        venueads = VenueApplication.objects.filter(
+        venueads = models.VenueApplication.objects.filter(
             deadline__gte=timezone.now()).filter(venue__approved=True).order_by('deadline')
         return itertools.chain(showads, socads, venueads)
 
@@ -59,7 +59,7 @@ class ApplicationFeed(Feed):
 
 class RoleFeed(Feed):
     def get_object(self, request, *args, slug=None, **kwargs):
-        return get_object_or_404(Role, slug=slug)
+        return get_object_or_404(models.Role, slug=slug)
 
     def title(self, obj):
         return "Camdram.net {0} feed".format(obj.name)
@@ -83,7 +83,7 @@ class FullCal(ICalFeed):
     title = "Camdram.net iCal Feed"
 
     def items(self):
-        return [item for x in Performance.objects.approved().filter(end_date__gte=timezone.now()) for item in x.get_performances()]
+        return [item for x in models.Performance.objects.approved().filter(end_date__gte=timezone.now()) for item in x.get_performances()]
 
     def item_title(self,obj):
         return obj.show.name

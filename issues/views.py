@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from issues.models import *
-from issues import forms
+from issues import forms, models
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_http_methods, require_POST
 from django.core.urlresolvers import reverse
@@ -9,7 +8,7 @@ from django.core.urlresolvers import reverse
 
 def list(request):
     if request.user.is_staff:
-        issues = Issue.objects.filter(active=True)
+        issues = models.Issue.objects.filter(active=True)
         my_issues = issues.filter(assigned_user=request.user)
         other_issues = issues.exclude(assigned_user__isnull=True).exclude(assigned_user=request.user)
         unassigned_issues = issues.filter(assigned_user__isnull=True)
@@ -20,7 +19,7 @@ def list(request):
 @require_http_methods(["GET", "POST"])
 def detail(request, key=None):
     if request.user.is_staff:
-        issue = get_object_or_404(Issue, pk=key)
+        issue = get_object_or_404(models.Issue, pk=key)
         if request.method == "POST":
             form = forms.ResponseForm(request.POST)
             if form.is_valid():
@@ -34,7 +33,7 @@ def detail(request, key=None):
 @require_POST
 def claim(request, key=None):
     if request.user.is_staff:
-        issue = get_object_or_404(Issue, pk=key)
+        issue = get_object_or_404(models.Issue, pk=key)
         issue.claim(request.user)
         return redirect(issue.get_absolute_url())
     else:
@@ -43,7 +42,7 @@ def claim(request, key=None):
 @require_POST
 def close(request, key=None):
     if request.user.is_staff:
-        issue = get_object_or_404(Issue, pk=key)
+        issue = get_object_or_404(models.Issue, pk=key)
         issue.close()
         return redirect(reverse('issues:list'))
     else:

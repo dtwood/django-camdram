@@ -5,7 +5,7 @@ import autocomplete_light
 autocomplete_light.autodiscover()
 from django import forms
 from django.forms.models import inlineformset_factory
-from drama.models import *
+from drama import models
 from registration.forms import RegistrationForm
 from django.contrib.auth.models import User
 
@@ -74,7 +74,7 @@ class ChildForm(FormsetsForm):
 class PerformanceForm(autocomplete_light.ModelForm):
 
     class Meta:
-        model = Performance
+        model = models.Performance
         fields = ['start_date','end_date','time','venue']
         widgets = {
             'start_date': forms.DateInput(attrs={'class':'date'}),
@@ -82,7 +82,7 @@ class PerformanceForm(autocomplete_light.ModelForm):
             }
 
 PerformanceInline = inlineformset_factory(
-    Show, Performance, PerformanceForm, extra=1)
+    models.Show, models.Performance, PerformanceForm, extra=1)
 
 class ShowForm(FormsetsForm, autocomplete_light.ModelForm):
     error_css_class = 'error'
@@ -90,7 +90,7 @@ class ShowForm(FormsetsForm, autocomplete_light.ModelForm):
     formsets = {'performance_formset': PerformanceInline}
 
     class Meta:
-        model = Show
+        model = models.Show
         fields = ['name','desc','book','prices','author','societies','image']
 
     def clean(self, *args, **kwargs):
@@ -111,7 +111,7 @@ class SocietyForm(FormsetsForm):
     formsets = {}
 
     class Meta:
-        model = Society
+        model = models.Society
         fields = ['name','shortname','desc','image']
 
 
@@ -121,7 +121,7 @@ class PersonForm(FormsetsForm):
     formsets = {}
 
     class Meta:
-        model = Person
+        model = models.Person
         fields = ['name','desc']
 
 
@@ -131,7 +131,7 @@ class VenueForm(FormsetsForm):
     formsets = {}
 
     class Meta:
-        model = Venue
+        model = models.Venue
         fields = ['name','desc','address','lat','lng']
 
         
@@ -141,7 +141,7 @@ class RoleForm(FormsetsForm):
     formsets = {}
 
     class Meta:
-        model = Role
+        model = models.Role
         fields = ['name','desc','cat']
 
 
@@ -173,13 +173,13 @@ class AuditionInstanceForm(forms.ModelForm):
 
     
     class Meta:
-        model = AuditionInstance
+        model = models.AuditionInstance
         fields = ['end_datetime','start_time','location']
         
 
         
 AuditionInline = inlineformset_factory(
-    Audition, AuditionInstance, AuditionInstanceForm, extra=1)
+    models.Audition, models.AuditionInstance, AuditionInstanceForm, extra=1)
 
 
 class AuditionForm(ChildForm):
@@ -188,19 +188,19 @@ class AuditionForm(ChildForm):
     formsets = {'audition_formset':AuditionInline}
     
     class Meta:
-        model = Audition
+        model = models.Audition
         fields = ['desc','contact']
 
         
 class TechieAdRoleForm(autocomplete_light.ModelForm):
 
     class Meta:
-        model = TechieAdRole
+        model = models.TechieAdRole
         fields = ['name','desc','role']
 
         
 TechieAdInline = inlineformset_factory(
-    TechieAd, TechieAdRole, TechieAdRoleForm, extra=1)
+    models.TechieAd, models.TechieAdRole, TechieAdRoleForm, extra=1)
 
 
 class DeadlineForm(forms.ModelForm):
@@ -237,7 +237,7 @@ class TechieAdForm(DeadlineForm, ChildForm):
     
 
     class Meta:
-        model = TechieAd
+        model = models.TechieAd
         fields = ['desc','contact','deadline']
 
 class ApplicationForm(DeadlineForm, FormsetsForm, autocomplete_light.ModelForm):
@@ -246,37 +246,37 @@ class ApplicationForm(DeadlineForm, FormsetsForm, autocomplete_light.ModelForm):
     formsets = {}
     
     class Meta:
-        model = Application
+        model = models.Application
         fields = ['name','desc','contact','deadline']
 
 
-ShowApplicationFormset = inlineformset_factory(Show, ShowApplication, ApplicationForm)
-VenueApplicationFormset = inlineformset_factory(Venue, VenueApplication, ApplicationForm)
-SocietyApplicationFormset = inlineformset_factory(Society, SocietyApplication, ApplicationForm)
+ShowApplicationFormset = inlineformset_factory(models.Show, models.ShowApplication, ApplicationForm)
+VenueApplicationFormset = inlineformset_factory(models.Venue, models.VenueApplication, ApplicationForm)
+SocietyApplicationFormset = inlineformset_factory(models.Society, models.SocietyApplication, ApplicationForm)
 
 class CastForm(forms.Form):
     role = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Role'}))
-    person = forms.ModelChoiceField(Person.objects.all(),
+    person = forms.ModelChoiceField(models.Person.objects.all(),
             widget=autocomplete_light.ChoiceWidget('PersonAutocomplete',
                     attrs={'placeholder':'Person'}))
 
 class BandForm(forms.Form):
     name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Custom Name'}))
-    role = forms.ModelChoiceField(Role.objects.filter(cat='band'),
+    role = forms.ModelChoiceField(models.Role.objects.filter(cat='band'),
         widget=autocomplete_light.ChoiceWidget('band',
             attrs={'placeholder':'Role'},
             widget_attrs = {'data-widget-bootstrap': 'fill-field-bootstrap',}))
-    person = forms.ModelChoiceField(Person.objects.all(),
+    person = forms.ModelChoiceField(models.Person.objects.all(),
             widget=autocomplete_light.ChoiceWidget('PersonAutocomplete',
                     attrs={'placeholder':'Person'}))
 
 class ProdForm(forms.Form):
     name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Custom Name'}))
-    role = forms.ModelChoiceField(Role.objects.filter(cat='prod'),
+    role = forms.ModelChoiceField(models.Role.objects.filter(cat='prod'),
         widget=autocomplete_light.ChoiceWidget('prod',
             attrs={'placeholder':'Role'},
             widget_attrs = {'data-widget-bootstrap': 'fill-field-bootstrap',}))
-    person = forms.ModelChoiceField(Person.objects.all(),
+    person = forms.ModelChoiceField(models.Person.objects.all(),
             widget=autocomplete_light.ChoiceWidget('PersonAutocomplete',
                     attrs={'placeholder':'Person'}))
 
@@ -301,8 +301,8 @@ class AdminForm(forms.Form):
     email = forms.EmailField()
 
 class DiaryJumpForm(forms.Form):
-    term = forms.ChoiceField(choices=TermDate.TERM_CHOICES)
-    year = forms.ChoiceField(choices=TermDate.YEAR_CHOICES)
+    term = forms.ChoiceField(choices=models.TermDate.TERM_CHOICES)
+    year = forms.ChoiceField(choices=models.TermDate.YEAR_CHOICES)
 
 class EmailForm(forms.Form):
     '''
@@ -318,6 +318,6 @@ class EmailListForm(forms.ModelForm):
     required_css_class = 'required'
 
     class Meta:
-        model = EmailList
+        model = models.EmailList
         fields = ['name', 'desc', 'default_address', 'from_addr', 'default_subject', 'default_header', 'html_template','plaintext_template', 'date_format']
 

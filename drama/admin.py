@@ -1,50 +1,50 @@
 from django.contrib import admin
-from drama.models import *
+from drama import models
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 import reversion
 
 
 class PerformanceInline(admin.TabularInline):
-    model = Performance
+    model = models.Performance
     extra = 0
     raw_id_fields = ['venue']
 
 
 class RoleInline(admin.TabularInline):
-    model = RoleInstance
+    model = models.RoleInstance
     extra = 0
     verbose_name = 'Role'
     raw_id_fields = ['role','person']
 
 
 class TechieAdInline(admin.TabularInline):
-    model = TechieAdRole
+    model = models.TechieAdRole
     extra = 0
     verbose_name = 'Role'
     raw_id_fields = ['role']
 
 
 class AuditionInline(admin.TabularInline):
-    model = AuditionInstance
+    model = models.AuditionInstance
     extra = 0
 
 class ShowApplicationInline(admin.StackedInline):
-    model = ShowApplication
+    model = models.ShowApplication
     extra = 0
 
 
 class SocietyApplicationInline(admin.StackedInline):
-    model = SocietyApplication
+    model = models.SocietyApplication
     extra = 0
 
 
 class VenueApplicationInline(admin.StackedInline):
-    model = VenueApplication
+    model = models.VenueApplication
     extra = 0
 
 
-@admin.register(Show)
+@admin.register(models.Show)
 class ShowAdmin(reversion.VersionAdmin):
     fieldsets = [
         (None, {
@@ -58,7 +58,7 @@ class ShowAdmin(reversion.VersionAdmin):
     search_fields = ['name']
 
 
-@admin.register(TechieAd)
+@admin.register(models.TechieAd)
 class TechieAdAdmin(admin.ModelAdmin):
     list_display = ['show', 'contact', 'deadline']
     inlines = [TechieAdInline]
@@ -66,51 +66,51 @@ class TechieAdAdmin(admin.ModelAdmin):
     raw_id_fields = ['show']
 
 
-@admin.register(Audition)
+@admin.register(models.Audition)
 class AuditionAdmin(admin.ModelAdmin):
     list_display = ['show', 'contact']
     inlines = [AuditionInline]
     search_fields = ['show']
     raw_id_fields = ['show']
 
-@admin.register(Person)
+@admin.register(models.Person)
 class PersonAdmin(reversion.VersionAdmin):
     list_display = ['name','num_shows','user_email',]
     search_fields = ['name',]
     raw_id_fields = ['user']
 
     
-@admin.register(Venue)
+@admin.register(models.Venue)
 class VenueAdmin(reversion.VersionAdmin):
     list_display = ['name','approved']
     search_fields = ['name']
     list_filter = ['approved']
     inlines = [VenueApplicationInline]
     
-@admin.register(Role)
+@admin.register(models.Role)
 class RoleAdmin(reversion.VersionAdmin):
     list_display = ['name','cat','approved']
     search_fields = ['name']
     list_filter = ['cat','approved']
     
-@admin.register(Society)
+@admin.register(models.Society)
 class SocietyAdmin(reversion.VersionAdmin):
     list_display = ['name','shortname','approved']
     search_fields = ['name','shortname']
     list_filter = ['approved']
     inlines = [SocietyApplicationInline]
     
-@admin.register(TermDate)
+@admin.register(models.TermDate)
 class TermDateAdmin(reversion.VersionAdmin):
     list_display = ['__str__','start']
     list_filter = ['term','year']
     list_editable = ['start']
 
-@admin.register(ApprovalQueueItem)
+@admin.register(models.ApprovalQueueItem)
 class ApprovalQueueAdmin(admin.ModelAdmin):
     list_display = ['content_object']
 
-@admin.register(LogItem)
+@admin.register(models.LogItem)
 class LogAdmin(admin.ModelAdmin):
     fields = ('object_link', 'cat', 'desc', 'user_email', 'datetime')
     readonly_fields = ('object_link', 'cat', 'desc', 'user_email', 'datetime')
@@ -145,4 +145,4 @@ class CustomUserAdmin(UserAdmin):
     log_link.short_description = 'Logs'
 
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(EmailList)
+admin.site.register(models.EmailList)

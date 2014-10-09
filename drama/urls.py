@@ -3,9 +3,7 @@ autocomplete_light.autodiscover()
 from django.contrib import auth
 from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView, ListView
-from drama.models import *
-from drama import views, viewsets, feeds
-from drama.forms import *
+from drama import viewsets, feeds, views
 from rest_framework.routers import DefaultRouter
 from registration.backends.default.views import ActivationView
 
@@ -42,39 +40,38 @@ simple_register_patterns = patterns('',
                        # [a-fA-F0-9]{40} because a bad activation key should still get to the view;
                        # that way it can return a sensible "invalid key" message instead of a
                        # confusing 404.
+
                        url(r'^activate/(?P<activation_key>\w+)/$',
                            ActivationView.as_view(),
                            name='registration_activate'),
-url(r'^register/$', views.EmailRegistrationView.as_view(), name='registration_register'),
+
+                       url(r'^register/$', views.EmailRegistrationView.as_view(), name='registration_register'),
+
                        url(r'^register/complete/$',
                            TemplateView.as_view(template_name='registration/registration_complete.html'),
                            name='registration_complete'),
-url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'), name='registration_disallowed'),
-(r'', include('django.contrib.auth.urls')),
+
+                       url(r'^register/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'), name='registration_disallowed'),
+
+                       url(r'', include('django.contrib.auth.urls')),
 )
 
 urlpatterns = patterns('drama.views',
-                       url(r'^$', views.index, name='home'),
+                       url(r'^$', 'index', name='home'),
                        url(r'^', include(router.urls)),
                        url(r'^auth/', include(simple_register_patterns)),
-                       url(r'^diary/$', views.diary, name='diary'),
-                       url(r'^diary_week$', views.diary_week, name='diary_week'),
+                       url(r'^diary/$', 'diary', name='diary'),
+                       url(r'^diary_week$', 'diary_week', name='diary_week'),
                        url(r'^diary/(?P<week>[-0-9]+)$', 'diary', name='diary'),
                        url(r'^diary_jump$', 'diary_jump', name='diary_jump'),
-                       url(r'^search', include('drama.haystack_urls'),
-                           name='search'),
+                       url(r'^search', include('drama.haystack_urls'), name='search'),
                        url(r'^ical/', feeds.FullCal(), name='ical'),
-                       url(r'^about/$',
-                           TemplateView.as_view(template_name="drama/about.html"), name='about'),
-                       url(r'^development/$', views.development,
-                           name='development'),
-                       url(r'^contact-us/$', views.contact_us,
-                           name='contact-us'),
-                       url(r'^privacy/$',
-                           TemplateView.as_view(template_name="drama/privacy.html"), name='privacy'),
+                       url(r'^about/$', TemplateView.as_view(template_name="drama/about.html"), name='about'),
+                       url(r'^development/$', 'development', name='development'),
+                       url(r'^contact-us/$', 'contact_us', name='contact-us'),
+                       url(r'^privacy/$', TemplateView.as_view(template_name="drama/privacy.html"), name='privacy'),
                        url(r'^vacancies/', include(vacancy_patterns)),
-                       url(r'^autocomplete/',
-                           include('autocomplete_light.urls')),
+                       url(r'^autocomplete/', include('autocomplete_light.urls')),
                        url(r'^show-admin/$', 'show_admin', name='show-admin'), 
                        url(r'^approvals/$', 'approval_queue', name='approvals'),
                        url(r'^approvals/(?P<key>[0-9]*)/ignore$', 'approval_ignore', name='approval-ignore'),
