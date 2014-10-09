@@ -115,8 +115,23 @@ class LogAdmin(admin.ModelAdmin):
     fields = ('object_link', 'cat', 'desc', 'user_email', 'datetime')
     readonly_fields = ('object_link', 'cat', 'desc', 'user_email', 'datetime')
     list_display = ['object_link', 'cat', 'desc', 'user_email','datetime']
-    list_filter = ['cat','user__email']
+    list_filter = ['cat','user__email', 'content_type']
     list_display_links = ['cat']
+
+    def has_delete_permission(self, request, obj=None):
+        #Disable delete
+        return False
+
+    def has_add_permission(self, request):
+        #Disable creating new log entries
+        return False
+
+    def get_actions(self, request):
+        #Disable delete
+        actions = super(LogAdmin, self).get_actions(request)
+        del actions['delete_selected']
+        return actions
+
 admin.site.unregister(User)
 
 class CustomUserAdmin(UserAdmin):
