@@ -92,7 +92,7 @@ class DramaObjectModel(models.Model):
             if self.__class__.objects.filter(slug=base_slug).count() > 0:
                 for i in itertools.count(2):
                     slug = slugify(base_slug + '-' + str(i))
-                    if Show.objects.filter(slug=slug).count() == 0:
+                    if self.__class__.objects.filter(slug=slug).count() == 0:
                         break
             else:
                 slug = base_slug
@@ -229,6 +229,7 @@ class DramaObjectModel(models.Model):
 class Person(DramaObjectModel):
     objects = DramaObjectManager()
     user = models.OneToOneField(settings.AUTH_USER_MODEL, blank=True, null=True)
+    norobots = models.BooleanField()
 
     class Meta:
         ordering = ['name']
@@ -307,17 +308,20 @@ class Person(DramaObjectModel):
             return self.user.email
     
 
+class DramaSocialMixin(object):
+    facebook_id = models.CharField(max_length=50, blank=True)
+    twitter_id = models.CharField(max_length=50, blank=True)
 
 
-class Venue(DramaObjectModel):
+class Venue(DramaObjectModel, DramaSocialMixin):
     objects = DramaObjectManager()
 
     def __str__(self):
         return self.name
     has_applications = True
     address = models.CharField(max_length=200, blank=True)
-    lat = models.FloatField('Latitude', blank=True)
-    lng = models.FloatField('Longditude', blank=True)
+    lat = models.FloatField('Latitude', blank=True, null=True)
+    lng = models.FloatField('Longditude', blank=True, null=True)
 
     class Meta:
         ordering = ['name']
@@ -356,9 +360,10 @@ class Venue(DramaObjectModel):
                 }
         
 
-class Society(DramaObjectModel):
+class Society(DramaObjectModel, DramaSocialMixin):
     objects = DramaObjectManager()
     shortname = models.CharField(max_length=100, verbose_name="Abbreviaiton")
+    college = models.CharField(max_length=100, blank=True)
     image = models.ImageField(
         upload_to='images/', blank=True, verbose_name="Logo")
     has_applications = True
@@ -404,7 +409,7 @@ class Society(DramaObjectModel):
                 }
         
 @reversion.register(follow=('performance_set','roleinstance_set','showapplication_set','audition','techiead'))
-class Show(DramaObjectModel):
+class Show(DramaObjectModel, DramaSocialMixin):
     objects = ShowManager()
     book = models.URLField('Booking Link', blank=True)
     prices = models.CharField(max_length=30, blank=True)
@@ -851,10 +856,6 @@ class VenueApplication(Application):
         return self.venue.get_url('applications')
     def get_remove_url(self):
         return False
-
-class PendingAdmin(models.Model):
-    email = models.EmailField()
-    show = models.ForeignKey(Show)
 
 class PendingGroupMember(models.Model):
     email = models.EmailField()

@@ -6,8 +6,7 @@
 .sass-cache
 *.scssc
 env
-migrations
-db.sqlite3
+*.sqlite3
 whoosh_index
 emails
 /libs
