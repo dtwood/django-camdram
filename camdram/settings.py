@@ -24,6 +24,7 @@ TEMPLATE_DIRS = (
 EMAIL_FROM_DOMAIN = 'camdram.com'
 NEW_ISSUE_ADDRESSES = ['websuport']
 DOMAIN_FOR_URI = 'http://www.camdram.com'
+DATABASE_ROUTERS = ['old_drama.routers.MigrationRouter']
 
 
 # Quick-start development settings - unsuitable for production
@@ -61,6 +62,7 @@ INSTALLED_APPS = (
     'autofixture',
     'django_extensions',
     'reversion',
+    'old_drama',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -91,7 +93,11 @@ DATABASES = {
         #'PORT': '',
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    },
+    'old': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'v1_db.sqlite3'),
+    },
 }
 
 # Internationalization

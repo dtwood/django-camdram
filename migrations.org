@@ -1,0 +1,54 @@
+* People
+- No image
+- No mapto
+- migrating: id, name, desc, norobots
+- auto approve
+
+* Societies/venues
+- this table also has venues, augh!
+- migrating: id, name, desc, facebook_id, twitter_id
+- migrating for soc: shortname, college
+- migrating for ven: address, lat, lng
+- auto approve
+
+* API Stuff
+- requires api keys in django_camdram, not yet implemented
+  
+* Events
+- requires events in django_camdram, not yet implemented
+
+* Shows
+- migrating: id, society, name, desc, faebook_id, twitter_id, author, prices, book
+- approved as orriginal
+- need to pull audextra out of this
+- need to reslug after performances
+- may need to think about excess fields, some data may be important
+
+* Performances
+- fiddling with excludedate to create 2 performance objects
+- migrating: show, venue, startdate, enddate, time
+
+* RoleInstances
+- migrate show, person, role, type (via premade role), order
+
+* TechieAds
+- migrating: show, contact, deadline (fusing), desc
+- create positions from string
+
+* Users
+- very rough migrations, mainly for dependancies
+
+* Access
+- add requisite users to admin groups, no logging
+
+* Issue Tracker
+- Not being migrated
+
+
+
+
+
+* Added fields:
+- social ids
+- society:college
+- person: norobots
