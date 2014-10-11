@@ -56,7 +56,7 @@ def index(request):
         'societyapps': models.SocietyApplication.objects.filter(deadline__gte=timezone.now()).filter(society__approved=True).order_by('deadline'),
         'venueapps': models.VenueApplication.objects.filter(deadline__gte=timezone.now()).filter(venue__approved=True).order_by('deadline'),
         'showapps': models.ShowApplication.objects.filter(deadline__gte=timezone.now()).filter(show__approved=True).order_by('deadline'),
-        'diary': util.diary_week(Performance.objects.filter(show__approved=True), today),
+        'diary': util.diary_week(models.Performance.objects.filter(show__approved=True), today),
         'weeks': weeks,
     }
     return render(request, 'drama/index.html', context)
