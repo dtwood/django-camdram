@@ -62,7 +62,7 @@
 <div class="row">
   <div class="large-12 columns">
     <h3>Shows</h3>
-    {% with events=object.get_performances %}
+    {% with events=object.get_future_performances %}
     {% diary events %}
     {% endwith %}
   </div>

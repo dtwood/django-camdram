@@ -342,6 +342,9 @@ class Venue(DramaObjectModel, DramaSocialMixin):
     def get_performances(self):
         return Performance.objects.approved().filter(venue=self)
 
+    def get_future_performances(self):
+        return self.get_performances().filter(end_date__gte=timezone.now())
+
     def get_auditions(self):
         return AuditionInstance.objects.approved().filter(audition__show__performance__venue=self).filter(end_datetime__gte=timezone.now()).order_by('end_datetime', 'start_time').distinct()
     
@@ -389,6 +392,9 @@ class Society(DramaObjectModel, DramaSocialMixin):
 
     def get_performances(self):
         return Performance.objects.approved().filter(show__societies=self)
+
+    def get_future_performances(self):
+        return self.get_performances().filter(end_date__gte=timezone.now())
 
     def get_auditions(self):
         return AuditionInstance.objects.approved().filter(audition__show__societies=self).filter(end_datetime__gte=timezone.now()).order_by('end_datetime', 'start_time').distinct()
