@@ -19,6 +19,7 @@
 
 * Shows
 - migrating: id, society, name, desc, faebook_id, twitter_id, author, prices, book
+- also create an audition
 - approved as orriginal
 - need to pull audextra out of this
 - need to reslug after performances

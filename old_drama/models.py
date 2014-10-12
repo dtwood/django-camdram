@@ -3,33 +3,6 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-class ActsApplications(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
-    showid = models.IntegerField(blank=True, null=True)
-    socid = models.IntegerField(blank=True, null=True)
-    text = models.TextField()  # This field type is a guess.
-    deadlinedate = models.DateField()
-    furtherinfo = models.TextField()  # This field type is a guess.
-    deadlinetime = models.TimeField()
-
-    class Meta:
-        db_table = 'acts_applications'
-
-
-class ActsAuditions(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
-    showid = models.IntegerField(blank=True, null=True)
-    date = models.DateField()
-    starttime = models.TimeField()
-    endtime = models.TimeField(blank=True, null=True)
-    location = models.CharField(max_length=255)
-    display = models.BooleanField()
-    nonscheduled = models.BooleanField()
-
-    class Meta:
-        db_table = 'acts_auditions'
-
-
 class ActsUsers(models.Model):
     id = models.IntegerField(primary_key=True)  # AutoField?
     person_id = models.IntegerField(blank=True, null=True)
@@ -57,6 +30,35 @@ class ActsUsers(models.Model):
 
     class Meta:
         db_table = 'acts_users'
+
+
+#Done
+class ActsAuditions(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    showid = models.IntegerField(blank=True, null=True)
+    date = models.DateField()
+    starttime = models.TimeField()
+    endtime = models.TimeField(blank=True, null=True)
+    location = models.CharField(max_length=255)
+    display = models.BooleanField()
+    nonscheduled = models.BooleanField()
+
+    class Meta:
+        db_table = 'acts_auditions'
+
+
+#Done
+class ActsApplications(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    showid = models.IntegerField(blank=True, null=True)
+    socid = models.IntegerField(blank=True, null=True)
+    text = models.TextField()  # This field type is a guess.
+    deadlinedate = models.DateField()
+    furtherinfo = models.TextField()  # This field type is a guess.
+    deadlinetime = models.TimeField()
+
+    class Meta:
+        db_table = 'acts_applications'
 
 
 #Done

@@ -83,6 +83,7 @@ def migrate_shows(apps, schema_editor):
     OldShow = apps.get_model('old_drama', 'ActsShows')
     Show = apps.get_model('drama', 'Show')
     Society = apps.get_model('drama', 'Society')
+    Audition = apps.get_model('drama', 'Audition')
     for os in OldShow.objects.all():
         new = Show()
         new.id = os.id
@@ -132,6 +133,11 @@ def migrate_shows(apps, schema_editor):
             new.approved = True
         new.save()
         new.societies.add(soc)
+        new_aud = Audition(show=new)
+        if os.audextra:
+            new_aud.desc = os.audextra
+        new_aud.save()
+        
 
 
 def migrate_performances(apps, schema_editor):
@@ -300,7 +306,60 @@ def migrate_pending_access(apps, schema_editor):
             print('Unrecognised ActsPendingAccess type: ' + item.type)
     
         
+def migrate_applications(apps, schema_editor):
+    Show = apps.get_model('drama', 'Show')
+    Society = apps.get_model('drama', 'Society')
+    Venue = apps.get_model('drama', 'Venue')
+    Application = apps.get_model('drama', 'Application')
+    ShowApplication = apps.get_model('drama', 'ShowApplication')
+    SocietyApplication = apps.get_model('drama', 'SocietyApplication')
+    VenueApplication = apps.get_model('drama', 'VenueApplication')
+    OldApplication = apps.get_model('old_drama', 'ActsApplications')
+    for old in OldApplication.objects.all():
+        if old.showid:
+            new = ShowApplication()
+            parent = Show.objects.get(id=old.showid)
+            new.show = parent
+        else:
+            try:
+                parent = Society.objects.get(id=old.socid)
+                new = SocietyApplication()
+                new.society = parent
+            except Society.DoesNotExist:
+                new = VenueApplication()
+                parent = Venue.objects.get(id=old.socid)
+                new.venue = parent
+        new.name = old.text
+        new.desc = old.furtherinfo
+        new.deadline = datetime.datetime.combine(old.deadlinedate, old.deadlinetime)
+        base_slug = slugify(parent.name + '-' + new.name)
+        if Application.objects.filter(slug=base_slug).count() > 0:
+            for i in itertools.count(2):
+                slug = slugify(base_slug + '-' + str(i))
+                if Application.objects.filter(slug=slug).count() == 0:
+                    break
+        else:
+            slug = base_slug
+        new.slug = slug
+        new.save()
     
+    
+def migrate_auditions(apps, schema_editor):
+    Show = apps.get_model('drama', 'Show')
+    OldAudition = apps.get_model('old_drama', 'ActsAuditions')
+    AuditionInstance = apps.get_model('drama', 'AuditionInstance')
+    for old in OldAudition.objects.all():
+        show = Show.objects.get(id=old.showid)
+        audition = show.audition
+        if old.nonscheduled:
+            audition.contact = old.location
+            audition.save()
+        else:
+            new = AuditionInstance(audition=audition)
+            new.location = old.location
+            new.start_time = old.starttime
+            new.end_datetime = datetime.datetime.combine(old.date, old.endtime)
+            new.save()
     
     
 
@@ -321,4 +380,8 @@ class Migration(migrations.Migration):
         migrations.RunPython(migrate_techieads),
         migrations.RunPython(migrate_users),
         migrations.RunPython(migrate_access),
+        migrations.RunPython(migrate_pending_access),
+        migrations.RunPython(migrate_applications),
+        migrations.RunPython(migrate_auditions),
+
     ]
