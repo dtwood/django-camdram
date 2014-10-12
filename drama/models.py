@@ -778,10 +778,10 @@ class Application(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.parent().name + '-' + self.name)
-            if self.__class__.objects.filter(slug=base_slug).count() > 0:
+            if Application.objects.filter(slug=base_slug).count() > 0:
                 for i in itertools.count(2):
                     slug = slugify(base_slug + '-' + str(i))
-                    if Show.objects.filter(slug=slug).count() == 0:
+                    if Application.objects.filter(slug=slug).count() == 0:
                         break
             else:
                 slug = base_slug
