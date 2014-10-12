@@ -32,186 +32,6 @@ class ActsUsers(models.Model):
         db_table = 'acts_users'
 
 
-#Done
-class ActsAuditions(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
-    showid = models.IntegerField(blank=True, null=True)
-    date = models.DateField()
-    starttime = models.TimeField()
-    endtime = models.TimeField(blank=True, null=True)
-    location = models.CharField(max_length=255)
-    display = models.BooleanField()
-    nonscheduled = models.BooleanField()
-
-    class Meta:
-        db_table = 'acts_auditions'
-
-
-#Done
-class ActsApplications(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
-    showid = models.IntegerField(blank=True, null=True)
-    socid = models.IntegerField(blank=True, null=True)
-    text = models.TextField()  # This field type is a guess.
-    deadlinedate = models.DateField()
-    furtherinfo = models.TextField()  # This field type is a guess.
-    deadlinetime = models.TimeField()
-
-    class Meta:
-        db_table = 'acts_applications'
-
-
-#Done
-class ActsPendingaccess(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
-    issuerid = models.IntegerField()
-    rid = models.IntegerField()
-    email = models.CharField(max_length=255)
-    type = models.CharField(max_length=255)
-    creationdate = models.DateField()
-
-    class Meta:
-        db_table = 'acts_pendingaccess'
-
-
-#Done
-class ActsAccess(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
-    uid = models.IntegerField(blank=True, null=True)
-    issuerid = models.IntegerField(blank=True, null=True)
-    revokeid = models.IntegerField(blank=True, null=True)
-    rid = models.IntegerField()
-    type = models.CharField(max_length=20)
-    creationdate = models.DateField()
-    revokedate = models.DateField(blank=True, null=True)
-    contact = models.BooleanField()
-
-    class Meta:
-        db_table = 'acts_access'
-
-
-#Done
-class ActsTechies(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
-    showid = models.IntegerField(blank=True, null=True)
-    positions = models.TextField()  # This field type is a guess.
-    contact = models.TextField()  # This field type is a guess.
-    deadline = models.BooleanField()
-    deadlinetime = models.TimeField()
-    expiry = models.DateField()
-    display = models.BooleanField()
-    remindersent = models.BooleanField()
-    techextra = models.TextField()  # This field type is a guess.
-    lastupdated = models.DateTimeField()
-
-    class Meta:
-        db_table = 'acts_techies'
-
-
-#Done
-class ActsPeopleData(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
-    image_id = models.IntegerField(blank=True, null=True)
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True)  # This field type is a guess.
-    slug = models.CharField(unique=True, max_length=128, blank=True)
-    mapto = models.IntegerField()
-    norobots = models.BooleanField()
-
-    class Meta:
-        db_table = 'acts_people_data'
-
-
-#Done
-class ActsPerformances(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
-    sid = models.IntegerField(blank=True, null=True)
-    venid = models.IntegerField(blank=True, null=True)
-    startdate = models.DateField()
-    enddate = models.DateField()
-    excludedate = models.DateField(blank=True, null=True)
-    time = models.TimeField()
-    venue = models.CharField(max_length=255, blank=True)
-
-    class Meta:
-        db_table = 'acts_performances'
-
-
-#Done (i think)
-class ActsShows(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
-    image_id = models.IntegerField(blank=True, null=True)
-    socid = models.IntegerField(blank=True, null=True)
-    venid = models.IntegerField(blank=True, null=True)
-    authorizeid = models.IntegerField(blank=True, null=True)
-    primaryref = models.IntegerField(unique=True, blank=True, null=True)
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)  # This field type is a guess.
-    facebook_id = models.CharField(max_length=50, blank=True)
-    twitter_id = models.CharField(max_length=50, blank=True)
-    slug = models.CharField(unique=True, max_length=128, blank=True)
-    dates = models.CharField(max_length=255)
-    author = models.CharField(max_length=255, blank=True)
-    prices = models.CharField(max_length=255, blank=True)
-    photourl = models.TextField(blank=True)  # This field type is a guess.
-    venue = models.CharField(max_length=255, blank=True)
-    excludedate = models.DateField(blank=True, null=True)
-    society = models.CharField(max_length=255, blank=True)
-    techsend = models.BooleanField()
-    actorsend = models.BooleanField()
-    audextra = models.TextField(blank=True)  # This field type is a guess.
-    entered = models.BooleanField()
-    entryexpiry = models.DateField()
-    category = models.CharField(max_length=255)
-    bookingcode = models.CharField(max_length=255, blank=True)
-    timestamp = models.DateTimeField()
-    start_at = models.DateTimeField(blank=True, null=True)
-    end_at = models.DateTimeField(blank=True, null=True)
-    freebase_id = models.CharField(max_length=255, blank=True)
-    facebookurl = models.CharField(max_length=2083, blank=True)
-    otherurl = models.CharField(max_length=2083, blank=True)
-    onlinebookingurl = models.CharField(max_length=2083, blank=True)
-
-    class Meta:
-        db_table = 'acts_shows'
-
-
-#Done
-class ActsShowsPeopleLink(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
-    sid = models.IntegerField(blank=True, null=True)
-    pid = models.IntegerField(blank=True, null=True)
-    type = models.CharField(max_length=20)
-    role = models.CharField(max_length=255)
-    order = models.IntegerField()
-
-    class Meta:
-        db_table = 'acts_shows_people_link'
-
-
-#Done
-class ActsSocieties(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
-    image_id = models.IntegerField(blank=True, null=True)
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True)  # This field type is a guess.
-    facebook_id = models.CharField(max_length=50, blank=True)
-    twitter_id = models.CharField(max_length=50, blank=True)
-    shortname = models.CharField(max_length=100)
-    college = models.CharField(max_length=100, blank=True)
-    affiliate = models.BooleanField()
-    logourl = models.CharField(max_length=255, blank=True)
-    slug = models.CharField(unique=True, max_length=128, blank=True)
-    expires = models.DateField(blank=True, null=True)
-    type = models.CharField(max_length=255)
-    address = models.TextField(blank=True)  # This field type is a guess.
-    latitude = models.TextField(blank=True)  # This field type is a guess.
-    longitude = models.TextField(blank=True)  # This field type is a guess.
-
-    class Meta:
-        db_table = 'acts_societies'
-
-        
 #Perplexing
 class ActsEvents(models.Model):
     id = models.IntegerField(primary_key=True)  # AutoField?
@@ -341,3 +161,183 @@ class ActsApiRefreshTokens(models.Model):
     class Meta:
         db_table = 'acts_api_refresh_tokens'
 
+#Done (i think)
+class ActsShows(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    image_id = models.IntegerField(blank=True, null=True)
+    socid = models.IntegerField(blank=True, null=True)
+    venid = models.IntegerField(blank=True, null=True)
+    authorizeid = models.IntegerField(blank=True, null=True)
+    primaryref = models.IntegerField(unique=True, blank=True, null=True)
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)  # This field type is a guess.
+    facebook_id = models.CharField(max_length=50, blank=True)
+    twitter_id = models.CharField(max_length=50, blank=True)
+    slug = models.CharField(unique=True, max_length=128, blank=True)
+    dates = models.CharField(max_length=255)
+    author = models.CharField(max_length=255, blank=True)
+    prices = models.CharField(max_length=255, blank=True)
+    photourl = models.TextField(blank=True)  # This field type is a guess.
+    venue = models.CharField(max_length=255, blank=True)
+    excludedate = models.DateField(blank=True, null=True)
+    society = models.CharField(max_length=255, blank=True)
+    techsend = models.BooleanField()
+    actorsend = models.BooleanField()
+    audextra = models.TextField(blank=True)  # This field type is a guess.
+    entered = models.BooleanField()
+    entryexpiry = models.DateField()
+    category = models.CharField(max_length=255)
+    bookingcode = models.CharField(max_length=255, blank=True)
+    timestamp = models.DateTimeField()
+    start_at = models.DateTimeField(blank=True, null=True)
+    end_at = models.DateTimeField(blank=True, null=True)
+    freebase_id = models.CharField(max_length=255, blank=True)
+    facebookurl = models.CharField(max_length=2083, blank=True)
+    otherurl = models.CharField(max_length=2083, blank=True)
+    onlinebookingurl = models.CharField(max_length=2083, blank=True)
+
+    class Meta:
+        db_table = 'acts_shows'
+
+
+#Done
+class ActsAuditions(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    showid = models.IntegerField(blank=True, null=True)
+    date = models.DateField()
+    starttime = models.TimeField()
+    endtime = models.TimeField(blank=True, null=True)
+    location = models.CharField(max_length=255)
+    display = models.BooleanField()
+    nonscheduled = models.BooleanField()
+
+    class Meta:
+        db_table = 'acts_auditions'
+
+
+#Done
+class ActsApplications(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    showid = models.IntegerField(blank=True, null=True)
+    socid = models.IntegerField(blank=True, null=True)
+    text = models.TextField()  # This field type is a guess.
+    deadlinedate = models.DateField()
+    furtherinfo = models.TextField()  # This field type is a guess.
+    deadlinetime = models.TimeField()
+
+    class Meta:
+        db_table = 'acts_applications'
+
+
+#Done
+class ActsPendingaccess(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    issuerid = models.IntegerField()
+    rid = models.IntegerField()
+    email = models.CharField(max_length=255)
+    type = models.CharField(max_length=255)
+    creationdate = models.DateField()
+
+    class Meta:
+        db_table = 'acts_pendingaccess'
+
+
+#Done
+class ActsAccess(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    uid = models.IntegerField(blank=True, null=True)
+    issuerid = models.IntegerField(blank=True, null=True)
+    revokeid = models.IntegerField(blank=True, null=True)
+    rid = models.IntegerField()
+    type = models.CharField(max_length=20)
+    creationdate = models.DateField()
+    revokedate = models.DateField(blank=True, null=True)
+    contact = models.BooleanField()
+
+    class Meta:
+        db_table = 'acts_access'
+
+
+#Done
+class ActsTechies(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    showid = models.IntegerField(blank=True, null=True)
+    positions = models.TextField()  # This field type is a guess.
+    contact = models.TextField()  # This field type is a guess.
+    deadline = models.BooleanField()
+    deadlinetime = models.TimeField()
+    expiry = models.DateField()
+    display = models.BooleanField()
+    remindersent = models.BooleanField()
+    techextra = models.TextField()  # This field type is a guess.
+    lastupdated = models.DateTimeField()
+
+    class Meta:
+        db_table = 'acts_techies'
+
+
+#Done
+class ActsPeopleData(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    image_id = models.IntegerField(blank=True, null=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)  # This field type is a guess.
+    slug = models.CharField(unique=True, max_length=128, blank=True)
+    mapto = models.IntegerField()
+    norobots = models.BooleanField()
+
+    class Meta:
+        db_table = 'acts_people_data'
+
+
+#Done
+class ActsPerformances(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    sid = models.IntegerField(blank=True, null=True)
+    venid = models.IntegerField(blank=True, null=True)
+    startdate = models.DateField()
+    enddate = models.DateField()
+    excludedate = models.DateField(blank=True, null=True)
+    time = models.TimeField()
+    venue = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        db_table = 'acts_performances'
+
+
+#Done
+class ActsShowsPeopleLink(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    sid = models.IntegerField(blank=True, null=True)
+    pid = models.IntegerField(blank=True, null=True)
+    type = models.CharField(max_length=20)
+    role = models.CharField(max_length=255)
+    order = models.IntegerField()
+
+    class Meta:
+        db_table = 'acts_shows_people_link'
+
+
+#Done
+class ActsSocieties(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    image_id = models.IntegerField(blank=True, null=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)  # This field type is a guess.
+    facebook_id = models.CharField(max_length=50, blank=True)
+    twitter_id = models.CharField(max_length=50, blank=True)
+    shortname = models.CharField(max_length=100)
+    college = models.CharField(max_length=100, blank=True)
+    affiliate = models.BooleanField()
+    logourl = models.CharField(max_length=255, blank=True)
+    slug = models.CharField(unique=True, max_length=128, blank=True)
+    expires = models.DateField(blank=True, null=True)
+    type = models.CharField(max_length=255)
+    address = models.TextField(blank=True)  # This field type is a guess.
+    latitude = models.TextField(blank=True)  # This field type is a guess.
+    longitude = models.TextField(blank=True)  # This field type is a guess.
+
+    class Meta:
+        db_table = 'acts_societies'
+
+        
