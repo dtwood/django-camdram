@@ -10,7 +10,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, BasePermission
 from rest_framework.exceptions import MethodNotAllowed
 from drama import serializers, models, views, forms, feeds
-from drama.models import LogItem
 from django.utils import timezone
 from django.contrib import auth
 from django.db.models import signals
@@ -62,7 +61,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
                 form = self.form(request.POST, request.FILES, instance=temp_item)
                 if form.is_valid():
                     form.save()
-                    log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=self.request.user, content_object=item, desc='')
+                    log_item = models.LogItem(cat='EDIT', datetime=timezone.now(), user=self.request.user, content_object=item, desc='')
                     log_item.save()
                     return redirect(item.get_absolute_url())
                 else:
@@ -93,7 +92,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):
             item.approve()
-            log_item = LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Approved')
+            log_item = models.LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Approved')
             log_item.save()
             return redirect(item.get_absolute_url())
         else:
@@ -106,7 +105,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):
             item.unapprove()
-            log_item = LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Unapproved')
+            log_item = models.LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Unapproved')
             log_item.save()
             return redirect(item.get_absolute_url())
         else:
@@ -149,7 +148,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
                 form = forms.AdminForm(request.POST)
                 if form.is_valid():
                     item.add_admin(form.cleaned_data['email'])
-                    log_item = LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Added {0}'.format(form.cleaned_data['email']))
+                    log_item = models.LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Added {0}'.format(form.cleaned_data['email']))
                     log_item.save()
                     signals.post_save.send(sender=item.__class__, instance=item, created=False, raw=False, using=None, update_fields=None)
                     return redirect(item.get_absolute_url())
@@ -167,7 +166,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
                 try:
                     user = auth.get_user_model().objects.filter(username=username)[0]
                     item.revoke_admin(user)
-                    log_item = LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Removed {0}'.format(user.email))
+                    log_item = models.LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Removed {0}'.format(user.email))
                     log_item.save()
                     signals.post_save.send(sender=item.__class__, instance=item, created=False, raw=False, using=None, update_fields=None)
                 except IndexError:
@@ -187,7 +186,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
             try:
                 user = auth.get_user_model().objects.filter(username=username)[0]
                 item.revoke_admin(user)
-                log_item = LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Removed {0}'.format(user.email))
+                log_item = models.LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Removed {0}'.format(user.email))
                 log_item.save()
                 signals.post_save.send(sender=item.__class__, instance=item, created=False, raw=False, using=None, update_fields=None)
             except IndexError:
@@ -203,7 +202,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
         if request.user.has_perm('change_' + item.class_name(), item):
             email = request.DATA['email']
             item.remove_pending_admin(email)
-            log_item = LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Removed {0}'.format(email))
+            log_item = models.LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Removed {0}'.format(email))
             log_item.save()
             signals.post_save.send(sender=item.__class__, instance=item, created=False, raw=False, using=None, update_fields=None)
             return redirect(item.get_admins_url())
@@ -228,7 +227,7 @@ class OrganizationViewSet(ObjectViewSet):
                 bound_form = self.applicationform(request.POST, instance=parent)
                 if bound_form.is_valid():
                     bound_form.save()
-                    log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=parent, desc='Changed Applications')
+                    log_item = models.LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=parent, desc='Changed Applications')
                     log_item.save()
                     signals.post_save.send(sender=parent.__class__, instance=parent, created=False, raw=False, using=None, update_fields=None)
                     return redirect(parent.get_absolute_url())
@@ -273,7 +272,7 @@ class PersonViewSet(ObjectViewSet):
         if person.user is not None:
             raise PermissionDenied
         else:
-            log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=person, desc='Linked Person')
+            log_item = models.LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=person, desc='Linked Person')
             log_item.save()
             signals.post_save.send(sender=person.__class__, instance=person, created=False, raw=False, using=None, update_fields=None)
             return person.link_user(user)
@@ -314,7 +313,7 @@ class ShowViewSet(OrganizationViewSet):
                     person = form.cleaned_data['person']
                     r = models.RoleInstance(name=name, show=show,person=person,role=character)
                     r.save()
-                    log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added cast member: {0}'.format(person.name))
+                    log_item = models.LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added cast member: {0}'.format(person.name))
                     log_item.save()
                     signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
                 return redirect(show.get_absolute_url())
@@ -337,7 +336,7 @@ class ShowViewSet(OrganizationViewSet):
                     person = form.cleaned_data['person']
                     r = models.RoleInstance(name=name, show=show,person=person,role=role)
                     r.save()
-                    log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added band member: {0}'.format(person.name))
+                    log_item = models.LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added band member: {0}'.format(person.name))
                     log_item.save()
                     signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
                 return redirect(show.get_absolute_url())
@@ -360,7 +359,7 @@ class ShowViewSet(OrganizationViewSet):
                     person = form.cleaned_data['person']
                     r = models.RoleInstance(name=name, show=show,person=person,role=role)
                     r.save()
-                    log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added production team member: {0}'.format(person.name))
+                    log_item = models.LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added production team member: {0}'.format(person.name))
                     log_item.save()
                     signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
                 return redirect(show.get_absolute_url())
@@ -380,7 +379,7 @@ class ShowViewSet(OrganizationViewSet):
                     raise PermissionDenied
                 item.sort = index
                 item.save()
-            log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Reordered Roles')
+            log_item = models.LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Reordered Roles')
             log_item.save()
             signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
             return HttpResponse('')
@@ -395,7 +394,7 @@ class ShowViewSet(OrganizationViewSet):
         if role.show != show:
             raise Http404
         if request.user.has_perm('drama.change_show', show):
-            log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Removed company member: {0}'.format(role.person.name))
+            log_item = models.LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Removed company member: {0}'.format(role.person.name))
             log_item.save()
             role.delete()
             signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
@@ -418,7 +417,7 @@ class ShowViewSet(OrganizationViewSet):
                     bound_form = form(request.POST, request.FILES, instance=item, parent=show, parent_name='show')
                     if bound_form.is_valid():
                         bound_form.save()
-                        log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Changed {0}'.format(item.__class__.__name__))
+                        log_item = models.LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Changed {0}'.format(item.__class__.__name__))
                         log_item.save()
                         signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
                         return redirect(show.get_absolute_url())
@@ -436,7 +435,7 @@ class ShowViewSet(OrganizationViewSet):
                     bound_form = form(request.POST, request.FILES, parent=show, parent_name='show')
                     if bound_form.is_valid():
                         bound_form.save()
-                        log_item = LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added {0}'.format(model.__name__))
+                        log_item = models.LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=show, desc='Added {0}'.format(model.__name__))
                         log_item.save()
                         signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
                         return redirect(show.get_absolute_url())
@@ -456,7 +455,7 @@ class ShowViewSet(OrganizationViewSet):
                 item = model.objects.filter(show__slug=slug)[0]
                 def on_success():
                     signals.post_save.send(sender=show.__class__, instance=show, created=False, raw=False, using=None, update_fields=None)
-                    log_item = LogItem(cat='DELETE', datetime=timezone.now(), user=request.user, content_object=show, desc='Removed {0}'.format(item.__class__.__name__))
+                    log_item = models.LogItem(cat='DELETE', datetime=timezone.now(), user=request.user, content_object=show, desc='Removed {0}'.format(item.__class__.__name__))
                     log_item.save()
                 view = views.MyDeleteView.as_view(model=model, success_url=show.get_absolute_url(), on_success=on_success)
                 return view(request, pk=item.pk, *args, **kwargs)

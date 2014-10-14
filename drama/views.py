@@ -194,11 +194,11 @@ class MyCreateView(autocomplete_light.CreateView):
             result = redirect(self.get_success_url())
         else:
             result = super(MyCreateView, self).form_valid(form)
-        log_item = LogItem(cat='CREATE', datetime=timezone.now(), user=self.request.user, content_object=self.object, desc='')
+        log_item = models.LogItem(cat='CREATE', datetime=timezone.now(), user=self.request.user, content_object=self.object, desc='')
         log_item.save()
         if self.request.user.has_perm('drama.approve_' + self.object.class_name(), self.object):
             self.object.approve()
-            log_item = LogItem(cat='APPROVE', datetime=timezone.now(), user=self.request.user, content_object=self.object, desc='Auto-approved')
+            log_item = models.LogItem(cat='APPROVE', datetime=timezone.now(), user=self.request.user, content_object=self.object, desc='Auto-approved')
             log_item.save()
         else:
             item = ApprovalQueueItem(created_by=self.request.user, content_object=self.object)
@@ -243,7 +243,7 @@ def approval_ignore(request, key=None):
     item = get_object_or_404(models.ApprovalQueueItem,pk=key)
     if request.user.has_perm('drama.approve_' + item.content_object.class_name(), item.content_object):
         item.delete()
-        log_item = LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item.object, desc='Ignored')
+        log_item = models.LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item.object, desc='Ignored')
         log_item.save()
         return redirect(reverse('approvals'))
     else:
@@ -256,7 +256,7 @@ def approval_approve(request, key=None):
     item = get_object_or_404(models.ApprovalQueueItem,pk=key)
     if request.user.has_perm('drama.approve_' + item.content_object.class_name(), item.content_object):
         item.content_object.approve()
-        log_item = LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item.object, desc='Approved')
+        log_item = models.LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item.object, desc='Approved')
         log_item.save()
         return redirect(reverse('approvals'))
     else:
