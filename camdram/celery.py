@@ -23,7 +23,7 @@ def debug_task(self):
     print('Request: {0!r}'.format(self.request))
 
 @app.task(bind=True)
-def update_facebook_posts(self):
+def update_posts(self):
     for ven in drama.models.Venue.objects.all():
         ven.update_posts()
     for soc in drama.models.Society.objects.all():

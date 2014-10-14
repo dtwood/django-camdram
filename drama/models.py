@@ -22,6 +22,7 @@ from django.template import defaultfilters
 import re
 import urllib
 from simplejson import loads
+from twython import Twython
 
 class ApprovalQueueItem(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -329,7 +330,7 @@ class SocialPost(models.Model):
 
     def get_link(self):
         if self.service == 'twit':
-            url = self.post_id #TODO
+            url = 'http://www.twitter.com/{}/status/{}'.format(self.content_object.twitter_id, self.post_id)
             return mark_safe('<a target="_blank" href="{}"><img alt="" src="/static/images/twitter.png" /></a>'.format(url))
         elif self.service == 'face':
             url = 'https://www.facebook.com/' + self.post_id
@@ -343,6 +344,7 @@ class DramaSocialMixin(models.Model):
     facebook_id = models.CharField('Facebook', max_length=50, blank=True, unique=True)
     facebook_since = models.IntegerField(null=True)
     twitter_id = models.CharField('Twitter', max_length=50, blank=True, unique=True)
+    twitter_since = models.IntegerField(null=True)
     post_set = GenericRelation(SocialPost)
 
     class Meta:
@@ -356,7 +358,11 @@ class DramaSocialMixin(models.Model):
         return mark_safe('<a target="_blank" href="{}"><img alt="" src="/static/images/facebook.png"></img> Facebook</a>'.format(url))
 
     def get_twitter_link(self):
-        pass #TODO
+        if not re.match(r'.*twitter\.com.*', self.twitter_id):
+            url = 'https://www.twitter.com/' + self.twitter_id
+        else:
+            url = self.twitter_id
+        return mark_safe('<a target="_blank" href="{}"><img alt="" src="/static/images/twitter.png"></img> Twitter</a>'.format(url))
         
 
     def has_news(self):
@@ -364,40 +370,68 @@ class DramaSocialMixin(models.Model):
 
     def update_posts(self):
         #Facebook
-        if not re.match('[0-9]*', self.facebook_id):
-            encoded_id = urllib.quote(facebook_id.encode('utf-8')).decode('utf-8')
-            facebook_id = loads(urllib.request.urlopen('https://graph.facebook.com/v2.1/?id={}'.format(encoded_id)).read().decode('utf-8'))['id']
-        else:
-            facebook_id = self.facebook_id
-        posts = []
-        if self.facebook_since:
-            since_option = '&since={}'.format(self.facebook_since)
-        else:
-            since_option = ''
-        url = 'https://graph.facebook.com/v2.1/{}/posts?access_token={}{}&limit=25&__previous=1'.format(facebook_id, settings.FACEBOOK_ACCESS_TOKEN, since_option)
-        since=None
-        while True:
-            post_data = loads(urllib.request.urlopen(url).read().decode('utf-8'))
-            posts = post_data['data'] + posts
-            try:
-                url = post_data['paging']['previous']
-            except KeyError:
-                break
-            since = int(re.match(r'.*since=([0-9]*).*', url).group(1))
-        for post in posts:
-            obj = SocialPost(content_object=self)
-            obj.service = 'face'
-            obj.post_id = post.get('id')
-            obj.time = post.get('updated_time')
-            obj.message = post.get('message')
-            obj.description = post.get('description')
-            obj.picture = post.get('picture')
-            obj.link = post.get('link')
-            obj.name = post.get('name')
-            SocialPost.objects.filter(service=obj.service, post_id=obj.post_id).delete()
-            obj.save()
-        self.facebook_since = since
-        self.save()
+        if self.facebook_id:
+            if re.match('.*facebook.com.*', self.facebook_id):
+                encoded_id = urllib.parse.quote(facebook_id.encode('utf-8')).decode('utf-8')
+                facebook_id = loads(urllib.request.urlopen('https://graph.facebook.com/v2.1/?id={}'.format(encoded_id)).read().decode('utf-8'))['id']
+            else:
+                facebook_id = self.facebook_id
+            posts = []
+            if self.facebook_since:
+                since_option = '&since={}'.format(self.facebook_since)
+            else:
+                since_option = ''
+            url = 'https://graph.facebook.com/v2.1/{}/posts?access_token={}{}&limit=25&__previous=1'.format(facebook_id, settings.FACEBOOK_ACCESS_TOKEN, since_option)
+            since=None
+            while True:
+                post_data = loads(urllib.request.urlopen(url).read().decode('utf-8'))
+                posts = post_data['data'] + posts
+                try:
+                    url = post_data['paging']['previous']
+                except KeyError:
+                    break
+                since = int(re.match(r'.*since=([0-9]*).*', url).group(1))
+            for post in posts:
+                obj = SocialPost(content_object=self)
+                obj.service = 'face'
+                obj.post_id = post.get('id')
+                obj.time = post.get('updated_time')
+                obj.message = post.get('message')
+                obj.description = post.get('description')
+                obj.picture = post.get('picture')
+                obj.link = post.get('link')
+                obj.name = post.get('name')
+                SocialPost.objects.filter(service=obj.service, post_id=obj.post_id).delete()
+                obj.save()
+            if since:
+                self.facebook_since = since
+                self.save()
+        #Twitter
+        if self.twitter_id:
+            twitter = Twython(app_key=settings.TWITTER_KEY, app_secret=settings.TWITTER_SECRET)
+            attrs = dict()
+            if self.twitter_since:
+                attrs['since_id'] = self.twitter_since
+            else:
+                attrs['count'] = 20
+            if re.match('^[0-9]*$', self.twitter_id):
+                attrs['user_id'] = self.twitter_id
+            else:
+                attrs['screen_name'] = self.twitter_id
+            timeline = twitter.get_user_timeline(**attrs)
+            for post in timeline:
+                obj = SocialPost(content_object=self)
+                obj.service='twit'
+                obj.post_id = post.get('id')
+                obj.time = datetime.strptime(post.get('created_at'),'%a %b %d %H:%M:%S %z %Y')
+                obj.message = post.get('text')
+                SocialPost.objects.filter(service=obj.service, post_id=obj.post_id).delete()
+                obj.save()
+            if timeline and timeline[0].get('id'):
+                self.twitter_since = timeline[0].get('id')
+                self.save()
+            
+        
         
         
 
