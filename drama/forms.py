@@ -91,7 +91,7 @@ class ShowForm(FormsetsForm, autocomplete_light.ModelForm):
 
     class Meta:
         model = models.Show
-        fields = ['name','desc','book','prices','author','societies','image']
+        fields = ['name','desc','book','prices','author','societies','image', 'facebook_id', 'twitter_id']
 
     def clean(self, *args, **kwargs):
         cleaned_data = super(ShowForm, self).clean()
@@ -112,7 +112,7 @@ class SocietyForm(FormsetsForm):
 
     class Meta:
         model = models.Society
-        fields = ['name','shortname','desc','image']
+        fields = ['name','shortname','desc','image', 'facebook_id', 'twitter_id']
 
 
 class PersonForm(FormsetsForm):
@@ -132,7 +132,7 @@ class VenueForm(FormsetsForm):
 
     class Meta:
         model = models.Venue
-        fields = ['name','desc','address','lat','lng']
+        fields = ['name','desc','address','lat','lng', 'facebook_id', 'twitter_id']
 
         
 class RoleForm(FormsetsForm):

@@ -1,0 +1,35 @@
+  {% if item.showp %}
+  <div class="row news-item">
+    <div class="large-12 column">
+      <p>
+	<strong>{{item.get_link}} {{item.content_object.get_link}} posted:</strong>
+	{% if item.message %}
+	{{item.message}}
+        {% endif %}
+      </p>
+      <p>{{item.time | date:'jS F fa'}}</p>
+      {% if item.link %}
+      <div class="news-link">
+	<div class="row">
+	  {% if item.picture %}
+	  <div class="small-3 columns">
+	    <a target="_blank" href="{{item.link}}">
+	      <img src="{{item.picture}}"></img>
+	    </a>
+	  </div>
+	  <div class="small-9 columns">
+	  {% else %}
+	  <div class="small-12 columns">
+	  {% endif %}
+	    <h6><a target="_blank" href="{{item.link}}">{% if item.name %}{{item.name}}{% else %}See More{% endif %}</a></h6>
+	    {% if item.description %}
+	      <p>{{item.description}}</p>
+	    {% endif %}
+	  </div>
+	</div>
+      </div>
+      {% endif %}
+      <hr />
+    </div>
+  </div>
+  {% endif %}

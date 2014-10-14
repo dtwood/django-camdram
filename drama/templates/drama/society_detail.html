@@ -11,15 +11,29 @@
   </div>
 </div>
 
-{% if object.get_auditions or object.get_showapps or object.get_societyapps or object.get_techieads %}
 <div class="row">
+{% if object.get_auditions or object.get_showapps or object.get_societyapps or object.get_techieads %}
+  {% if object.has_news %}
+  <div class="large-6 columns">
+  {% else %}
   <div class="large-12 columns">
+  {% endif %}
     {% with title="Get involved with "|add:object.name|add:" shows:" %}
     {% include "drama/vacancies-panel.html" with title=title ourapps=object.get_societyapps%}
     {% endwith %}
   </div>
-</div>
+  {% if object.has_news %}
+  <div class="large-6 columns">
+  {% endif %}
+{% else %}
+  {% if object.has_news %}
+  <div class="large-12 columns">
+  {% endif %}
 {% endif %}
+  {% if object.has_news %}
+  {% include 'drama/organization_news.html' %}
+  {% endif %}
+</div>
 
 <div class="row">
   <div class="large-12 columns">

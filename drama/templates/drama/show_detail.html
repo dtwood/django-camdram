@@ -39,8 +39,13 @@
     </div>
     {% if object.image %}</div>{% endif %}
 </div>
-{% if object.get_techiead or object.get_auditions or object.get_apps %}
 <div class ="row">
+{% if object.get_techiead or object.get_auditions or object.get_apps %}
+{% if objects.has_news %}
+<div class="large-6 columns">
+{% else %}
+<div class="large-12 columns">
+{% endif %}
   <div class="vacancies-panel">
     <h5> Get involved with <em>{{object.name}}</em>:</h5>
     {% for application in object.get_apps %}
@@ -59,7 +64,17 @@
     {% endif %}
   </div>
 </div>
+{% if object.has_news %}
+<div class="large-6 columns">
 {% endif %}
+{% else %}
+{% if object.has_news %}
+<div class="large-12 columns">
+{% endif %}
+{% if object.has_news %}
+  {% include 'drama/organization_news.html' %}
+{% endif %}
+</div>
 <div class="row">
   <div class="large-{% if object.get_band or "change_show" in user_perms%}4{% else %}6{% endif %} columns">
     <h3> Cast </h3>

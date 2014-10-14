@@ -1,0 +1,11 @@
+  <ul class="inline-list right">
+    {% if object.facebook_id %}<li>{{object.get_facebook_link}}</li>{% endif %}
+    {% if object.twitter_id %}<li>{{object.get_twitter_link}}</li>{% endif %}
+  </ul>
+  <h5>News</h5>
+  <div id="organisation-news">
+  {% for item in object.post_set.all %}
+  {% include 'drama/news_post.html' %}
+  {% endfor %}
+  </div>
+  </div>

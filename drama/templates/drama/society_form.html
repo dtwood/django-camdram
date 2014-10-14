@@ -20,6 +20,30 @@
     {% include "drama/form_field.html" with field=content_form.shortname %}
     {% include "drama/form_field.html" with field=content_form.desc %}
     {% include "drama/form_field.html" with field=content_form.image %}
+  <div class="row">
+    <div class="large-3 columns">
+      <label class="{{content_form.facebook_id.css_classes}} right inline" for="{{content_form.facebook_id.id_for_label}}">
+	Facebook
+      </label>
+    </div>
+    <div class="{{content_form.facebook_id.css_classes}} large-4 columns">
+      {{content_form.facebook_id}}
+      {% for error in content_form.facebook_id.errors %}
+      <small class="error">{{error}}</small>
+      {% endfor %}
+    </div>
+    <div class="large-1 columns">
+      <label class="{{content_form.twitter_id.css_classes}} right inline" for="{{content_form.twitter_id.id_for_label}}">
+	Twitter
+      </label>
+    </div>
+    <div class="{{content_form.twitter_id.css_classes}} large-4 columns">
+      {{content_form.twitter_id}}
+      {% for error in content_form.twitter_id.errors %}
+      <small class="error">{{error}}</small>
+      {% endfor %}
+    </div>
+  </div>
     <div class="right">
       <button type="submit">Save</button>
     </div>

@@ -19,6 +19,9 @@ from django.core.mail import send_mail
 import reversion
 import pystache
 from django.template import defaultfilters
+import re
+import urllib
+from simplejson import loads
 
 class ApprovalQueueItem(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -229,7 +232,7 @@ class DramaObjectModel(models.Model):
 class Person(DramaObjectModel):
     objects = DramaObjectManager()
     user = models.OneToOneField(settings.AUTH_USER_MODEL, blank=True, null=True)
-    norobots = models.BooleanField()
+    norobots = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['name']
@@ -307,11 +310,96 @@ class Person(DramaObjectModel):
         if self.user:
             return self.user.email
     
+class SocialPost(models.Model):
+    service_choices = [('face', 'Facebook'), ('twit', 'Twitter')]
+    service = models.CharField(max_length=4, choices=service_choices)
+    post_id = models.CharField(max_length=100)
+    time = models.DateTimeField()
+    message = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    picture = models.URLField(blank=True, null=True)
+    link = models.URLField(blank=True, null=True)
+    name = models.TextField(blank=True, null=True)
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
 
-class DramaSocialMixin(object):
-    facebook_id = models.CharField(max_length=50, blank=True)
-    twitter_id = models.CharField(max_length=50, blank=True)
+    def showp(self):
+        return self.link or self.picture or self.message
 
+    def get_link(self):
+        if self.service == 'twit':
+            url = self.post_id #TODO
+            return mark_safe('<a target="_blank" href="{}"><img alt="" src="/static/images/twitter.png" /></a>'.format(url))
+        elif self.service == 'face':
+            url = 'https://www.facebook.com/' + self.post_id
+            return mark_safe('<a target="_blank" href="{}"><img alt="" src="/static/images/facebook.png" /></a>'.format(url))
+
+    class Meta:
+        ordering = ['-time','service']
+
+
+class DramaSocialMixin(models.Model):
+    facebook_id = models.CharField('Facebook', max_length=50, blank=True)
+    facebook_since = models.IntegerField(null=True)
+    twitter_id = models.CharField('Twitter', max_length=50, blank=True)
+    post_set = GenericRelation(SocialPost)
+
+    class Meta:
+        abstract = True
+
+    def get_facebook_link(self):
+        if not re.match(r'.*facebook\.com.*', self.facebook_id):
+            url = 'https://www.facebook.com/' + self.facebook_id
+        else:
+            url = self.facebook_id
+        return mark_safe('<a target="_blank" href="{}"><img alt="" src="/static/images/facebook.png"></img> Facebook</a>'.format(url))
+
+    def get_twitter_link(self):
+        pass #TODO
+        
+
+    def has_news(self):
+        return (self.facebook_id or self.twitter_id) and self.post_set.count() > 0
+
+    def update_posts(self):
+        #Facebook
+        if not re.match('[0-9]*', self.facebook_id):
+            encoded_id = urllib.quote(facebook_id.encode('utf-8')).decode('utf-8')
+            facebook_id = loads(urllib.request.urlopen('https://graph.facebook.com/v2.1/?id={}'.format(encoded_id)).read().decode('utf-8'))['id']
+        else:
+            facebook_id = self.facebook_id
+        posts = []
+        if self.facebook_since:
+            since_option = '&since={}'.format(self.facebook_since)
+        else:
+            since_option = ''
+        url = 'https://graph.facebook.com/v2.1/{}/posts?access_token={}{}&limit=25&__previous=1'.format(facebook_id, settings.FACEBOOK_ACCESS_TOKEN, since_option)
+        since=None
+        while True:
+            post_data = loads(urllib.request.urlopen(url).read().decode('utf-8'))
+            posts = post_data['data'] + posts
+            try:
+                url = post_data['paging']['previous']
+            except KeyError:
+                break
+            since = int(re.match(r'.*since=([0-9]*).*', url).group(1))
+        for post in posts:
+            obj = SocialPost(content_object=self)
+            obj.service = 'face'
+            obj.post_id = post.get('id')
+            obj.time = post.get('updated_time')
+            obj.message = post.get('message')
+            obj.description = post.get('description')
+            obj.picture = post.get('picture')
+            obj.link = post.get('link')
+            obj.name = post.get('name')
+            SocialPost.objects.filter(service=obj.service, post_id=obj.post_id).delete()
+            obj.save()
+        self.facebook_since = since
+        self.save()
+        
+        
 
 class Venue(DramaObjectModel, DramaSocialMixin):
     objects = DramaObjectManager()
