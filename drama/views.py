@@ -61,6 +61,7 @@ def index(request):
         '2_years': models.Show.objects.filter(end_date__gte=datetime.date(start_date.year - 2, start_date.month, start_date.day), start_date__lte=datetime.date(end_date.year - 2, end_date.month, end_date.day)).approved()[0:5],
         '5_years': models.Show.objects.filter(end_date__gte=datetime.date(start_date.year - 5, start_date.month, start_date.day), start_date__lte=datetime.date(end_date.year - 5, end_date.month, end_date.day)).approved()[0:5],
         'weeks': weeks,
+        'news': models.SocialPost.objects.all()[0:15],
     }
     return render(request, 'drama/index.html', context)
 
