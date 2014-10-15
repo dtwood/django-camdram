@@ -61,8 +61,10 @@ def migrate_societies(apps, schema_editor):
         new.id = os.id
         new.name = os.name
         new.desc = os.description
-        new.facebook_id = os.facebook_id
-        new.twitter_id = os.twitter_id
+        if os.facebook_id:
+            new.facebook_id = os.facebook_id
+        if os.twitter_id:
+            new.twitter_id = os.twitter_id
         base_slug = slugify(new.name)
         if new.__class__.objects.filter(slug=base_slug).count() > 0:
             for i in itertools.count(2):
@@ -110,8 +112,10 @@ def migrate_shows(apps, schema_editor):
                 soc.save()
         new.name = os.title
         new.desc = os.description
-        new.facebook_id = os.facebook_id
-        new.twitter_id = os.twitter_id
+        if os.facebook_id:
+            new.facebook_id = os.facebook_id
+        if os.twitter_id:
+            new.twitter_id = os.twitter_id
         new.author = os.author
         if os.onlinebookingurl:
             new.book = os.onlinebookingurl
