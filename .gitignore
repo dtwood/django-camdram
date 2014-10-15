@@ -12,3 +12,4 @@ emails
 /libs
 /media
 /static
+/celerybeat-schedule
