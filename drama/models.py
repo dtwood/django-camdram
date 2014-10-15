@@ -341,9 +341,9 @@ class SocialPost(models.Model):
 
 
 class DramaSocialMixin(models.Model):
-    facebook_id = models.CharField('Facebook', max_length=50, blank=True, unique=True)
+    facebook_id = models.CharField('Facebook', max_length=50, blank=True)
     facebook_since = models.IntegerField(null=True)
-    twitter_id = models.CharField('Twitter', max_length=50, blank=True, unique=True)
+    twitter_id = models.CharField('Twitter', max_length=50, blank=True)
     twitter_since = models.IntegerField(null=True)
     post_set = GenericRelation(SocialPost)
 

@@ -9,20 +9,20 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('contenttypes', '0001_initial'),
-        ('auth', '0003_auto_20141005_1357'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('auth', '0003_auto_20141005_1357'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='Application',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('name', models.CharField(max_length=200)),
                 ('desc', models.TextField(verbose_name='Description', blank=True)),
                 ('contact', models.CharField(max_length=200, blank=True)),
                 ('deadline', models.DateTimeField()),
-                ('slug', models.SlugField(unique=True, max_length=200, blank=True, editable=False)),
+                ('slug', models.SlugField(unique=True, blank=True, editable=False, max_length=200)),
             ],
             options={
             },
@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ApprovalQueueItem',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('object_id', models.PositiveIntegerField()),
                 ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
                 ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Audition',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('desc', models.TextField(verbose_name='Description', blank=True)),
                 ('contact', models.CharField(max_length=200, blank=True)),
             ],
@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AuditionInstance',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('end_datetime', models.DateTimeField()),
                 ('start_time', models.TimeField()),
                 ('location', models.CharField(max_length=200)),
@@ -67,18 +67,18 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='EmailList',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('name', models.CharField(max_length=200)),
                 ('desc', models.TextField(verbose_name='Description', blank=True)),
                 ('slug', models.SlugField(unique=True, max_length=200)),
-                ('approved', models.BooleanField(default=False, editable=False)),
+                ('approved', models.BooleanField(editable=False, default=False)),
                 ('html_template', models.TextField()),
                 ('plaintext_template', models.TextField()),
                 ('default_address', models.EmailField(max_length=75)),
                 ('default_header', models.TextField()),
                 ('default_subject', models.CharField(max_length=256)),
-                ('from_addr', models.EmailField(max_length=75, verbose_name='From Address')),
-                ('date_format', models.CharField(default='D jS F Y', max_length=50)),
+                ('from_addr', models.EmailField(verbose_name='From Address', max_length=75)),
+                ('date_format', models.CharField(max_length=50, default='D jS F Y')),
                 ('group', models.OneToOneField(to='auth.Group')),
             ],
             options={
@@ -89,8 +89,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LogItem',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
-                ('cat', models.CharField(max_length=10, verbose_name='Type', choices=[('CREATE', 'Create'), ('EDIT', 'Edit'), ('APPROVE', 'Approval Change'), ('ADMIN', 'Admin Change'), ('DELETE', 'Delete')])),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('cat', models.CharField(verbose_name='Type', choices=[('CREATE', 'Create'), ('EDIT', 'Edit'), ('APPROVE', 'Approval Change'), ('ADMIN', 'Admin Change'), ('DELETE', 'Delete')], max_length=10)),
                 ('datetime', models.DateTimeField()),
                 ('object_id', models.PositiveIntegerField()),
                 ('desc', models.TextField()),
@@ -104,7 +104,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PendingGroupMember',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('email', models.EmailField(max_length=75)),
                 ('group', models.ForeignKey(to='auth.Group')),
             ],
@@ -115,7 +115,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Performance',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('start_date', models.DateField()),
                 ('end_date', models.DateField()),
                 ('time', models.TimeField()),
@@ -127,14 +127,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Person',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('name', models.CharField(max_length=200)),
                 ('desc', models.TextField(verbose_name='Description', blank=True)),
                 ('slug', models.SlugField(unique=True, max_length=200)),
-                ('approved', models.BooleanField(default=False, editable=False)),
+                ('approved', models.BooleanField(editable=False, default=False)),
                 ('norobots', models.BooleanField(default=False)),
                 ('group', models.OneToOneField(to='auth.Group')),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL, null=True, blank=True)),
+                ('user', models.OneToOneField(blank=True, null=True, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'permissions': (('approve_person', 'Approve Person'),),
@@ -145,12 +145,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Role',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('name', models.CharField(max_length=200)),
                 ('desc', models.TextField(verbose_name='Description', blank=True)),
                 ('slug', models.SlugField(unique=True, max_length=200)),
-                ('approved', models.BooleanField(default=False, editable=False)),
-                ('cat', models.CharField(max_length=4, verbose_name='Role Category', choices=[('cast', 'Cast'), ('band', 'Band'), ('prod', 'Production Team')])),
+                ('approved', models.BooleanField(editable=False, default=False)),
+                ('cat', models.CharField(verbose_name='Role Category', choices=[('cast', 'Cast'), ('band', 'Band'), ('prod', 'Production Team')], max_length=4)),
                 ('group', models.OneToOneField(to='auth.Group')),
             ],
             options={
@@ -162,11 +162,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='RoleInstance',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=200, verbose_name='Role name')),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('name', models.CharField(verbose_name='Role name', max_length=200)),
                 ('sort', models.IntegerField(default=1000)),
                 ('person', models.ForeignKey(to='drama.Person')),
-                ('role', models.ForeignKey(verbose_name='Role Type', to='drama.Role')),
+                ('role', models.ForeignKey(to='drama.Role', verbose_name='Role Type')),
             ],
             options={
                 'ordering': ['sort'],
@@ -176,19 +176,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Show',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('name', models.CharField(max_length=200)),
                 ('desc', models.TextField(verbose_name='Description', blank=True)),
                 ('slug', models.SlugField(unique=True, max_length=200)),
-                ('approved', models.BooleanField(default=False, editable=False)),
-                ('facebook_id', models.CharField(unique=True, max_length=50, verbose_name='Facebook', blank=True)),
+                ('approved', models.BooleanField(editable=False, default=False)),
+                ('facebook_id', models.CharField(verbose_name='Facebook', blank=True, max_length=50)),
                 ('facebook_since', models.IntegerField(null=True)),
-                ('twitter_id', models.CharField(unique=True, max_length=50, verbose_name='Twitter', blank=True)),
+                ('twitter_id', models.CharField(verbose_name='Twitter', blank=True, max_length=50)),
                 ('twitter_since', models.IntegerField(null=True)),
                 ('book', models.URLField(verbose_name='Booking Link', blank=True)),
                 ('prices', models.CharField(max_length=30, blank=True)),
                 ('author', models.CharField(max_length=200, blank=True)),
-                ('image', models.ImageField(upload_to='images/', blank=True)),
+                ('image', models.ImageField(blank=True, upload_to='images/')),
                 ('group', models.OneToOneField(to='auth.Group')),
             ],
             options={
@@ -200,7 +200,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ShowApplication',
             fields=[
-                ('application_ptr', models.OneToOneField(auto_created=True, parent_link=True, to='drama.Application', primary_key=True, serialize=False)),
+                ('application_ptr', models.OneToOneField(serialize=False, primary_key=True, to='drama.Application', auto_created=True, parent_link=True)),
                 ('show', models.ForeignKey(to='drama.Show')),
             ],
             options={
@@ -210,15 +210,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SocialPost',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('service', models.CharField(max_length=4, choices=[('face', 'Facebook'), ('twit', 'Twitter')])),
                 ('post_id', models.CharField(max_length=100)),
                 ('time', models.DateTimeField()),
-                ('message', models.TextField(null=True, blank=True)),
-                ('description', models.TextField(null=True, blank=True)),
-                ('picture', models.URLField(null=True, blank=True)),
-                ('link', models.URLField(null=True, blank=True)),
-                ('name', models.TextField(null=True, blank=True)),
+                ('message', models.TextField(blank=True, null=True)),
+                ('description', models.TextField(blank=True, null=True)),
+                ('picture', models.URLField(blank=True, null=True)),
+                ('link', models.URLField(blank=True, null=True)),
+                ('name', models.TextField(blank=True, null=True)),
                 ('object_id', models.PositiveIntegerField()),
                 ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
             ],
@@ -230,18 +230,18 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Society',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('name', models.CharField(max_length=200)),
                 ('desc', models.TextField(verbose_name='Description', blank=True)),
                 ('slug', models.SlugField(unique=True, max_length=200)),
-                ('approved', models.BooleanField(default=False, editable=False)),
-                ('facebook_id', models.CharField(unique=True, max_length=50, verbose_name='Facebook', blank=True)),
+                ('approved', models.BooleanField(editable=False, default=False)),
+                ('facebook_id', models.CharField(verbose_name='Facebook', blank=True, max_length=50)),
                 ('facebook_since', models.IntegerField(null=True)),
-                ('twitter_id', models.CharField(unique=True, max_length=50, verbose_name='Twitter', blank=True)),
+                ('twitter_id', models.CharField(verbose_name='Twitter', blank=True, max_length=50)),
                 ('twitter_since', models.IntegerField(null=True)),
-                ('shortname', models.CharField(max_length=100, verbose_name='Abbreviaiton')),
+                ('shortname', models.CharField(verbose_name='Abbreviaiton', max_length=100)),
                 ('college', models.CharField(max_length=100, blank=True)),
-                ('image', models.ImageField(upload_to='images/', verbose_name='Logo', blank=True)),
+                ('image', models.ImageField(verbose_name='Logo', blank=True, upload_to='images/')),
                 ('group', models.OneToOneField(to='auth.Group')),
             ],
             options={
@@ -253,7 +253,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SocietyApplication',
             fields=[
-                ('application_ptr', models.OneToOneField(auto_created=True, parent_link=True, to='drama.Application', primary_key=True, serialize=False)),
+                ('application_ptr', models.OneToOneField(serialize=False, primary_key=True, to='drama.Application', auto_created=True, parent_link=True)),
                 ('society', models.ForeignKey(to='drama.Society')),
             ],
             options={
@@ -263,7 +263,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TechieAd',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('desc', models.TextField(verbose_name='Description', blank=True)),
                 ('contact', models.CharField(max_length=200)),
                 ('deadline', models.DateTimeField()),
@@ -276,12 +276,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TechieAdRole',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('name', models.CharField(max_length=200)),
                 ('desc', models.TextField(verbose_name='Description', blank=True)),
-                ('slug', models.SlugField(max_length=200, blank=True, editable=False)),
+                ('slug', models.SlugField(blank=True, editable=False, max_length=200)),
                 ('ad', models.ForeignKey(to='drama.TechieAd')),
-                ('role', models.ForeignKey(verbose_name='Role Type', to='drama.Role')),
+                ('role', models.ForeignKey(to='drama.Role', verbose_name='Role Type')),
             ],
             options={
             },
@@ -290,7 +290,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TermDate',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('year', models.IntegerField(choices=[(2000, 2000), (2001, 2001), (2002, 2002), (2003, 2003), (2004, 2004), (2005, 2005), (2006, 2006), (2007, 2007), (2008, 2008), (2009, 2009), (2010, 2010), (2011, 2011), (2012, 2012), (2013, 2013), (2014, 2014), (2015, 2015)])),
                 ('term', models.CharField(max_length=2, choices=[('Terms', (('MT', 'Michaelmas Term'), ('LT', 'Lent Term'), ('ET', 'Easter Term'))), ('Breaks', (('CB', 'Christmas Break'), ('EB', 'Easter Break'), ('SB', 'Summer Break')))])),
                 ('start', models.DateField()),
@@ -302,18 +302,18 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Venue',
             fields=[
-                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('name', models.CharField(max_length=200)),
                 ('desc', models.TextField(verbose_name='Description', blank=True)),
                 ('slug', models.SlugField(unique=True, max_length=200)),
-                ('approved', models.BooleanField(default=False, editable=False)),
-                ('facebook_id', models.CharField(unique=True, max_length=50, verbose_name='Facebook', blank=True)),
+                ('approved', models.BooleanField(editable=False, default=False)),
+                ('facebook_id', models.CharField(verbose_name='Facebook', blank=True, max_length=50)),
                 ('facebook_since', models.IntegerField(null=True)),
-                ('twitter_id', models.CharField(unique=True, max_length=50, verbose_name='Twitter', blank=True)),
+                ('twitter_id', models.CharField(verbose_name='Twitter', blank=True, max_length=50)),
                 ('twitter_since', models.IntegerField(null=True)),
                 ('address', models.CharField(max_length=200, blank=True)),
-                ('lat', models.FloatField(null=True, verbose_name='Latitude', blank=True)),
-                ('lng', models.FloatField(null=True, verbose_name='Longditude', blank=True)),
+                ('lat', models.FloatField(verbose_name='Latitude', blank=True, null=True)),
+                ('lng', models.FloatField(verbose_name='Longditude', blank=True, null=True)),
                 ('group', models.OneToOneField(to='auth.Group')),
             ],
             options={
@@ -325,7 +325,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='VenueApplication',
             fields=[
-                ('application_ptr', models.OneToOneField(auto_created=True, parent_link=True, to='drama.Application', primary_key=True, serialize=False)),
+                ('application_ptr', models.OneToOneField(serialize=False, primary_key=True, to='drama.Application', auto_created=True, parent_link=True)),
                 ('venue', models.ForeignKey(to='drama.Venue')),
             ],
             options={
