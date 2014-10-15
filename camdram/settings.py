@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from celery.schedules import crontab
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -198,3 +199,10 @@ PIPELINE_DISABLE_WRAPPER = True
 DRAMA_DIARY_ROW_HEIGHT = 30 #in minutes
 
 ACCOUNT_ACTIVATION_DAYS = 7
+
+CELERYBEAT_SCHEDULE = {
+    'social-news-update': {
+        'task':'camdram.update-posts',
+        'schedule': crontab(minute='*/15'),
+        }
+    }
