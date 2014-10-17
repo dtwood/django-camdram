@@ -216,8 +216,9 @@ class MyDeleteView(DeleteView):
     
     @transaction.atomic()
     def delete(self, request, *args, **kwargs):
-        fun = self.on_success
-        fun()
+        if self.on_success:
+            fun = self.on_success
+            fun()
         return super(MyDeleteView, self).delete(self, request, *args, **kwargs)
 
 

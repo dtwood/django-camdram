@@ -165,7 +165,7 @@ class AuditionInstanceForm(forms.ModelForm):
         if 'end_datetime' in self._errors:
             del self._errors['end_datetime']
         try:
-            cleaned_data['end_datetime'] = datetime.combine(
+            cleaned_data['end_datetime'] = datetime.datetime.combine(
                 cleaned_data['date'], cleaned_data['end_time'])
         except KeyError:
             pass
@@ -223,7 +223,7 @@ class DeadlineForm(forms.ModelForm):
         if 'deadline' in self._errors:
             del self._errors['deadline']
         try:
-            cleaned_data['deadline'] = datetime.combine(
+            cleaned_data['deadline'] = datetime.datetime.combine(
                 cleaned_data['date'], cleaned_data['time'])
         except KeyError:
             pass
