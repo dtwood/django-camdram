@@ -182,7 +182,7 @@ def migrate_performances(apps, schema_editor):
                 g = Group(name=ven.slug)
                 g.save()
                 ven.group = g
-                ven.approved = True
+                ven.approved = False
                 ven.save()
         new.venue = ven
         if old.excludedate:
