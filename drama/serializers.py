@@ -17,6 +17,7 @@ class RoleInstanceSerializer(serializers.HyperlinkedModelSerializer):
         lookup_field = 'id'
         fields = ('role', 'role_name', 'show', 'show_name')
         
+        
 class PersonSerializer(serializers.HyperlinkedModelSerializer):
     roles = RoleInstanceSerializer(source='roleinstance_set')
     
@@ -25,19 +26,7 @@ class PersonSerializer(serializers.HyperlinkedModelSerializer):
         lookup_field = 'slug'
         fields = ('id', 'url', 'name', 'desc', 'roles')
 
-class SocietySerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = models.Society
-        lookup_field = 'slug'
-        fields = ('id', 'url', 'name', 'shortname', 'desc', 'image')
-
         
-class VenueSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = models.Venue
-        lookup_field = 'slug'
-        fields = ('id', 'url', 'name', 'desc')
-
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
     cat = serializers.CharField(max_length=4, source='role.cat')
     person_name = serializers.RelatedField(source='person')
@@ -48,6 +37,7 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
         lookup_field = 'id'
         fields = ('role', 'role_name', 'person', 'person_name',  'cat')
 
+
 class PerformanceSerializer(serializers.HyperlinkedModelSerializer):
     venue_name = serializers.RelatedField(source='venue')
     class Meta:
@@ -55,6 +45,7 @@ class PerformanceSerializer(serializers.HyperlinkedModelSerializer):
         lookup_field='id'
         fields = ('start_date', 'end_date', 'time', 'venue', 'venue_name')
         
+
 class ShowSerializer(serializers.HyperlinkedModelSerializer):
     performances = PerformanceSerializer(source='performance_set', many=True)
     cast = CompanySerializer(source = 'cast')
@@ -66,8 +57,35 @@ class ShowSerializer(serializers.HyperlinkedModelSerializer):
         lookup_field = 'slug'
         fields = ('id', 'url', 'name', 'author', 'societies', 'desc', 'performances', 'cast', 'band', 'prod', 'image')
 
+
 class EmailListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.EmailList
         lookup_field = 'slug'
         fields = ('name',)
+
+
+class VenueSerializer(serializers.HyperlinkedModelSerializer):
+    shows = serializers.SerializerMethodField(method_name='get_shows')
+
+    def get_shows(self, obj):
+        return [reverse('show-detail', kwargs={'slug': x.slug}, request=self.context.get('request', None),
+                        format=self.context.get('format', None)) for x in obj.get_shows()]
+
+    class Meta:
+        model = models.Venue
+        lookup_field = 'slug'
+        fields = ('id', 'url', 'name', 'desc', 'shows')
+
+
+class SocietySerializer(serializers.HyperlinkedModelSerializer):
+    shows = serializers.SerializerMethodField(method_name='get_shows')
+
+    def get_shows(self, obj):
+        return [reverse('show-detail', kwargs={'slug': x.slug}, request=self.context.get('request', None),
+                        format=self.context.get('format', None)) for x in obj.get_shows()]
+    
+    class Meta:
+        model = models.Society
+        lookup_field = 'slug'
+        fields = ('id', 'url', 'name', 'shortname', 'desc', 'image', 'shows')
