@@ -13,3 +13,4 @@ emails
 /media
 /static
 /celerybeat-schedule
+/celerybeat.pid
