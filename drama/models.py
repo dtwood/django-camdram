@@ -155,6 +155,9 @@ class DramaObjectModel(models.Model):
     def get_admin_request_url(self):
         return self.get_url('request-admin')
 
+    def get_admin_response_url(self):
+        return self.get_url('respond-admin')
+
     def get_log_url(self):
         return '/admin/drama/logitem/?content_type_id__exact={0}&object_id__exact={1}'.format(ContentType.objects.get_for_model(self).id,self.id)
     
@@ -194,6 +197,9 @@ class DramaObjectModel(models.Model):
         return the pending admins
         """
         return self.group.pendinggroupmember_set.all()
+
+    def get_admin_requests(self):
+        return self.group.adminrequest_set.all()
     
     def add_admin(self, email):
         """
@@ -996,6 +1002,13 @@ class PendingGroupMember(models.Model):
 class AdminRequest(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     group = models.ForeignKey(auth.models.Group)
+
+    def approve(self):
+        self.group.user_set.add(self.user)
+        self.delete()
+
+    def deny(self):
+        self.delete()
 
 
 class TermDate(models.Model):

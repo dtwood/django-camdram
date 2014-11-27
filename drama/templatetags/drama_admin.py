@@ -32,6 +32,7 @@ class AdminPanelNode(template.Node):
                 subcontext['admin'] = True
                 subcontext['users'] = item.group.user_set.all()
                 subcontext['pending_users'] = item.group.pendinggroupmember_set.all()
+                subcontext['admin_requests'] = item.get_admin_requests()
                 groups = list(get_groups_with_perms(item).exclude(id=item.group.id))
                 if type == 'show':
                     for society in item.societies.all():

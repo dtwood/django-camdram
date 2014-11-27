@@ -43,4 +43,14 @@
     {% endwith %}
   </div>
 </div>
+<div class="row">
+  {% if user.is_authenticated %}
+  {% if "change_show" in user_perms %}
+  {% else %}
+  <p>If you'd like to change the information about this society, you can <a href="#" onclick="$(this).parent().parent().children('form').submit()">request to be an admin</a>.</p><form action="{{object.get_admin_request_url}}" method="post" class="hidden">{% csrf_token %}</form>
+  {% endif %}
+  {% else %}
+  <p>Log in to be able to request to be an admin for this society.</p>
+  {% endif %}
+</div>
 {% endblock %}

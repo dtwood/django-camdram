@@ -25,4 +25,14 @@
   </div>
 </div>
 {% endif %}
+<div class="row">
+  {% if user.is_authenticated %}
+  {% if "change_role" in user_perms %}
+  {% else %}
+  <p>If you'd like to change the information about this role, you can <a href="#" onclick="$(this).parent().parent().children('form').submit()">request to be an admin</a>.</p><form action="{{object.get_admin_request_url}}" method="post" class="hidden">{% csrf_token %}</form>
+  {% endif %}
+  {% else %}
+  <p>Log in to be able to request to be an admin for this role.</p>
+  {% endif %}
+</div>
 {% endblock %}

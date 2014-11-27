@@ -1,0 +1,8 @@
+{% extends "drama/base.html" %}
+{% load drama_admin %}
+{% load guardian_tags %}
+{% block title %}Admin Requested: {{object.name}}{% endblock %}
+
+{% block content %}
+Your request for access to this show has been sent.
+{% endblock %}

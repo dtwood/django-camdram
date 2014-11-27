@@ -38,5 +38,9 @@
   <p>The following people will be admins, pending account creation:
     {% for user in pending_users %}{% if not forloop.first %}, {% endif %}{{user.email}}{% endfor %}</p>
   {% endif %}
+  {% if admin_requests %}
+  <p>The following people have requested to become admins:
+    {% for request in admin_requests %}{% if not forloop.first %}, {% endif %}{{request.user.email}}{% endfor %}</p>
+  {% endif %}
 {% endif %}
 </div>
