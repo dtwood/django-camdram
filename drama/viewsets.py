@@ -74,27 +74,37 @@ class ObjectViewSet(viewsets.ModelViewSet):
         else:
             raise PermissionDenied
 
-    @detail_route(methods=['POST'])
+    @detail_route(methods=['GET', 'POST'])
     @transaction.atomic()
     def approve(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):
-            item.approve()
-            log_item = models.LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Approved')
-            log_item.save()
-            return redirect(item.get_absolute_url())
+            if request.method == 'GET':
+                return render(request, 'drama/confirm_approve.html', {'object': item})
+            elif request.method == 'POST':
+                item.approve()
+                log_item = models.LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Approved')
+                log_item.save()
+                return redirect(item.get_absolute_url())
+            else:
+                raise MethodNotAllowed
         else:
             raise PermissionDenied
 
-    @detail_route(methods=['POST'])
+    @detail_route(methods=['GET', 'POST'])
     @transaction.atomic()
     def unapprove(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):
-            item.unapprove()
-            log_item = models.LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Unapproved')
-            log_item.save()
-            return redirect(item.get_absolute_url())
+            if request.method == 'GET':
+                return render(request, 'drama/confirm_unapprove.html', {'object': item})
+            elif request.method == 'POST':
+                item.unapprove()
+                log_item = models.LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Unapproved')
+                log_item.save()
+                return redirect(item.get_absolute_url())
+            else:
+                raise MethodNotAllowed
         else:
             raise PermissionDenied
 
