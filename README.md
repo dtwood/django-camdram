@@ -36,7 +36,7 @@ python manage.py createsuperuser
 
 Initialize the audit log/reversion system:
 ```
-python manage.py createinitialreversions
+python manage.py createinitialrevisions
 ```
 
 Rebuild the search index:
@@ -57,7 +57,12 @@ python manage.py migrate
 
 Initialize the audit log/reversion system:
 ```
-python manage.py createinitialreversions
+python manage.py createinitialrevisions
+```
+
+Add term dates to the database:
+```
+python manage.py loaddata term_dates
 ```
 
 Rebuild the search index:
