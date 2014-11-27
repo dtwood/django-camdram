@@ -152,6 +152,9 @@ class DramaObjectModel(models.Model):
     def get_admin_interface_url(self):
         return reverse('admin:drama_{0}_change'.format(self.class_name()), args=[self.id])
 
+    def get_admin_request_url(self):
+        return self.get_url('request-admin')
+
     def get_log_url(self):
         return '/admin/drama/logitem/?content_type_id__exact={0}&object_id__exact={1}'.format(ContentType.objects.get_for_model(self).id,self.id)
     
@@ -508,7 +511,7 @@ class Society(DramaObjectModel, DramaSocialMixin):
 
     def get_applications(self):
         return SocietyApplication.objects.filter(society=self)
-    
+
     def get_shows(self):
         return self.show_set.approved()
 
@@ -988,6 +991,12 @@ class VenueApplication(Application):
 class PendingGroupMember(models.Model):
     email = models.EmailField()
     group = models.ForeignKey(auth.models.Group)
+
+
+class AdminRequest(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    group = models.ForeignKey(auth.models.Group)
+
 
 class TermDate(models.Model):
     YEAR_CHOICES = []
