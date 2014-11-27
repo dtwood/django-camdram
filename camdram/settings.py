@@ -63,6 +63,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'reversion',
     'old_drama',
+    'debug_toolbar',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -192,7 +193,7 @@ PIPELINE_JS = {
         'source_filenames': (
             'javascripts/camdram/diary.js',
             ),
-        'output_filename':' js/diary.js'
+        'output_filename':'js/diary.js'
     },
 }
 

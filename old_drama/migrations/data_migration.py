@@ -4,9 +4,13 @@ import itertools
 import datetime
 import hashlib
 
-from django.db import models, migrations
+from django.db import models, migrations, connections
 from django.template.defaultfilters import slugify
 from django.core.management import call_command
+from django.conf import settings
+
+def seq_update(tablename):
+    return "select setval('{0}_id_seq', max(id)) from {0};".format(tablename)
 
 def initial_data(apps, schema_editor):
     call_command('loaddata','initial_data')
@@ -29,13 +33,17 @@ def migrate_people(apps, schema_editor):
         p.slug = slug
         p.id = op.id
         p.name = op.name
-        p.desc = op.description
+        if op.description:
+            p.desc = op.description
         p.norobots = op.norobots
         g = Group(name=p.slug)
         g.save()
         p.group = g
         p.approved=True
         p.save()
+    if settings.DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
+        with connections['default'].cursor() as db:
+            db.execute(seq_update('drama_person'))
 
 def migrate_societies(apps, schema_editor):
     OldSociety = apps.get_model('old_drama', 'ActsSocieties')
@@ -60,7 +68,8 @@ def migrate_societies(apps, schema_editor):
                 new.college = ''
         new.id = os.id
         new.name = os.name
-        new.desc = os.description
+        if os.description:
+            new.desc = os.description
         if os.facebook_id:
             new.facebook_id = os.facebook_id
         if os.twitter_id:
@@ -79,6 +88,10 @@ def migrate_societies(apps, schema_editor):
         new.group = g
         new.approved = True
         new.save()
+    if settings.DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
+        with connections['default'].cursor() as db:
+            db.execute(seq_update('drama_society'))
+            db.execute(seq_update('drama_venue'))
 
 def migrate_shows(apps, schema_editor):
     Group = apps.get_model('auth', 'Group')
@@ -89,10 +102,11 @@ def migrate_shows(apps, schema_editor):
     for os in OldShow.objects.all():
         new = Show()
         new.id = os.id
+        soc = None
         if os.socid:
             socid = os.socid
             soc = Society.objects.get(id=socid)
-        else:
+        elif os.society:
             try:
                 soc = Society.objects.filter(name=os.society)[0]
             except IndexError:
@@ -111,12 +125,14 @@ def migrate_shows(apps, schema_editor):
                 soc.group = g
                 soc.save()
         new.name = os.title
-        new.desc = os.description
+        if os.description:
+            new.desc = os.description
         if os.facebook_id:
             new.facebook_id = os.facebook_id
         if os.twitter_id:
             new.twitter_id = os.twitter_id
-        new.author = os.author
+        if os.author:
+            new.author = os.author
         if os.onlinebookingurl:
             new.book = os.onlinebookingurl
         if os.prices:
@@ -136,11 +152,15 @@ def migrate_shows(apps, schema_editor):
         if os.authorizeid:
             new.approved = True
         new.save()
-        new.societies.add(soc)
+        if soc:
+            new.societies.add(soc)
         new_aud = Audition(show=new)
         if os.audextra:
             new_aud.desc = os.audextra
         new_aud.save()
+    if settings.DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
+        with connections['default'].cursor() as db:
+            db.execute(seq_update('drama_show'))
         
 
 
@@ -153,6 +173,8 @@ def migrate_performances(apps, schema_editor):
     Group = apps.get_model('auth', 'Group')
     for old in OldPerformance.objects.all():
         new = Performance()
+        if not old.sid:
+            continue
         new.show = Show.objects.get(id=old.sid)
         new.start_date = old.startdate
         new.time = old.time
@@ -233,7 +255,8 @@ def migrate_techieads(apps, schema_editor):
     for old in OldTechieAd.objects.all():
         new = TechieAd()
         new.show = Show.objects.get(id=old.showid)
-        new.desc = old.techextra
+        if old.techextra:
+            new.desc = old.techextra
         new.contact = old.contact
         deadline = old.expiry
         if old.deadlinetime:
@@ -261,6 +284,9 @@ def migrate_users(apps, schema_editor):
         new.password = '{alg}${salt}${hash}'.format(alg='md5', hash=old.pass_field, salt='')
         new.username = hashlib.md5(new.email.encode('utf-8')).hexdigest()[0:30]
         new.save()
+    if settings.DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
+        with connections['default'].cursor() as db:
+            db.execute(seq_update('auth_user'))
 
 def migrate_access(apps, schema_editor):
     User = apps.get_model('auth', 'User')
@@ -268,6 +294,7 @@ def migrate_access(apps, schema_editor):
     Show = apps.get_model('drama', 'Show')
     Society = apps.get_model('drama', 'Society')
     Venue = apps.get_model('drama', 'Venue')
+    AdminRequest = apps.get_model('drama', 'AdminRequest')
     for item in Access.objects.all():
         user = User.objects.get(id=item.uid)
         if item.type == 'security':
@@ -285,6 +312,10 @@ def migrate_access(apps, schema_editor):
                 obj = Venue.objects.get(id=item.rid)
             obj.group.user_set.add(user)
             obj.save()
+        elif item.type == 'request-show':
+            obj = Show.objects.get(id=item.uid)
+            ar = AdminRequest(user = user, group = obj.group)
+            ar.save()
         else:
             print('Unrecognised ActsAccess type: ' + item.type)
     
@@ -334,7 +365,8 @@ def migrate_applications(apps, schema_editor):
                 parent = Venue.objects.get(id=old.socid)
                 new.venue = parent
         new.name = old.text
-        new.desc = old.furtherinfo
+        if old.furtherinfo:
+            new.desc = old.furtherinfo
         new.deadline = datetime.datetime.combine(old.deadlinedate, old.deadlinetime)
         base_slug = slugify(parent.name + '-' + new.name)
         if Application.objects.filter(slug=base_slug).count() > 0:
