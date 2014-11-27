@@ -223,8 +223,12 @@ class ObjectViewSet(viewsets.ModelViewSet):
             if admin_request.group == item.group:
                 if 'approve' in request.DATA:
                     admin_request.approve()
+                    log_item = models.LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Added {0} by request'.format(admin_request.user.email))
+                    log_item.save()
                 else:
                     admin_request.deny()
+                    log_item = models.LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Denied admin request by {0}'.format(admin_request.user.email))
+                    log_item.save()
                 return redirect(item.get_admins_url())
             else:
                 raise PermissionDenied
