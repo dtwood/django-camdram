@@ -12,7 +12,7 @@ class VenueAutocomplete(autocomplete_light.AutocompleteModelBase):
 
 
 class PersonAutocomplete(autocomplete_light.AutocompleteModelBase):
-    search_fields = ['name']
+    search_fields = ['name', 'namealias__name']
 
 
 class RoleAutocomplete(autocomplete_light.AutocompleteModelBase):

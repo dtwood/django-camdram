@@ -319,6 +319,10 @@ class Person(DramaObjectModel):
     def user_email(self):
         if self.user:
             return self.user.email
+
+class NameAlias(models.Model):
+    name = models.CharField(max_length=200)
+    person = models.ForeignKey(Person)
     
 class SocialPost(models.Model):
     service_choices = [('face', 'Facebook'), ('twit', 'Twitter')]
