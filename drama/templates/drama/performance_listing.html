@@ -1,1 +1,1 @@
-{{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D jS F Y"}} - {{performance.end_date|date:"D jS F Y"}} at {{performance.venue.get_link}}<br />
+{{performance.time|date:"g:iA"|lower}}, {{performance.start_date|date:"D jS F Y"}}{% if performance.start_date != performance.end_date %} - {{performance.end_date|date:"D jS F Y"}}{% endif %} at {{performance.venue.get_link}}<br />
