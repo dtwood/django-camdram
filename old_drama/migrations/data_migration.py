@@ -396,6 +396,16 @@ def migrate_auditions(apps, schema_editor):
             new.start_time = old.starttime
             new.end_datetime = datetime.datetime.combine(old.date, old.endtime)
             new.save()
+
+
+def migrate_aliases(apps, schema_editor):
+    NameAlias = apps.get_model('drama', 'NameAlias')
+    Person = apps.get_model('drama', 'Person')
+    OldNameAlias = apps.get_model('old_drama', 'ActsNameAliases')
+    for old in OldNameAlias.objects.all():
+        person = Person.objects.get(id=old.pid)
+        new = NameAlias(person=person, name=old.name)
+        new.save()
     
     
 
@@ -419,5 +429,6 @@ class Migration(migrations.Migration):
         migrations.RunPython(migrate_pending_access),
         migrations.RunPython(migrate_applications),
         migrations.RunPython(migrate_auditions),
+        migrations.RunPython(migrate_aliases),
 
     ]
