@@ -5,7 +5,7 @@
 
 {% block content %}  
 <div class="row">
-  {% admin_panel parent %}
+  {% admin_panel object %}
     <div class="large-12 columns">
       {% if model_name == 'show' %}
         <p>Admins are able to edit the details of a show, create adverts for production
@@ -25,7 +25,7 @@
 	  </div>
 	  <div class="small-1 columns">
 	    <span data-tooltip class="has-tip" title="Revoke this admin.">
-	      <form action="{{parent.get_admin_revoke_url}}" method="post">
+	      <form action="{{object.get_admin_revoke_url}}" method="post">
 		{% csrf_token %}
 		<input type="hidden" value="{{user.username}}" name="username" />
 		<button class="tiny" type="submit">
@@ -44,7 +44,7 @@
 	  </div>
 	  <div class="small-1 columns">
 	    <span data-tooltip class="has-tip" title="Revoke this admin.">
-	      <form action="{{parent.get_pending_admin_revoke_url}}" method="post">
+	      <form action="{{object.get_pending_admin_revoke_url}}" method="post">
 		{% csrf_token %}
 		<input type="hidden" value="{{user.email}}" name="email" />
 		<button class="tiny" type="submit">
@@ -52,6 +52,24 @@
 		</button>
 		</form>
 	    </span>
+	  </div>
+	</div>
+	{% endfor %}
+	<h4>Admin Requests</h4>
+	{% for request in admin_requests %}
+	<div class="row">
+	  <div class="small-6 columns">
+	    <p>{{request.user.email}}</p>
+	  </div>
+	  <div class="small-6 columns">
+	    <form action="{{object.get_admin_response_url}}" method="post">
+	      {% csrf_token %}
+	      <input type="hidden" value="{{request.id}}" name="request_id" />
+	      <ul class="inline">
+		<li><input class="button tiny" type="submit" value="Approve" name="approve" /></li>
+		<li><input class="button tiny" type="submit" value="Deny" name="deny" /></li>
+	      </ul>
+	    </form>
 	  </div>
 	</div>
 	{% endfor %}

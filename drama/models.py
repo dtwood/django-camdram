@@ -47,6 +47,10 @@ class DramaObjectQuerySet(models.query.QuerySet):
 
 DramaObjectManager = models.Manager.from_queryset(DramaObjectQuerySet)
 
+class PersonManager(DramaObjectManager):
+    def get_queryset(self):
+        return super(PersonManager, self).get_queryset().annotate(num_shows=models.Count('roleinstance'))
+
 
 class ShowApprovedQuerySet(models.query.QuerySet):
     def approved(self):
@@ -155,6 +159,9 @@ class DramaObjectModel(models.Model):
     def get_admin_request_url(self):
         return self.get_url('request-admin')
 
+    def get_admin_response_url(self):
+        return self.get_url('respond-admin')
+
     def get_log_url(self):
         return '/admin/drama/logitem/?content_type_id__exact={0}&object_id__exact={1}'.format(ContentType.objects.get_for_model(self).id,self.id)
     
@@ -194,6 +201,9 @@ class DramaObjectModel(models.Model):
         return the pending admins
         """
         return self.group.pendinggroupmember_set.all()
+
+    def get_admin_requests(self):
+        return self.group.adminrequest_set.all()
     
     def add_admin(self, email):
         """
@@ -234,7 +244,7 @@ class DramaObjectModel(models.Model):
 
 
 class Person(DramaObjectModel):
-    objects = DramaObjectManager()
+    objects = PersonManager()
     user = models.OneToOneField(settings.AUTH_USER_MODEL, blank=True, null=True)
     norobots = models.BooleanField(default=False)
 
@@ -250,7 +260,6 @@ class Person(DramaObjectModel):
     def get_shows(self):
         return Show.objects.approved().filter(roleinstance__person=self).distinct()
     
-    @property
     def num_shows(self):
         return self.get_shows().count()
 
@@ -277,7 +286,7 @@ class Person(DramaObjectModel):
                 label = 'Was Active: ' + \
                     self.first_active.strftime('%b %y') + \
                     ' - ' + self.last_active.strftime('%b %y')
-            return '(' + label + ', Shows: ' + str(self.num_shows) + ')'
+            return '(' + label + ', Shows: ' + str(self.num_shows()) + ')'
         else:
             return ''
 
@@ -313,6 +322,10 @@ class Person(DramaObjectModel):
     def user_email(self):
         if self.user:
             return self.user.email
+
+class NameAlias(models.Model):
+    name = models.CharField(max_length=200)
+    person = models.ForeignKey(Person)
     
 class SocialPost(models.Model):
     service_choices = [('face', 'Facebook'), ('twit', 'Twitter')]
@@ -996,6 +1009,13 @@ class PendingGroupMember(models.Model):
 class AdminRequest(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     group = models.ForeignKey(auth.models.Group)
+
+    def approve(self):
+        self.group.user_set.add(self.user)
+        self.delete()
+
+    def deny(self):
+        self.delete()
 
 
 class TermDate(models.Model):

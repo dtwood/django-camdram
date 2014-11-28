@@ -7,7 +7,7 @@ from rest_framework import viewsets, routers, permissions
 from rest_framework.renderers import JSONRenderer, YAMLRenderer, BrowsableAPIRenderer, TemplateHTMLRenderer, StaticHTMLRenderer, XMLRenderer
 from rest_framework.decorators import link, detail_route, permission_classes, api_view
 from rest_framework.response import Response
-from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, BasePermission
+from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, IsAuthenticatedOrReadOnly, BasePermission
 from rest_framework.exceptions import MethodNotAllowed
 from drama import serializers, models, views, forms, feeds
 from django.utils import timezone
@@ -16,25 +16,13 @@ from django.db.models import signals
 from django.db import transaction
 import reversion
 
-class CamdramPermissions(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        else:
-            return request.user.has_perm('drama.add_' + view.model.class_name())
-        
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        else:
-            return request.user.has_perm('drama.change_' + obj.class_name(),obj)
-    
 
 class ObjectViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
     renderer_classes = (TemplateHTMLRenderer, BrowsableAPIRenderer, JSONRenderer, YAMLRenderer, XMLRenderer)
-    permission_classes = (CamdramPermissions,)
+    permission_classes = ()
 
+    @transaction.atomic()
     def new(self, request, *args, **kwargs):
         if request.user.has_perm('drama.add_' + self.model.class_name()):
             view = views.MyCreateView.as_view(model=self.model, model_name=self.model.class_name(), form_class = self.form)
@@ -86,28 +74,37 @@ class ObjectViewSet(viewsets.ModelViewSet):
         else:
             raise PermissionDenied
 
-    @detail_route(methods=['POST'])
+    @detail_route(methods=['GET', 'POST'])
     @transaction.atomic()
     def approve(self, request, slug, *args, **kwargs):
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):
-            item.approve()
-            log_item = models.LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Approved')
-            log_item.save()
-            return redirect(item.get_absolute_url())
+            if request.method == 'GET':
+                return render(request, 'drama/confirm_approve.html', {'object': item})
+            elif request.method == 'POST':
+                item.approve()
+                log_item = models.LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Approved')
+                log_item.save()
+                return redirect(item.get_absolute_url())
+            else:
+                raise MethodNotAllowed
         else:
             raise PermissionDenied
 
-    @detail_route(methods=['POST'])
+    @detail_route(methods=['GET', 'POST'])
     @transaction.atomic()
     def unapprove(self, request, slug, *args, **kwargs):
-        print('hello')
         item = get_object_or_404(self.model, slug=slug)
         if request.user.has_perm('drama.approve_' + item.class_name(), item):
-            item.unapprove()
-            log_item = models.LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Unapproved')
-            log_item.save()
-            return redirect(item.get_absolute_url())
+            if request.method == 'GET':
+                return render(request, 'drama/confirm_unapprove.html', {'object': item})
+            elif request.method == 'POST':
+                item.unapprove()
+                log_item = models.LogItem(cat='APPROVE', datetime=timezone.now(), user=request.user, content_object=item, desc='Unapproved')
+                log_item.save()
+                return redirect(item.get_absolute_url())
+            else:
+                raise MethodNotAllowed
         else:
             raise PermissionDenied
 
@@ -139,8 +136,9 @@ class ObjectViewSet(viewsets.ModelViewSet):
                 context = {
                     'users': item.get_admins(),
                     'pending_users': item.get_pending_admins(),
+                    'admin_requests':item.get_admin_requests(),
                     'new_admin_form': forms.AdminForm(),
-                    'parent': item,
+                    'object': item,
                     'model_name': item.class_name(),
                 }
                 return render(request, 'drama/change_admins.html', context)
@@ -157,7 +155,7 @@ class ObjectViewSet(viewsets.ModelViewSet):
                         'users': item.get_admins(),
                         'pending_users': item.get_pending_admins(),
                         'new_admin_form': form,
-                        'parent': item,
+                        'object': item,
                         'model_name': item.class_name(),
                     }
                     return render(request, 'drama/change_admins.html', context)
@@ -209,6 +207,33 @@ class ObjectViewSet(viewsets.ModelViewSet):
         else:
             raise PermissionDenied
 
+    @detail_route(methods=['POST'])
+    def request_admin(self, request, slug, *args, **kwargs):
+        item = get_object_or_404(self.model, slug=slug)
+        group = item.group
+        user = request.user
+        models.AdminRequest(user=user, group=group).save()
+        return render(request, 'drama/admin_requested.html', {})
+
+    @detail_route(methods=['POST'])
+    def respond_admin(self, request, slug, *args, **kwargs):
+        item = get_object_or_404(self.model, slug=slug)
+        if request.user.has_perm('change_' + item.class_name(), item):
+            admin_request = get_object_or_404(models.AdminRequest, id=request.DATA['request_id'])
+            if admin_request.group == item.group:
+                if 'approve' in request.DATA:
+                    admin_request.approve()
+                    log_item = models.LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Added {0} by request'.format(admin_request.user.email))
+                    log_item.save()
+                else:
+                    admin_request.deny()
+                    log_item = models.LogItem(cat='ADMIN', datetime=timezone.now(), user=request.user, content_object=item, desc='Denied admin request by {0}'.format(admin_request.user.email))
+                    log_item.save()
+                return redirect(item.get_admins_url())
+            else:
+                raise PermissionDenied
+        else:
+            raise PermissionDenied
 
 
 class OrganizationViewSet(ObjectViewSet):

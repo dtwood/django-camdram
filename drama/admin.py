@@ -2,8 +2,22 @@ from django.contrib import admin
 from drama import models
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
+from django.shortcuts import redirect
 import reversion
 
+
+class OrphanFilter(admin.SimpleListFilter):
+    title = 'Is orphaned'
+    parameter_name = 'orphan'
+
+    def lookups(self, request, model_admin):
+        return (('true', 'True'),('false', 'False'))
+
+    def queryset(self, request, queryset):
+        if self.value() == 'true':
+            return queryset.filter(num_shows=0)
+        if self.value() == 'false':
+            return queryset.exclude(num_shows=0)
 
 class PerformanceInline(admin.TabularInline):
     model = models.Performance
@@ -15,6 +29,7 @@ class RoleInline(admin.TabularInline):
     model = models.RoleInstance
     extra = 0
     verbose_name = 'Role'
+    fields = ['name', 'role', 'person', 'sort']
     raw_id_fields = ['role','person']
 
 
@@ -43,6 +58,9 @@ class VenueApplicationInline(admin.StackedInline):
     model = models.VenueApplication
     extra = 0
 
+class NameAliasInline(admin.TabularInline):
+    model = models.NameAlias
+    extra = 0
 
 @admin.register(models.Show)
 class ShowAdmin(reversion.VersionAdmin):
@@ -75,11 +93,27 @@ class AuditionAdmin(admin.ModelAdmin):
 
 @admin.register(models.Person)
 class PersonAdmin(reversion.VersionAdmin):
+    actions = ['merge_people']
     list_display = ['name','num_shows','user_email',]
+    list_filter = [OrphanFilter]
     search_fields = ['name',]
     raw_id_fields = ['user']
+    inlines = [NameAliasInline]
 
-    
+    def merge_people(self, request, queryset):
+        new_queryset = queryset.order_by('-num_shows')
+        print(new_queryset)
+        keep = new_queryset[0]
+        count = new_queryset.count()
+        for person in new_queryset[1:]:
+            for role in person.roleinstance_set.all():
+                role.person = keep
+                role.save()
+            models.NameAlias(person=keep, name=person.name).save()
+            person.delete()
+        self.message_user(request, '{} people successfully merged'.format(count))
+        return redirect(keep.get_admin_interface_url())
+
 @admin.register(models.Venue)
 class VenueAdmin(reversion.VersionAdmin):
     list_display = ['name','approved']
@@ -99,7 +133,7 @@ class SocietyAdmin(reversion.VersionAdmin):
     search_fields = ['name','shortname']
     list_filter = ['approved']
     inlines = [SocietyApplicationInline]
-    
+
 @admin.register(models.TermDate)
 class TermDateAdmin(reversion.VersionAdmin):
     list_display = ['__str__','start']
