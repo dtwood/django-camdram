@@ -2,10 +2,22 @@ from django.contrib import admin
 from drama import models
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from django.db.models import Count
 from django.shortcuts import redirect
 import reversion
 
+
+class OrphanFilter(admin.SimpleListFilter):
+    title = 'Is orphaned'
+    parameter_name = 'orphan'
+
+    def lookups(self, request, model_admin):
+        return (('true', 'True'),('false', 'False'))
+
+    def queryset(self, request, queryset):
+        if self.value() == 'true':
+            return queryset.filter(num_shows=0)
+        if self.value() == 'false':
+            return queryset.exclude(num_shows=0)
 
 class PerformanceInline(admin.TabularInline):
     model = models.Performance
@@ -83,12 +95,13 @@ class AuditionAdmin(admin.ModelAdmin):
 class PersonAdmin(reversion.VersionAdmin):
     actions = ['merge_people']
     list_display = ['name','num_shows','user_email',]
+    list_filter = [OrphanFilter]
     search_fields = ['name',]
     raw_id_fields = ['user']
     inlines = [NameAliasInline]
 
     def merge_people(self, request, queryset):
-        new_queryset = queryset.annotate(num_show=Count('roleinstance')).order_by('-num_show')
+        new_queryset = queryset.order_by('-num_shows')
         print(new_queryset)
         keep = new_queryset[0]
         count = new_queryset.count()

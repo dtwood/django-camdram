@@ -47,6 +47,10 @@ class DramaObjectQuerySet(models.query.QuerySet):
 
 DramaObjectManager = models.Manager.from_queryset(DramaObjectQuerySet)
 
+class PersonManager(DramaObjectManager):
+    def get_queryset(self):
+        return super(PersonManager, self).get_queryset().annotate(num_shows=models.Count('roleinstance'))
+
 
 class ShowApprovedQuerySet(models.query.QuerySet):
     def approved(self):
@@ -240,7 +244,7 @@ class DramaObjectModel(models.Model):
 
 
 class Person(DramaObjectModel):
-    objects = DramaObjectManager()
+    objects = PersonManager()
     user = models.OneToOneField(settings.AUTH_USER_MODEL, blank=True, null=True)
     norobots = models.BooleanField(default=False)
 
@@ -256,7 +260,6 @@ class Person(DramaObjectModel):
     def get_shows(self):
         return Show.objects.approved().filter(roleinstance__person=self).distinct()
     
-    @property
     def num_shows(self):
         return self.get_shows().count()
 
@@ -283,7 +286,7 @@ class Person(DramaObjectModel):
                 label = 'Was Active: ' + \
                     self.first_active.strftime('%b %y') + \
                     ' - ' + self.last_active.strftime('%b %y')
-            return '(' + label + ', Shows: ' + str(self.num_shows) + ')'
+            return '(' + label + ', Shows: ' + str(self.num_shows()) + ')'
         else:
             return ''
 
