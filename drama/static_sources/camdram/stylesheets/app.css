@@ -9678,34 +9678,29 @@ ul.diary-header:after {
 }
 
 /* line 462, ../scss/app.scss */
-#home_historic dd a {
-  padding: 0 5px;
-}
-
-/* line 466, ../scss/app.scss */
 #home_historic ul {
   list-style: none;
   margin: 0;
 }
 
-/* line 471, ../scss/app.scss */
+/* line 467, ../scss/app.scss */
 #home_historic h6 {
   margin-bottom: 0;
 }
 
-/* line 475, ../scss/app.scss */
+/* line 471, ../scss/app.scss */
 #home_historic .show_info {
   font-style: italic;
 }
 
-/* line 479, ../scss/app.scss */
+/* line 475, ../scss/app.scss */
 #home-diary-container {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   position: relative;
   margin-bottom: 1em;
 }
-/* line 485, ../scss/app.scss */
+/* line 481, ../scss/app.scss */
 #home-diary-container .left-link {
   position: absolute;
   left: 0;
@@ -9718,14 +9713,14 @@ ul.diary-header:after {
   background: -ms-linear-gradient(right, rgba(255, 255, 255, 0) 0%, white 50%, white 100%);
   background: -o-linear-gradient(right, rgba(255, 255, 255, 0) 0%, white 50%, white 100%);
 }
-/* line 488, ../scss/app.scss */
+/* line 484, ../scss/app.scss */
 #home-diary-container .left-link a {
   padding-top: 0.3em;
   height: 1.7em;
   display: block;
   float: left;
 }
-/* line 504, ../scss/app.scss */
+/* line 500, ../scss/app.scss */
 #home-diary-container .right-link {
   position: absolute;
   right: 0;
@@ -9738,14 +9733,14 @@ ul.diary-header:after {
   background: -ms-linear-gradient(left, rgba(255, 255, 255, 0) 0%, white 50%, white 100%);
   background: -o-linear-gradient(left, rgba(255, 255, 255, 0) 0%, white 50%, white 100%);
 }
-/* line 507, ../scss/app.scss */
+/* line 503, ../scss/app.scss */
 #home-diary-container .right-link a {
   padding-top: 0.3em;
   height: 1.7em;
   display: block;
   float: right;
 }
-/* line 523, ../scss/app.scss */
+/* line 519, ../scss/app.scss */
 #home-diary-container .overlay {
   opacity: 0.5;
   display: none;
@@ -9754,7 +9749,7 @@ ul.diary-header:after {
   background: white;
   z-index: 10;
 }
-/* line 531, ../scss/app.scss */
+/* line 527, ../scss/app.scss */
 #home-diary-container .overlay .spinner {
   position: absolute;
   top: 50%;
@@ -9762,28 +9757,28 @@ ul.diary-header:after {
   margin-left: -1em;
   margin-top: -1em;
 }
-/* line 537, ../scss/app.scss */
+/* line 533, ../scss/app.scss */
 #home-diary-container .overlay .spinner i {
   font-size: 2em;
 }
 
-/* line 544, ../scss/app.scss */
+/* line 540, ../scss/app.scss */
 #home-diary {
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
 }
-/* line 548, ../scss/app.scss */
+/* line 544, ../scss/app.scss */
 #home-diary .diary-week {
   min-width: 900px;
 }
 
-/* line 553, ../scss/app.scss */
+/* line 549, ../scss/app.scss */
 #home-diary-nav {
   overflow: hidden;
 }
 
-/* line 556, ../scss/app.scss */
+/* line 552, ../scss/app.scss */
 #home-diary-nav ul {
   width: auto;
   overflow: hidden;
@@ -9791,33 +9786,92 @@ ul.diary-header:after {
   width: 3000px;
 }
 
-/* line 562, ../scss/app.scss */
+/* line 558, ../scss/app.scss */
 #home-diary-nav li {
   display: inline-block;
   font-size: 0.8em;
 }
-/* line 566, ../scss/app.scss */
+/* line 562, ../scss/app.scss */
 #home-diary-nav li a {
   padding: 0 0.8em;
   display: block;
 }
-/* line 571, ../scss/app.scss */
+/* line 567, ../scss/app.scss */
 #home-diary-nav li em {
   display: block;
   color: #555;
 }
-/* line 576, ../scss/app.scss */
+/* line 572, ../scss/app.scss */
 #home-diary-nav li.diary-link {
   width: 7em;
   text-align: center;
   font-style: italic;
   white-space: normal;
 }
-/* line 583, ../scss/app.scss */
+/* line 579, ../scss/app.scss */
 #home-diary-nav li.current {
   background: #eee;
 }
-/* line 585, ../scss/app.scss */
+/* line 581, ../scss/app.scss */
 #home-diary-nav li.current a {
   cursor: default;
+}
+
+@media only screen and (min-width: 40.063em) {
+  /* line 590, ../scss/app.scss */
+  dl.tabs > dd > a {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ccc #ccc #fff;
+    font-size: .875em;
+    padding: .9375em;
+  }
+  /* line 597, ../scss/app.scss */
+  dl.tabs > dd:not(.active) > a {
+    border-bottom: solid 1px #ccc;
+  }
+
+  /* line 601, ../scss/app.scss */
+  .tabs-content {
+    border: 1px solid #ccc;
+    margin: -1px 0 .9375rem 0;
+  }
+  /* line 603, ../scss/app.scss */
+  .tabs-content .content {
+    padding: .9375rem;
+    margin-top: 0;
+  }
+}
+/* line 612, ../scss/app.scss */
+.tabs-content {
+  background-color: #fff;
+}
+
+/* line 617, ../scss/app.scss */
+dl.tabs.wx-subtabs {
+  margin: 0 0 .9375rem;
+  text-transform: capitalize;
+}
+/* line 621, ../scss/app.scss */
+dl.tabs.wx-subtabs > dd > a {
+  font-size: .875rem;
+  margin: 0;
+  padding: .25rem .5rem;
+  border: none;
+  background-color: transparent;
+}
+/* line 628, ../scss/app.scss */
+dl.tabs.wx-subtabs > dd.active a {
+  background-color: #fe5c1f;
+  color: #fff;
+}
+/* line 633, ../scss/app.scss */
+dl.tabs.wx-subtabs + .tabs-content {
+  margin: 0;
+  border: none;
+}
+/* line 636, ../scss/app.scss */
+dl.tabs.wx-subtabs + .tabs-content > .content {
+  padding-right: 0;
+  padding-left: 0;
 }

@@ -72,14 +72,22 @@ $('.week-link').click(function () {
 	{% endfor %}
       </ul>
     </div>
+    {% if last_year or 2_years or 5_years %}
     <div id="home_historic">
       <h5>This time...</h5>
       <dl class="tabs" data-tab>
+	{% if last_year %}
 	<dd class="active"><a href="#panel1">last year</a></dd>
-	<dd ><a href="#panel2">2 years ago</a></dd>
-	<dd ><a href="#panel3">5 years ago</a></dd>
+	{% endif %}
+	{% if 2_years %}
+	<dd ><a {% if last_year %}{% else %}class="active"{% endif %} href="#panel2">2 years ago</a></dd>
+	{% endif %}
+	{% if 5_years %}
+	<dd ><a {% if last_year or 2_years%}{% else %}class="active"{% endif %} href="#panel3">5 years ago</a></dd>
+	{% endif %}
       </dl>
       <div class="tabs-content">
+	{% if last_year %}
 	<div class="content active" id="panel1">
 	  <ul>
 	    {% for item in last_year %}
@@ -93,7 +101,9 @@ $('.week-link').click(function () {
 	    {% endfor %}
 	  </ul>
 	</div>
-	<div class="content" id="panel2">
+	{% endif %}
+	{% if 2_years %}
+	<div class="content{% if last_year %}{% else %} "active"{% endif %} " id="panel2">
 	  <ul>
 	    {% for item in 2_years %}
 	    <li>
@@ -106,7 +116,9 @@ $('.week-link').click(function () {
 	    {% endfor %}
 	  </ul>
 	</div>
-	<div class="content" id="panel3">
+	{% endif %}
+	{% if 5_years %}
+	<div class="content{% if last_year or 2_years %}{% else %} "active"{% endif %}" id="panel3">
 	  <ul>
 	    {% for item in 5_years %}
 	    <li>
@@ -119,8 +131,10 @@ $('.week-link').click(function () {
 	    {% endfor %}
 	  </ul>
 	</div>
+	{% endif %}
       </div>
     </div>
+    {% endif %}
   </div>
   <div class="large-7 columns">
     <h4>News</h4>

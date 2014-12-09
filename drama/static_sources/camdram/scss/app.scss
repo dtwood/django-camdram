@@ -459,10 +459,6 @@ ul.diary-header:after {
   padding:5px 0;
 }
 
-#home_historic dd a {
-  padding: 0 5px;
-}
-
 #home_historic ul {
   list-style:none;
   margin:0;
@@ -585,5 +581,61 @@ ul.diary-header:after {
     a {
       cursor:default;
     }
+  }
+}
+
+// add borders to Foundation 5 tabs
+@media #{$medium-up} {
+  dl.tabs {
+     > dd > a {
+       border-width: 1px;
+       border-style: solid;
+       border-color: #ccc #ccc #fff;
+       font-size: .875em;
+       padding: .9375em;
+     }
+     > dd:not(.active) > a {
+       border-bottom: solid 1px #ccc;
+     }
+   }
+  .tabs-content {
+    border: 1px solid #ccc;
+    .content {
+      padding: .9375rem;
+      margin-top: 0;
+    }
+    margin: -1px 0 .9375rem 0;
+  }
+}
+
+// if tabs container has a background color
+.tabs-content { background-color: #fff; }
+
+// create subtab styles
+$subtab-item-color: $primary-color;
+
+dl.tabs.wx-subtabs {
+  margin: 0 0 .9375rem;
+  text-transform: capitalize;
+
+  > dd > a, {
+    font-size: .875rem;
+    margin:  0;
+    padding: .25rem .5rem;
+    border: none;
+    background-color: transparent;
+  }
+  > dd.active a {
+    background-color: $subtab-item-color;
+    color: #fff; // bg-lightness option is available for you fancy folks
+    //@include radius($button-radius);
+  }
+  + .tabs-content {
+    margin: 0;
+    border: none;
+      > .content {
+        padding-right: 0;
+        padding-left:  0;
+      }
   }
 }
