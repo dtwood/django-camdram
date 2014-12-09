@@ -95,7 +95,7 @@ $('.week-link').click(function () {
 	</div>
 	<div class="content" id="panel2">
 	  <ul>
-	    {% for item in last_year %}
+	    {% for item in 2_years %}
 	    <li>
 	      <h6>{{item.get_link}}</h6>
 	      <div class="show_info">
@@ -108,7 +108,7 @@ $('.week-link').click(function () {
 	</div>
 	<div class="content" id="panel3">
 	  <ul>
-	    {% for item in last_year %}
+	    {% for item in 5_years %}
 	    <li>
 	      <h6>{{item.get_link}}</h6>
 	      <div class="show_info">

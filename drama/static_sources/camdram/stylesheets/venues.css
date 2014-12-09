@@ -26,3 +26,8 @@
 #venues_list .marker_img {
   cursor: pointer;
 }
+
+/* line 26, ../scss/venues.scss */
+.gmnoprint img {
+  max-width: none;
+}
