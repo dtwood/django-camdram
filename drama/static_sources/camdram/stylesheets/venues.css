@@ -1,28 +1,28 @@
-/* line 1, ../sass/venues.scss */
+/* line 1, ../scss/venues.scss */
 .map-small {
   height: 270px;
   width: 270px;
 }
 
-/* line 6, ../sass/venues.scss */
+/* line 6, ../scss/venues.scss */
 .map-large {
   height: 300px;
   margin-bottom: 15px;
 }
 
 @media only screen and (max-width: 767px) {
-  /* line 12, ../sass/venues.scss */
+  /* line 12, ../scss/venues.scss */
   .map-large {
     height: 250px;
   }
 }
-/* line 17, ../sass/venues.scss */
+/* line 17, ../scss/venues.scss */
 #venues_list .marker_column {
   text-align: center;
   margin-top: 15px;
 }
 
-/* line 22, ../sass/venues.scss */
+/* line 22, ../scss/venues.scss */
 #venues_list .marker_img {
   cursor: pointer;
 }

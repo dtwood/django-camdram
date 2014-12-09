@@ -153,7 +153,6 @@ PIPELINE_CSS = {
     'vendor': {
         'source_filenames': (
             'stylesheets/h5bp/*.css',
-            'stylesheets/foundation/*.css',
             'stylesheets/lightbox/*.css',
         ),
         'output_filename': 'css/vendor.css',
@@ -169,9 +168,7 @@ PIPELINE_CSS = {
 PIPELINE_JS = {
     'vendor': {
         'source_filenames': (
-            'javascripts/foundation/foundation/foundation.js',
-            'javascripts/foundation/foundation/foundation.*.js',
-            'javascripts/foundation/vendor/custom.modernizr.js',
+            'javascripts/foundation/*.js',
             'javascripts/moment.js',
             'javascripts/lightbox/*.js',
         ),
@@ -179,8 +176,7 @@ PIPELINE_JS = {
     },
     'app': {
         'source_filenames': (
-            'javascripts/camdram/autocomplete.js',
-            'javascripts/camdram/camdram.js',
+            'javascripts/camdram/*.js',
         ),
         'output_filename': 'js/app.js'
     },

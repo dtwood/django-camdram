@@ -1,4 +1,4 @@
-/* line 1, ../sass/diary.scss */
+/* line 1, ../scss/diary.scss */
 a.infinite_scroll {
   display: block;
   text-align: center;
@@ -8,7 +8,7 @@ a.infinite_scroll {
   color: #333;
 }
 
-/* line 9, ../sass/diary.scss */
+/* line 9, ../scss/diary.scss */
 a.infinite_scroll:hover {
   background: #ddd;
   color: #000;

@@ -1,4 +1,4 @@
-/* line 1, ../sass/news.scss */
+/* line 1, ../scss/news.scss */
 #organisation-news {
   max-height: 400px;
   overflow-y: scroll;
@@ -7,7 +7,7 @@
   padding: 0.5em;
   clear: both;
 }
-/* line 9, ../sass/news.scss */
+/* line 9, ../scss/news.scss */
 #organisation-news .row {
   margin: 0;
 }
