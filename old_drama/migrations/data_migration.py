@@ -33,10 +33,12 @@ def migrate_people(apps, schema_editor):
         p.slug = slug
         p.id = op.id
         p.name = op.name
+        if op.mapto != 0:
+            p.name = "TODO Merge with" + str(op.mapto) + p.name 
         if op.description:
             p.desc = op.description
         p.norobots = op.norobots
-        g = Group(name=p.slug)
+        g = Group(name='person-' + p.slug)
         g.save()
         p.group = g
         p.approved=True
@@ -52,6 +54,7 @@ def migrate_societies(apps, schema_editor):
     Group = apps.get_model('auth', 'Group')
     for os in OldSociety.objects.all():
         if os.type == '1': #this means venue, i think.
+            prefix = 'venue-'
             new = Venue()
             if os.address:
                 new.address = os.address
@@ -60,6 +63,7 @@ def migrate_societies(apps, schema_editor):
             new.lat = os.latitude
             new.lng = os.longitude
         else:
+            prefix = 'society-'
             new = Society()
             new.shortname = os.shortname
             if os.college:
@@ -83,7 +87,7 @@ def migrate_societies(apps, schema_editor):
         else:
             slug = base_slug
         new.slug = slug
-        g = Group(name=new.slug)
+        g = Group(name=prefix + new.slug)
         g.save()
         new.group = g
         new.approved = True
@@ -112,15 +116,15 @@ def migrate_shows(apps, schema_editor):
             except IndexError:
                 soc = Society(name=os.society)
                 base_slug = slugify(soc.name)
-                if new.__class__.objects.filter(slug=base_slug).count() > 0:
+                if Society.objects.filter(slug=base_slug).count() > 0:
                     for i in itertools.count(2):
                         slug = slugify(base_slug + '-' + str(i))
-                        if new.__class__.objects.filter(slug=slug).count() == 0:
+                        if Society.objects.filter(slug=slug).count() == 0:
                             break
                 else:
                     slug = base_slug
                 soc.slug = slug
-                g = Group(name=soc.slug)
+                g = Group(name='society-' + soc.slug)
                 g.save()
                 soc.group = g
                 soc.save()
@@ -146,7 +150,7 @@ def migrate_shows(apps, schema_editor):
         else:
             slug = base_slug
         new.slug = slug
-        g = Group(name=new.slug)
+        g = Group(name='show-' + new.slug)
         g.save()
         new.group = g
         if os.authorizeid:
@@ -186,8 +190,10 @@ def migrate_performances(apps, schema_editor):
         else:
             if old.venue:
                 venue_name = old.venue
-            else:
+            elif oldshow.venue:
                 venue_name = oldshow.venue
+            else:
+                venue_name = 'Venue to be confirmed'
             try:
                 ven = Venue.objects.filter(name=venue_name)[0]
             except IndexError:
@@ -201,13 +207,13 @@ def migrate_performances(apps, schema_editor):
                 else:
                     slug = base_slug
                 ven.slug = slug
-                g = Group(name=ven.slug)
+                g = Group(name='venue-' + ven.slug)
                 g.save()
                 ven.group = g
                 ven.approved = False
                 ven.save()
         new.venue = ven
-        if old.excludedate:
+        if old.excludedate and old.excludedate >= old.startdate and old.excludedate <= old.enddate:
             new.end_date = old.excludedate - datetime.timedelta(days=1)
             new.save()
             new2 = Performance()
@@ -295,6 +301,7 @@ def migrate_access(apps, schema_editor):
     Society = apps.get_model('drama', 'Society')
     Venue = apps.get_model('drama', 'Venue')
     AdminRequest = apps.get_model('drama', 'AdminRequest')
+    unrecognized = set()
     for item in Access.objects.all():
         user = User.objects.get(id=item.uid)
         if item.type == 'security':
@@ -302,7 +309,10 @@ def migrate_access(apps, schema_editor):
             user.is_staff = True
             user.save()
         elif item.type == 'show':
-            obj = Show.objects.get(id=item.rid)
+            try:
+                obj = Show.objects.get(id=item.rid)
+            except Show.DoesNotExist:
+                continue
             obj.group.user_set.add(user)
             obj.save()
         elif item.type == 'society':
@@ -317,7 +327,9 @@ def migrate_access(apps, schema_editor):
             ar = AdminRequest(user = user, group = obj.group)
             ar.save()
         else:
-            print('Unrecognised ActsAccess type: ' + item.type)
+            unrecognized.add(item.type)
+    for i in unrecognized:
+        print('Unrecognised ActsAccess type: ' + i)
     
 def migrate_pending_access(apps, schema_editor):
     Show = apps.get_model('drama', 'Show')
@@ -325,9 +337,13 @@ def migrate_pending_access(apps, schema_editor):
     Venue = apps.get_model('drama', 'Venue')
     Access = apps.get_model('old_drama', 'ActsPendingAccess')
     PendingGroupMember = apps.get_model('drama', 'PendingGroupMember')
+    unrecognized = set()
     for item in Access.objects.all():
         if item.type == 'show':
-            group = Show.objects.get(id=item.rid).group
+            try:
+                group = Show.objects.get(id=item.rid).group
+            except Show.DoesNotExist:
+                continue
             pg = PendingGroupMember(email = item.email, group = group)
             pg.save()
         elif item.type == 'society':
@@ -338,7 +354,9 @@ def migrate_pending_access(apps, schema_editor):
             pg = PendingGroupMember(email = item.email, group = group)
             pg.save()
         else:
-            print('Unrecognised ActsPendingAccess type: ' + item.type)
+            unrecognized.add(item.type)
+    for i in unrecognized:
+        print('Unrecognised ActsPendingAccess type: ' + i)
     
         
 def migrate_applications(apps, schema_editor):
@@ -361,9 +379,12 @@ def migrate_applications(apps, schema_editor):
                 new = SocietyApplication()
                 new.society = parent
             except Society.DoesNotExist:
-                new = VenueApplication()
-                parent = Venue.objects.get(id=old.socid)
-                new.venue = parent
+                try:
+                    new = VenueApplication()
+                    parent = Venue.objects.get(id=old.socid)
+                    new.venue = parent
+                except Venue.DoesNotExist:
+                    continue
         new.name = old.text
         if old.furtherinfo:
             new.desc = old.furtherinfo
@@ -385,7 +406,10 @@ def migrate_auditions(apps, schema_editor):
     OldAudition = apps.get_model('old_drama', 'ActsAuditions')
     AuditionInstance = apps.get_model('drama', 'AuditionInstance')
     for old in OldAudition.objects.all():
-        show = Show.objects.get(id=old.showid)
+        try:
+            show = Show.objects.get(id=old.showid)
+        except Show.DoesNotExist:
+            continue
         audition = show.audition
         if old.nonscheduled:
             audition.contact = old.location

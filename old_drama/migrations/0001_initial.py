@@ -13,14 +13,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsAccess',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('uid', models.IntegerField(blank=True, null=True)),
-                ('issuerid', models.IntegerField(blank=True, null=True)),
-                ('revokeid', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('uid', models.IntegerField(null=True, blank=True)),
+                ('issuerid', models.IntegerField(null=True, blank=True)),
+                ('revokeid', models.IntegerField(null=True, blank=True)),
                 ('rid', models.IntegerField()),
                 ('type', models.CharField(max_length=20)),
                 ('creationdate', models.DateField()),
-                ('revokedate', models.DateField(blank=True, null=True)),
+                ('revokedate', models.DateField(null=True, blank=True)),
                 ('contact', models.BooleanField()),
             ],
             options={
@@ -31,11 +31,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsApiAccessTokens',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
                 ('client_id', models.IntegerField()),
-                ('user_id', models.IntegerField(blank=True, null=True)),
+                ('user_id', models.IntegerField(null=True, blank=True)),
                 ('token', models.CharField(max_length=255, unique=True)),
-                ('expires_at', models.IntegerField(blank=True, null=True)),
+                ('expires_at', models.IntegerField(null=True, blank=True)),
                 ('scope', models.CharField(max_length=255, blank=True)),
             ],
             options={
@@ -46,9 +46,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsApiApps',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('user_id', models.IntegerField(blank=True, null=True)),
-                ('organisation_id', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('user_id', models.IntegerField(null=True, blank=True)),
+                ('organisation_id', models.IntegerField(null=True, blank=True)),
                 ('random_id', models.CharField(max_length=255)),
                 ('redirect_uris', models.TextField()),
                 ('secret', models.CharField(max_length=255)),
@@ -69,12 +69,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsApiAuthCodes',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
                 ('client_id', models.IntegerField()),
-                ('user_id', models.IntegerField(blank=True, null=True)),
+                ('user_id', models.IntegerField(null=True, blank=True)),
                 ('token', models.CharField(max_length=255, unique=True)),
                 ('redirect_uri', models.TextField()),
-                ('expires_at', models.IntegerField(blank=True, null=True)),
+                ('expires_at', models.IntegerField(null=True, blank=True)),
                 ('scope', models.CharField(max_length=255, blank=True)),
             ],
             options={
@@ -85,7 +85,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsApiAuthorisations',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, auto_created=True, verbose_name='ID')),
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('externalapp_id', models.IntegerField()),
                 ('user_id', models.IntegerField()),
             ],
@@ -97,11 +97,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsApiRefreshTokens',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
                 ('client_id', models.IntegerField()),
-                ('user_id', models.IntegerField(blank=True, null=True)),
+                ('user_id', models.IntegerField(null=True, blank=True)),
                 ('token', models.CharField(max_length=255, unique=True)),
-                ('expires_at', models.IntegerField(blank=True, null=True)),
+                ('expires_at', models.IntegerField(null=True, blank=True)),
                 ('scope', models.CharField(max_length=255, blank=True)),
             ],
             options={
@@ -112,9 +112,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsApplications',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('showid', models.IntegerField(blank=True, null=True)),
-                ('socid', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('showid', models.IntegerField(null=True, blank=True)),
+                ('socid', models.IntegerField(null=True, blank=True)),
                 ('text', models.TextField()),
                 ('deadlinedate', models.DateField()),
                 ('furtherinfo', models.TextField()),
@@ -128,11 +128,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsAuditions',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('showid', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('showid', models.IntegerField(null=True, blank=True)),
                 ('date', models.DateField()),
                 ('starttime', models.TimeField()),
-                ('endtime', models.TimeField(blank=True, null=True)),
+                ('endtime', models.TimeField(null=True, blank=True)),
                 ('location', models.CharField(max_length=255)),
                 ('display', models.BooleanField()),
                 ('nonscheduled', models.BooleanField()),
@@ -145,8 +145,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsEvents',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('socid', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('socid', models.IntegerField(null=True, blank=True)),
                 ('text', models.CharField(max_length=255)),
                 ('endtime', models.TimeField()),
                 ('starttime', models.TimeField()),
@@ -162,9 +162,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsExternalUsers',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('user_id', models.IntegerField(blank=True, null=True)),
-                ('person_id', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('user_id', models.IntegerField(null=True, blank=True)),
+                ('person_id', models.IntegerField(null=True, blank=True)),
                 ('service', models.CharField(max_length=50)),
                 ('remote_id', models.CharField(max_length=100, blank=True)),
                 ('username', models.CharField(max_length=255, blank=True)),
@@ -172,7 +172,7 @@ class Migration(migrations.Migration):
                 ('token', models.CharField(max_length=255, blank=True)),
                 ('email', models.CharField(max_length=255, blank=True)),
                 ('profile_picture_url', models.CharField(max_length=255, blank=True)),
-                ('last_login_at', models.DateTimeField(blank=True, null=True)),
+                ('last_login_at', models.DateTimeField(null=True, blank=True)),
             ],
             options={
                 'db_table': 'acts_external_users',
@@ -182,9 +182,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsKnowledgebase',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('pageid', models.IntegerField(blank=True, null=True)),
-                ('userid', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('pageid', models.IntegerField(null=True, blank=True)),
+                ('userid', models.IntegerField(null=True, blank=True)),
                 ('text', models.TextField()),
                 ('date', models.DateTimeField()),
             ],
@@ -196,8 +196,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsNameAliases',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('person_id', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('person_id', models.IntegerField(null=True, blank=True)),
                 ('name', models.CharField(max_length=255)),
             ],
             options={
@@ -208,7 +208,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsPendingaccess',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
                 ('issuerid', models.IntegerField()),
                 ('rid', models.IntegerField()),
                 ('email', models.CharField(max_length=255)),
@@ -223,8 +223,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsPeopleData',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('image_id', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('image_id', models.IntegerField(null=True, blank=True)),
                 ('name', models.CharField(max_length=255)),
                 ('description', models.TextField(blank=True)),
                 ('slug', models.CharField(max_length=128, blank=True, unique=True)),
@@ -239,12 +239,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsPerformances',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('sid', models.IntegerField(blank=True, null=True)),
-                ('venid', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('sid', models.IntegerField(null=True, blank=True)),
+                ('venid', models.IntegerField(null=True, blank=True)),
                 ('startdate', models.DateField()),
                 ('enddate', models.DateField()),
-                ('excludedate', models.DateField(blank=True, null=True)),
+                ('excludedate', models.DateField(null=True, blank=True)),
                 ('time', models.TimeField()),
                 ('venue', models.CharField(max_length=255, blank=True)),
             ],
@@ -256,12 +256,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsShows',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('image_id', models.IntegerField(blank=True, null=True)),
-                ('socid', models.IntegerField(blank=True, null=True)),
-                ('venid', models.IntegerField(blank=True, null=True)),
-                ('authorizeid', models.IntegerField(blank=True, null=True)),
-                ('primaryref', models.IntegerField(blank=True, null=True, unique=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('image_id', models.IntegerField(null=True, blank=True)),
+                ('socid', models.IntegerField(null=True, blank=True)),
+                ('venid', models.IntegerField(null=True, blank=True)),
+                ('authorizeid', models.IntegerField(null=True, blank=True)),
+                ('primaryref', models.IntegerField(null=True, unique=True, blank=True)),
                 ('title', models.CharField(max_length=255)),
                 ('description', models.TextField(blank=True)),
                 ('facebook_id', models.CharField(max_length=50, blank=True)),
@@ -272,18 +272,13 @@ class Migration(migrations.Migration):
                 ('prices', models.CharField(max_length=255, blank=True)),
                 ('photourl', models.TextField(blank=True)),
                 ('venue', models.CharField(max_length=255, blank=True)),
-                ('excludedate', models.DateField(blank=True, null=True)),
                 ('society', models.CharField(max_length=255, blank=True)),
                 ('techsend', models.BooleanField()),
                 ('actorsend', models.BooleanField()),
                 ('audextra', models.TextField(blank=True)),
                 ('entered', models.BooleanField()),
-                ('entryexpiry', models.DateField()),
                 ('category', models.CharField(max_length=255)),
                 ('bookingcode', models.CharField(max_length=255, blank=True)),
-                ('timestamp', models.DateTimeField()),
-                ('start_at', models.DateTimeField(blank=True, null=True)),
-                ('end_at', models.DateTimeField(blank=True, null=True)),
                 ('freebase_id', models.CharField(max_length=255, blank=True)),
                 ('facebookurl', models.CharField(max_length=2083, blank=True)),
                 ('otherurl', models.CharField(max_length=2083, blank=True)),
@@ -297,9 +292,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsShowsPeopleLink',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('sid', models.IntegerField(blank=True, null=True)),
-                ('pid', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('sid', models.IntegerField(null=True, blank=True)),
+                ('pid', models.IntegerField(null=True, blank=True)),
                 ('type', models.CharField(max_length=20)),
                 ('role', models.CharField(max_length=255)),
                 ('order', models.IntegerField()),
@@ -312,7 +307,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsSimilarNames',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
                 ('name1', models.CharField(max_length=255)),
                 ('name2', models.CharField(max_length=255)),
                 ('equivalence', models.BooleanField()),
@@ -325,8 +320,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsSocieties',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('image_id', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('image_id', models.IntegerField(null=True, blank=True)),
                 ('name', models.CharField(max_length=255)),
                 ('description', models.TextField(blank=True)),
                 ('facebook_id', models.CharField(max_length=50, blank=True)),
@@ -336,7 +331,7 @@ class Migration(migrations.Migration):
                 ('affiliate', models.BooleanField()),
                 ('logourl', models.CharField(max_length=255, blank=True)),
                 ('slug', models.CharField(max_length=128, blank=True, unique=True)),
-                ('expires', models.DateField(blank=True, null=True)),
+                ('expires', models.DateField(null=True, blank=True)),
                 ('type', models.CharField(max_length=255)),
                 ('address', models.TextField(blank=True)),
                 ('latitude', models.TextField(blank=True)),
@@ -350,8 +345,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsTechies',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('showid', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('showid', models.IntegerField(null=True, blank=True)),
                 ('positions', models.TextField()),
                 ('contact', models.TextField()),
                 ('deadline', models.BooleanField()),
@@ -370,11 +365,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActsUsers',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('person_id', models.IntegerField(blank=True, null=True)),
+                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ('person_id', models.IntegerField(null=True, blank=True)),
                 ('name', models.CharField(max_length=255)),
                 ('email', models.CharField(max_length=255)),
-                ('pass_field', models.CharField(max_length=32, blank=True, db_column='pass')),
+                ('pass_field', models.CharField(db_column='pass', max_length=32, blank=True)),
                 ('registered', models.DateField()),
                 ('login', models.DateField()),
                 ('contact', models.BooleanField()),
@@ -390,7 +385,7 @@ class Migration(migrations.Migration):
                 ('threadmessages', models.NullBooleanField()),
                 ('reversetime', models.BooleanField()),
                 ('resetcode', models.CharField(max_length=32, blank=True)),
-                ('upgraded_at', models.DateTimeField(blank=True, null=True)),
+                ('upgraded_at', models.DateTimeField(null=True, blank=True)),
                 ('is_email_verified', models.BooleanField()),
                 ('profile_picture_url', models.CharField(max_length=255, blank=True)),
             ],
