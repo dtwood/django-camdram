@@ -115,7 +115,7 @@ def migrate_shows(apps, schema_editor):
                 soc = Society.objects.filter(name=os.society)[0]
             except IndexError:
                 soc = Society(name=os.society)
-                base_slug = slugify(soc.name)
+                base_slug = slugify(soc.name)[0:70] #TODO:Ugly
                 if Society.objects.filter(slug=base_slug).count() > 0:
                     for i in itertools.count(2):
                         slug = slugify(base_slug + '-' + str(i))
@@ -140,8 +140,8 @@ def migrate_shows(apps, schema_editor):
         if os.onlinebookingurl:
             new.book = os.onlinebookingurl
         if os.prices:
-            new.prices = os.prices
-        base_slug = slugify(new.name)
+            new.prices = os.prices[0:30]
+        base_slug = slugify(new.name)[0:70] #TODO: Ugly
         if new.__class__.objects.filter(slug=base_slug).count() > 0:
             for i in itertools.count(2):
                 slug = slugify(base_slug + '-' + str(i))
@@ -198,7 +198,7 @@ def migrate_performances(apps, schema_editor):
                 ven = Venue.objects.filter(name=venue_name)[0]
             except IndexError:
                 ven = Venue(name=venue_name)
-                base_slug = slugify(ven.name)
+                base_slug = slugify(ven.name)[0:70] #TODO: Ugly
                 if ven.__class__.objects.filter(slug=base_slug).count() > 0:
                     for i in itertools.count(2):
                         slug = slugify(base_slug + '-' + str(i))
@@ -263,18 +263,21 @@ def migrate_techieads(apps, schema_editor):
         new.show = Show.objects.get(id=old.showid)
         if old.techextra:
             new.desc = old.techextra
-        new.contact = old.contact
+        print(old.contact)
+        new.contact = old.contact[0:190]
         deadline = old.expiry
         if old.deadlinetime:
             deadline = datetime.datetime.combine(deadline, old.deadlinetime)
         new.deadline = deadline
         new.save()
-        for pos in old.positions.splitlines():
+        for pos in old.positions.encode().decode('unicode-escape').splitlines():
             new_pos = TechieAdRole()
-            new_pos.name = pos
+            new_pos.name = pos[0:200]
+            if len(pos) > 150:
+                print(pos)
             new_pos.ad = new
             new_pos.role = prod
-            new_pos.slug = slugify(new_pos.name)
+            new_pos.slug = slugify(new_pos.name)[0:200]
             new_pos.save()
 
 def migrate_users(apps, schema_editor):
