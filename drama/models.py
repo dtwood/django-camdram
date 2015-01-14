@@ -605,6 +605,9 @@ class Show(DramaObjectModel, DramaSocialMixin):
     def prod(self):
         return self.roleinstance_set.filter(role__cat='prod')
 
+    def get_venue(self):
+        return self.performance_set.order_by('-end_date')[0].venue
+    
     @property
     def opening_night(self):
         try:
