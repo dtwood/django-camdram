@@ -1,7 +1,7 @@
 import math
 import itertools
 import drama
-from django.db import models, IntegrityError
+from django.db import models, IntegrityError, transaction
 from django.template.defaultfilters import slugify
 from django.core.urlresolvers import reverse
 from datetime import date, timedelta, datetime
@@ -334,8 +334,8 @@ class SocialPost(models.Model):
     time = models.DateTimeField()
     message = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    picture = models.URLField(blank=True, null=True)
-    link = models.URLField(blank=True, null=True)
+    picture = models.URLField(blank=True, null=True, max_length=500)
+    link = models.URLField(blank=True, null=True, max_length=500)
     name = models.TextField(blank=True, null=True)
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
@@ -358,9 +358,9 @@ class SocialPost(models.Model):
 
 class DramaSocialMixin(models.Model):
     facebook_id = models.CharField('Facebook', max_length=50, blank=True)
-    facebook_since = models.IntegerField(null=True)
+    facebook_since = models.CharField(null=True, blank=True, max_length=100)
     twitter_id = models.CharField('Twitter', max_length=50, blank=True)
-    twitter_since = models.IntegerField(null=True)
+    twitter_since = models.CharField(null=True, blank=True, max_length=100)
     post_set = GenericRelation(SocialPost)
 
     class Meta:
@@ -375,7 +375,10 @@ class DramaSocialMixin(models.Model):
 
     def get_twitter_link(self):
         if not re.match(r'.*twitter\.com.*', self.twitter_id):
-            url = 'https://www.twitter.com/' + self.twitter_id
+            if re.match(r'^[0-9]*$', self.twitter_id):
+                url = 'https://www.twitter.com/user?id=' + self.twitter_id
+            else:
+                url = 'https://www.twitter.com/' + self.twitter_id
         else:
             url = self.twitter_id
         return mark_safe('<a target="_blank" href="{}"><img alt="" src="/static/images/twitter.png"></img> Twitter</a>'.format(url))
@@ -384,6 +387,7 @@ class DramaSocialMixin(models.Model):
     def has_news(self):
         return (self.facebook_id or self.twitter_id) and self.post_set.count() > 0
 
+    @transaction.atomic
     def update_posts(self):
         #Facebook
         if self.facebook_id:
@@ -401,8 +405,8 @@ class DramaSocialMixin(models.Model):
             since=None
             while True:
                 post_data = loads(urllib.request.urlopen(url).read().decode('utf-8'))
-                posts = post_data['data'] + posts
                 try:
+                    posts = post_data['data'] + posts
                     url = post_data['paging']['previous']
                 except KeyError:
                     break
