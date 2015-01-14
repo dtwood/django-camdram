@@ -2,17 +2,17 @@
 {% load drama_admin %}
 {% block title %}Person: {{object.name}}{% endblock %}
 
+{% comment "Disabled for security reasons" %}
 {% block extra_menu %}
 <li><a href="#" onclick="$(this).children('form').first().submit(); return false;" display="block"><form action="{% url 'person-link' slug=object.slug %}" method="post">{% csrf_token %}</form><i class="fa fa-chain fa-fw"></i> This is me</a></li>
 {% endblock %}
+{% endcomment %}
 
 {% block content %}
 <div class="row">
   {% admin_panel object %}
   <div class="large-12 columns panel">
-    <div id="entity-header">
-      <h2>{{object.name}}</h2>
-    </div>
+    <h2>{{object.name}}</h2>
     <p>{{object.desc}}</p>
   </div>
 </div>

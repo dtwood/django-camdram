@@ -289,18 +289,18 @@ class PersonViewSet(ObjectViewSet):
     model = models.Person
     form = forms.PersonForm
 
-    @detail_route(methods=['POST'])
-    @transaction.atomic()
-    def link(self, request, slug, *args, **kwargs):
-        person = get_object_or_404(self.model, slug=slug)
-        user = request.user
-        if person.user is not None:
-            raise PermissionDenied
-        else:
-            log_item = models.LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=person, desc='Linked Person')
-            log_item.save()
-            signals.post_save.send(sender=person.__class__, instance=person, created=False, raw=False, using=None, update_fields=None)
-            return person.link_user(user)
+    #@detail_route(methods=['POST'])
+    #@transaction.atomic()
+    #def link(self, request, slug, *args, **kwargs):
+        #person = get_object_or_404(self.model, slug=slug)
+        #user = request.user
+        #if person.user is not None:
+            #raise PermissionDenied
+        #else:
+            #log_item = models.LogItem(cat='EDIT', datetime=timezone.now(), user=request.user, content_object=person, desc='Linked Person')
+            #log_item.save()
+            #signals.post_save.send(sender=person.__class__, instance=person, created=False, raw=False, using=None, update_fields=None)
+            #return person.link_user(user)
 
 class SocietyViewSet(OrganizationViewSet):
     queryset = models.Society.objects.all()
