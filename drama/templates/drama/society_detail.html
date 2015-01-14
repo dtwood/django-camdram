@@ -7,7 +7,14 @@
 <div class="row">
   <div class="large-12 columns panel">
     <h2>{{object.name}}<small> - {{object.shortname}}</small></h2>
+    {% if object.image %}
+    <div class="large-3 columns text-center">
+      <a href="{{object.image.url}}" data-lightbox="poster"><img src="{{object.image.url}}" /></a>
+    </div>
+    <div class="large-9 columns">
+  {% endif %}    
     <p>{{object.desc|markdown}}</p>
+    {% if object.image %}</div>{% endif %}
   </div>
 </div>
 
