@@ -31,6 +31,10 @@ DOMAIN_FOR_URI = 'http://www.camdram.com'
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'c^g6z6@^f&6@0v$n(4_r*s36eea3nkn-sq_(swkmmnn2(tdzm7'
+FACEBOOK_ACCESS_TOKEN = '442245022574342|56555ade12f03b8a1474c50ce8b5a66c'
+TWITTER_KEY = 'nfZQqlLtFQQN8ak04uVqwE4WU'
+TWITTER_SECRET = 'm6ogFwuxBKQCaBYOKVafuvrStGhIJgJwm6vVP1LgYpj4lcLZAS'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -84,15 +88,15 @@ WSGI_APPLICATION = 'camdram.wsgi.application'
 
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.postgresql_psycopg2', 
-        #'NAME': 'camdram',
-        #'USER': 'camdram',
-        #'PASSWORD': 'hello, little girl',
-        #'HOST': '',   # Or an IP Address that your DB is hosted on
-        #'PORT': '',
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', 
+        'NAME': 'camdram',
+        'USER': 'camdram',
+        'PASSWORD': 'four bears, four bears',
+        'HOST': '',   # Or an IP Address that your DB is hosted on
+        'PORT': '',
+        #'ENGINE': 'django.db.backends.sqlite3',
+        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
 }
 
 # Internationalization
@@ -168,7 +172,6 @@ PIPELINE_CSS = {
 PIPELINE_JS = {
     'vendor': {
         'source_filenames': (
-            'javascripts/foundation/*.js',
             'javascripts/moment.js',
             'javascripts/lightbox/*.js',
         ),
