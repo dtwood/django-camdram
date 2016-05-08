@@ -1,6 +1,6 @@
 {% load i18n l10n %}
 {% load staticfiles %}
-{% load autocomplete_light_tags %}
+{% load dal_tags %}
 {% load url from future %}
 
 {% block widget_open %}
@@ -11,7 +11,7 @@
     {# a deck that should contain the list of selected options #}
     <span id="{{ widget.html_id }}-deck" class="deck" >
         {% for choice in choices %}
-            {{ choice|autocomplete_light_choice_html:autocomplete }}
+            {{ choice|dal_choice_html:autocomplete }}
         {% endfor %}
     </span>
 {% endblock %}

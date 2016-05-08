@@ -56,7 +56,7 @@ INSTALLED_APPS = (
     'registration',
     'guardian',
     'haystack',
-    'autocomplete_light',
+    'dal',
     'pipeline',
     'rest_framework',
     'drama',

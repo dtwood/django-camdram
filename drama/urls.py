@@ -1,5 +1,4 @@
-import autocomplete_light
-autocomplete_light.autodiscover()
+import dal as dal
 from django.contrib import auth
 from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView, ListView
@@ -71,7 +70,6 @@ urlpatterns = patterns('drama.views',
                        url(r'^contact-us/$', 'contact_us', name='contact-us'),
                        url(r'^privacy/$', TemplateView.as_view(template_name="drama/privacy.html"), name='privacy'),
                        url(r'^vacancies/', include(vacancy_patterns)),
-                       url(r'^autocomplete/', include('autocomplete_light.urls')),
                        url(r'^show-admin/$', 'show_admin', name='show-admin'), 
                        url(r'^approvals/$', 'approval_queue', name='approvals'),
                        url(r'^approvals/(?P<key>[0-9]*)/ignore$', 'approval_ignore', name='approval-ignore'),

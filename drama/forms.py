@@ -1,8 +1,9 @@
 from haystack.forms import SearchForm
 import hashlib
 import datetime
-import autocomplete_light
-autocomplete_light.autodiscover()
+import dal
+import dal.widgets
+import dal.forms
 from django import forms
 from django.forms.models import inlineformset_factory
 from drama import models
@@ -71,7 +72,7 @@ class ChildForm(FormsetsForm):
         return cleaned_data
 
 
-class PerformanceForm(autocomplete_light.ModelForm):
+class PerformanceForm(dal.forms.FutureModelForm):
 
     class Meta:
         model = models.Performance
@@ -84,7 +85,7 @@ class PerformanceForm(autocomplete_light.ModelForm):
 PerformanceInline = inlineformset_factory(
     models.Show, models.Performance, PerformanceForm, extra=1)
 
-class ShowForm(FormsetsForm, autocomplete_light.ModelForm):
+class ShowForm(FormsetsForm, dal.forms.FutureModelForm):
     error_css_class = 'error'
     required_css_class = 'required'
     formsets = {'performance_formset': PerformanceInline}
@@ -192,7 +193,7 @@ class AuditionForm(ChildForm):
         fields = ['desc','contact']
 
         
-class TechieAdRoleForm(autocomplete_light.ModelForm):
+class TechieAdRoleForm(dal.forms.FutureModelForm):
 
     class Meta:
         model = models.TechieAdRole
@@ -240,7 +241,7 @@ class TechieAdForm(DeadlineForm, ChildForm):
         model = models.TechieAd
         fields = ['desc','contact','deadline']
 
-class ApplicationForm(DeadlineForm, FormsetsForm, autocomplete_light.ModelForm):
+class ApplicationForm(DeadlineForm, FormsetsForm, dal.forms.FutureModelForm):
     error_css_class = 'error'
     required_css_class = 'required'
     formsets = {}
@@ -257,27 +258,25 @@ SocietyApplicationFormset = inlineformset_factory(models.Society, models.Society
 class CastForm(forms.Form):
     role = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Role'}))
     person = forms.ModelChoiceField(models.Person.objects.all(),
-            widget=autocomplete_light.ChoiceWidget('PersonAutocomplete',
+            widget=dal.widgets.Select('PersonAutocomplete',
                     attrs={'placeholder':'Person'}))
 
 class BandForm(forms.Form):
     name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Custom Name'}))
     role = forms.ModelChoiceField(models.Role.objects.filter(cat='band'),
-        widget=autocomplete_light.ChoiceWidget('band',
-            attrs={'placeholder':'Role'},
-            widget_attrs = {'data-widget-bootstrap': 'fill-field-bootstrap',}))
+        widget=dal.widgets.Select('band',
+            attrs={'placeholder':'Role'}))
     person = forms.ModelChoiceField(models.Person.objects.all(),
-            widget=autocomplete_light.ChoiceWidget('PersonAutocomplete',
+            widget=dal.widgets.Select('PersonAutocomplete',
                     attrs={'placeholder':'Person'}))
 
 class ProdForm(forms.Form):
     name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Custom Name'}))
     role = forms.ModelChoiceField(models.Role.objects.filter(cat='prod'),
-        widget=autocomplete_light.ChoiceWidget('prod',
-            attrs={'placeholder':'Role'},
-            widget_attrs = {'data-widget-bootstrap': 'fill-field-bootstrap',}))
+        widget=dal.widgets.Select('prod',
+            attrs={'placeholder':'Role'},))
     person = forms.ModelChoiceField(models.Person.objects.all(),
-            widget=autocomplete_light.ChoiceWidget('PersonAutocomplete',
+            widget=dal.widgets.Select('PersonAutocomplete',
                     attrs={'placeholder':'Person'}))
 
 

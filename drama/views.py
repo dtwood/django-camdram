@@ -10,7 +10,7 @@ from django.views.generic import TemplateView, DetailView, CreateView, UpdateVie
 from drama import util, models, forms
 import json
 import datetime
-import autocomplete_light
+import dal
 import hashlib
 from registration.backends.default.views import RegistrationView
 from guardian.shortcuts import assign_perm, get_objects_for_user, remove_perm, get_users_with_perms
@@ -175,7 +175,7 @@ def application_item(request, slug, *args, **kwargs):
     return redirect(reverse('applications') + '#' + slug)
 
 
-class MyCreateView(autocomplete_light.CreateView):
+class MyCreateView(CreateView):
     model_name = None
 
     def get_context_data(self, **kwargs):
