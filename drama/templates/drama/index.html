@@ -48,7 +48,7 @@ $('.week-link').click(function () {
     <div id="home_statistics">
       <h5>This week</h5>
       <p>
-	<strong>{{performances}}</strong> performance{% if performances > 1 %}s{% endif %} of <strong>{{shows}}</strong> show{% if shows > 1 %}s{% endif %} {% if performances > 1 %}are{% else %}is{% endif %} happening in <strong>{{venues}}</strong> venue{% if venues > 1 %}s{% endif %} involving <strong>{{people}}</strong> {% if people > 1 %}people{% else %}person{% endif %}
+	<strong>{{performances}}</strong> performance{% if performances != 1 %}s{% endif %} of <strong>{{shows}}</strong> show{% if shows != 1 %}s{% endif %} {% if performances != 1 %}are{% else %}is{% endif %} happening in <strong>{{venues}}</strong> venue{% if venues != 1 %}s{% endif %} involving <strong>{{people}}</strong> {% if people != 1 %}people{% else %}person{% endif %}
       </p>
     </div>
     <div id="home_vacancies">
