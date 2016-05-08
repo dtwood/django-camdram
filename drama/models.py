@@ -16,7 +16,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
-import reversion
+from reversion import revisions
 import pystache
 from django.template import defaultfilters
 import re
@@ -556,7 +556,7 @@ class Society(DramaObjectModel, DramaSocialMixin):
                 'url': settings.DOMAIN_FOR_URI + self.get_absolute_url(),
                 }
         
-@reversion.register(follow=('performance_set','roleinstance_set','showapplication_set','audition','techiead'))
+@revisions.register(follow=('performance_set','roleinstance_set','showapplication_set','audition','techiead'))
 class Show(DramaObjectModel, DramaSocialMixin):
     objects = ShowManager()
     book = models.URLField('Booking Link', blank=True)
@@ -721,7 +721,7 @@ class PerformanceInstance:
         return self.show.get_absolute_url()
 
 
-@reversion.register()
+@revisions.register()
 class Performance(models.Model):
     objects = ShowApprovedManager()
 
@@ -785,7 +785,7 @@ class Role(DramaObjectModel):
         return ''
         
 
-@reversion.register()
+@revisions.register()
 class RoleInstance(models.Model):
     objects = ShowApprovedManager()
 
@@ -811,7 +811,7 @@ class RoleInstance(models.Model):
         
 
 
-@reversion.register(follow=('techieadrole_set',))
+@revisions.register(follow=('techieadrole_set',))
 class TechieAd(models.Model):
     objects = AdvertManager()
 
@@ -847,7 +847,7 @@ class TechieAd(models.Model):
                 }
 
 
-@reversion.register()
+@revisions.register()
 class TechieAdRole(models.Model):
     name = models.CharField(max_length=200)
     ad = models.ForeignKey(TechieAd)
@@ -864,7 +864,7 @@ class TechieAdRole(models.Model):
                 }
 
 
-@reversion.register(follow=('auditioninstance_set',))
+@revisions.register(follow=('auditioninstance_set',))
 class Audition(models.Model):
     objects = AdvertManager()
     show = models.OneToOneField(Show)
@@ -895,7 +895,7 @@ class Audition(models.Model):
                 
 
 
-@reversion.register()
+@revisions.register()
 class AuditionInstance(models.Model):
     objects = AuditionInstanceManager()
     audition = models.ForeignKey(Audition)
@@ -956,7 +956,7 @@ class Application(models.Model):
                 } 
 
 
-@reversion.register()
+@revisions.register()
 class ShowApplication(Application):
     objects = AdvertManager()
     show = models.ForeignKey(Show)

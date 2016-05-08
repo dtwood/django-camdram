@@ -4,6 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 import reversion
+from reversion.admin import VersionAdmin
 
 
 class OrphanFilter(admin.SimpleListFilter):
@@ -63,7 +64,7 @@ class NameAliasInline(admin.TabularInline):
     extra = 0
 
 @admin.register(models.Show)
-class ShowAdmin(reversion.VersionAdmin):
+class ShowAdmin(VersionAdmin):
     fieldsets = [
         (None, {
          'fields': ['name', 'author', 'desc', 'societies', 'image']}),
@@ -92,7 +93,7 @@ class AuditionAdmin(admin.ModelAdmin):
     raw_id_fields = ['show']
 
 @admin.register(models.Person)
-class PersonAdmin(reversion.VersionAdmin):
+class PersonAdmin(VersionAdmin):
     actions = ['merge_people']
     list_display = ['name','num_shows','user_email',]
     list_filter = [OrphanFilter]
@@ -115,27 +116,27 @@ class PersonAdmin(reversion.VersionAdmin):
         return redirect(keep.get_admin_interface_url())
 
 @admin.register(models.Venue)
-class VenueAdmin(reversion.VersionAdmin):
+class VenueAdmin(VersionAdmin):
     list_display = ['name','approved']
     search_fields = ['name']
     list_filter = ['approved']
     inlines = [VenueApplicationInline]
     
 @admin.register(models.Role)
-class RoleAdmin(reversion.VersionAdmin):
+class RoleAdmin(VersionAdmin):
     list_display = ['name','cat','approved']
     search_fields = ['name']
     list_filter = ['cat','approved']
     
 @admin.register(models.Society)
-class SocietyAdmin(reversion.VersionAdmin):
+class SocietyAdmin(VersionAdmin):
     list_display = ['name','shortname','approved']
     search_fields = ['name','shortname']
     list_filter = ['approved']
     inlines = [SocietyApplicationInline]
 
 @admin.register(models.TermDate)
-class TermDateAdmin(reversion.VersionAdmin):
+class TermDateAdmin(VersionAdmin):
     list_display = ['__str__','start']
     list_filter = ['term','year']
     list_editable = ['start']
