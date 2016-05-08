@@ -8,6 +8,6 @@ urlpatterns = patterns('haystack.views',
                            view_class=SearchView,
                            form_class=CamdramSearchForm
                            ), name='haystack_search'),
-                       url(r'^/autocomplete$', autocomplete,
+                       url(r'^autocomplete$', autocomplete,
                            name='haystack_autocomplete'),
                        )
