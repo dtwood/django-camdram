@@ -153,7 +153,8 @@ GUARDIAN_RAISE_403 = True
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
-PIPELINE_CSS = {
+PIPELINE = {}
+PIPELINE['STYLESHEETS'] = {
     'vendor': {
         'source_filenames': (
             'stylesheets/h5bp/*.css',
@@ -169,7 +170,13 @@ PIPELINE_CSS = {
     },
 }
 
-PIPELINE_JS = {
+PIPELINE['CSS_COMPRESSOR'] = 'pipeline.compressors.NoopCompressor'
+PIPELINE['JS_COMPRESSOR'] = 'pipeline.compressors.NoopCompressor'
+
+
+PIPELINE_ENABLED = True
+
+PIPELINE['JAVASCRIPT'] = {
     'vendor': {
         'source_filenames': (
             'javascripts/moment.js',

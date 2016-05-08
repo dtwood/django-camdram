@@ -1,10 +1,10 @@
 {% extends "drama/base.html" %}
-{% load compressed %}
+{% load pipeline %}
 
 {% block title %}Diary{% endblock %}
 
 {% block extra_headers %}
-{% compressed_js 'diary' %}
+{% javascript 'diary' %}
 <script>
 var diary_start = moment({{start|date:'U'}}, 'X')
 var diary_end = moment({{end|date:'U'}}, 'X')
