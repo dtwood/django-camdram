@@ -2,6 +2,10 @@ from drama import models
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 class RoleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Role
@@ -10,8 +14,8 @@ class RoleSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RoleInstanceSerializer(serializers.HyperlinkedModelSerializer):
-    show_name = serializers.RelatedField(source='show')
-    role_name = serializers.RelatedField(source='role')
+    show_name = serializers.RelatedField(source='show', queryset=User.objects.all())
+    role_name = serializers.RelatedField(source='role', queryset=User.objects.all())
     class Meta:
         model = models.RoleInstance
         lookup_field = 'id'
@@ -29,7 +33,7 @@ class PersonSerializer(serializers.HyperlinkedModelSerializer):
         
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
     cat = serializers.CharField(max_length=4, source='role.cat')
-    person_name = serializers.RelatedField(source='person')
+    person_name = serializers.RelatedField(source='person', queryset=User.objects.all())
     role_name = serializers.CharField(source='name')
     
     class Meta:
@@ -39,7 +43,7 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PerformanceSerializer(serializers.HyperlinkedModelSerializer):
-    venue_name = serializers.RelatedField(source='venue')
+    venue_name = serializers.RelatedField(source='venue', queryset=User.objects.all())
     class Meta:
         model = models.Performance
         lookup_field='id'
