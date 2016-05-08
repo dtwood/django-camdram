@@ -4,8 +4,10 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from rest_framework import viewsets, routers, permissions
-from rest_framework.renderers import JSONRenderer, YAMLRenderer, BrowsableAPIRenderer, TemplateHTMLRenderer, StaticHTMLRenderer, XMLRenderer
-from rest_framework.decorators import link, detail_route, permission_classes, api_view
+from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer, TemplateHTMLRenderer, StaticHTMLRenderer
+from rest_framework_xml.renderers import XMLRenderer
+from rest_framework_yaml.renderers import YAMLRenderer
+from rest_framework.decorators import detail_route, permission_classes, api_view
 from rest_framework.response import Response
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, IsAuthenticatedOrReadOnly, BasePermission
 from rest_framework.exceptions import MethodNotAllowed
