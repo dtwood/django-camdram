@@ -17,9 +17,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/'
 LOGIN_URL = '/auth/login'
 LOGIN_REDIRECT_URL = '/'
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'templates'),
-    )
 
 EMAIL_FROM_DOMAIN = 'camdram.com'
 NEW_ISSUE_ADDRESSES = ['websuport']
@@ -39,13 +36,32 @@ TWITTER_SECRET = 'm6ogFwuxBKQCaBYOKVafuvrStGhIJgJwm6vVP1LgYpj4lcLZAS'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
-
 ALLOWED_HOSTS = ['.camdram.net']
 
 INTERNAL_IPS = ('127.0.0.1',)
 
 # Application definition
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [ os.path.join(BASE_DIR, 'templates') ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors':  [
+                "django.contrib.auth.context_processors.auth",
+                "django.core.context_processors.i18n",
+                "django.core.context_processors.media",
+                "django.core.context_processors.static",
+                "django.core.context_processors.tz",
+                "django.core.context_processors.request",
+                "django.contrib.messages.context_processors.messages",
+                "drama.processors.navitems_processor",
+                "drama.processors.searchform",
+            ],
+        },
+    },
+]
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -118,16 +134,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
-                               "django.core.context_processors.i18n",
-                               "django.core.context_processors.media",
-                               "django.core.context_processors.static",
-                               "django.core.context_processors.tz",
-                               "django.core.context_processors.request",
-                               "django.contrib.messages.context_processors.messages",
-                               "drama.processors.navitems_processor",
-                               "drama.processors.searchform",
-                               )
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')
 
