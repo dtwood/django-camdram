@@ -507,7 +507,7 @@ class Venue(DramaObjectModel, DramaSocialMixin):
 
 class Society(DramaObjectModel, DramaSocialMixin):
     objects = DramaObjectManager()
-    shortname = models.CharField(max_length=100, verbose_name="Abbreviaiton")
+    shortname = models.CharField(max_length=100, verbose_name="Abbreviation")
     college = models.CharField(max_length=100, blank=True)
     image = models.ImageField(
         upload_to='images/', blank=True, verbose_name="Logo")
