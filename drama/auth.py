@@ -1,7 +1,7 @@
 from django.conf import settings
 import hashlib
 from django.contrib.auth import backends, get_user_model
-from django.contrib.auth.models import User, check_password
+from django.contrib.auth.models import User
 from django.db import models
 
 class EmailBackend(backends.ModelBackend):
