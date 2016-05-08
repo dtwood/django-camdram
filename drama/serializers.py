@@ -52,9 +52,9 @@ class PerformanceSerializer(serializers.HyperlinkedModelSerializer):
 
 class ShowSerializer(serializers.HyperlinkedModelSerializer):
     performances = PerformanceSerializer(source='performance_set', many=True)
-    cast = CompanySerializer(source = 'cast')
-    band = CompanySerializer(source = 'band')
-    prod = CompanySerializer(source = 'prod')
+    cast = CompanySerializer()
+    band = CompanySerializer()
+    prod = CompanySerializer()
     
     class Meta:
         model = models.Show
@@ -70,7 +70,7 @@ class EmailListSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class VenueSerializer(serializers.HyperlinkedModelSerializer):
-    shows = serializers.SerializerMethodField(method_name='get_shows')
+    shows = serializers.SerializerMethodField()
 
     def get_shows(self, obj):
         return [reverse('show-detail', kwargs={'slug': x.slug}, request=self.context.get('request', None),
@@ -83,7 +83,7 @@ class VenueSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class SocietySerializer(serializers.HyperlinkedModelSerializer):
-    shows = serializers.SerializerMethodField(method_name='get_shows')
+    shows = serializers.SerializerMethodField()
 
     def get_shows(self, obj):
         return [reverse('show-detail', kwargs={'slug': x.slug}, request=self.context.get('request', None),
