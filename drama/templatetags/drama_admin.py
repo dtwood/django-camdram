@@ -79,7 +79,7 @@ class DefaultMenuNode(template.Node):
             'admin':user.is_staff,
             'csrf_token': context['csrf_token'],
             }
-        return self.template.render(template.Context(subcontext))
+        return self.template.render(subcontext)
         
         
 @register.tag
