@@ -85,13 +85,13 @@ def diary_week(events, week, week_template=None, row_template=None, label=None, 
     rows = []
     for row in packed:
         rows.append(diary_row(row, start_date, row_template))
-    return week_template.render(template.Context({'dates':dates,
-                                                  'rows':rows,
-                                                  'start_date': start_date.strftime("%Y-%m-%d"),
-                                                  'end_date': end_date.strftime("%Y-%m-%d"),
-                                                  'label':label,
-                                                  'hide':hide,
-                                                  }))
+    return week_template.render({'dates':dates,
+                                 'rows':rows,
+                                 'start_date': start_date.strftime("%Y-%m-%d"),
+                                 'end_date': end_date.strftime("%Y-%m-%d"),
+                                 'label':label,
+                                 'hide':hide,
+                                 })
 
 def diary(start_date, end_date, events, with_labels=False):
     diary_week_template = get_template('drama/diary_week.html')
